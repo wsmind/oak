@@ -1,7 +1,7 @@
 oak
 ===
 
-Cross-platform lightweight game engine. Oaks is written in C++, and currently supports Android,
+Cross-platform lightweight game engine. Oak is written in C++, and currently supports Android,
 Windows, and Browsers (through Emscripten).
 
 License
