@@ -12,7 +12,7 @@ Oak is licensed under the MIT license, making it usable in both free and commerc
 Build
 -----
 
-Oak's build system is base on [Waf](http://code.google.com/p/waf/), so you need a
+Oak's build system is based on [Waf](http://code.google.com/p/waf/), so you need a
 decently recent version of Python 2.x installed.
 
 ### Windows - Visual C++
