@@ -1,0 +1,174 @@
+import sys
+import os
+from waflib.Build import BuildContext
+from waflib import Logs
+
+top = ".."
+out = "output"
+
+configurations = ["debug", "release"]
+systems = ["windows", "linux", "android9", "browser"]
+architectures = ["x86", "x64", "armv6", "armv7", "mips", "js"]
+toolchains = ["msvc", "gcc", "ndk", "emcc"]
+
+# Platform-specific tags, used to include/exclude source files according
+# to their directory.
+#
+# Tags are matched against directories with the same name, lead by '_'.
+# Ex: on linux, the "posix" tag will be active, and all folders named "_posix"
+# will be included in the build.
+systemTags = {
+	"windows": ["windows"],
+	"linux": ["linux", "posix"],
+	"android9": ["android", "posix"],
+	"browser": ["browser"]
+}
+
+# define the valid subset of all possible parameter combinations
+def validateVariant(configuration, system, architecture, toolchain):
+	if system == "windows":
+		if architecture not in ["x86", "x64"]:
+			return False
+		if toolchain not in ["msvc", "gcc"]:
+			return False
+	elif system == "linux":
+		if architecture not in ["x86", "x64"]:
+			return False
+		if toolchain not in ["gcc"]:
+			return False
+	elif system == "android9":
+		if architecture not in ["armv6", "armv7", "mips", "x86"]:
+			return False
+		if toolchain not in ["ndk"]:
+			return False
+	elif system == "browser":
+		if architecture not in ["js"]:
+			return False
+		if toolchain not in ["emcc"]:
+			return False
+	
+	return True
+
+# generate the list of valid variants
+def computeValidVariants():
+	validVariants = []
+	for configuration in configurations:
+		for system in systems:
+			for architecture in architectures:
+				for toolchain in toolchains:
+					if validateVariant(configuration, system, architecture, toolchain):
+						validVariants.append({"configuration": configuration, "system": system, "architecture": architecture, "toolchain": toolchain})
+	return validVariants
+
+validVariants = computeValidVariants()
+
+def makeVariantName(variant):
+	return variant["configuration"] + "_" + variant["system"] + "_" + variant["architecture"] + "_" + variant["toolchain"]
+
+# generate platform-specific source file list
+# this will take tags into account, to include only the appropriate specific source directories
+def generateSourceList(ctx):
+	includes = systemTags[ctx.env.TARGET_OS]
+	
+	# find all tags that must be _excluded_ for this system
+	excludes = []
+	for system, tags in systemTags.items():
+		if system == ctx.env.TARGET_OS:
+			continue
+		
+		for tag in tags:
+			# if the tag should not be included, and is not already excluded, append it
+			if (tag not in includes) and (tag not in excludes):
+				excludes.append(tag)
+	
+	# generate the actual source file list
+	sourceList = ctx.path.parent.ant_glob("**/*.cpp", excl=["**/_" + tag for tag in excludes])
+	
+	return sourceList
+
+def options(ctx):
+	ctx.load("android-gxx", tooldir = "waf-tools")
+
+def configure(ctx):
+	# try to generate environment for all valid build variants
+	# the one that fail are tagged as disabled, so that they can be quickly rejected at
+	# the build step
+	for variant in validVariants:
+		variantName = makeVariantName(variant)
+		ctx.setenv(variantName)
+		
+		# store variant parameters for other build steps to know
+		ctx.env.TARGET_CONFIG = variant["configuration"]
+		ctx.env.TARGET_OS = variant["system"]
+		ctx.env.TARGET_ARCH = variant["architecture"]
+		ctx.env.TARGET_TOOLCHAIN = variant["toolchain"]
+		
+		Logs.pprint("BLUE", "\n\n==== " + variantName + " ====")
+		
+		try:
+			# check the systems we cannot cross-compile to
+			validTargetOs = True
+			if sys.platform == "win32" and variant["system"] not in ["windows", "android9", "browser"]:
+				validTargetOs = False
+			
+			ctx.msg("Checking target system", "ok" if validTargetOs else "failed (cross-compile not supported from the current host system)", "GREEN" if validTargetOs else "YELLOW")
+			if not validTargetOs:
+				raise "invalid target system"
+			
+			if variant["toolchain"] == "gcc":
+				ctx.load("gcc")
+				ctx.load("g++")
+			elif variant["toolchain"] == "msvc":
+				ctx.load("msvc")
+			elif variant["toolchain"] == "ndk":
+				ctx.load("android-gxx", tooldir = "waf-tools")
+			elif variant["toolchain"] == "emcc":
+				ctx.load("emxx", tooldir = "waf-tools")
+			
+			# configure successful for this variant
+			ctx.env.DISABLED = False
+			Logs.pprint("GREEN", "==== ENABLED: " + variantName + " ====")
+		except:
+			# configure failed for this variant
+			ctx.env.DISABLED = True
+			Logs.pprint("YELLOW", "==== DISABLED: " + variantName + " ====")
+
+def build(ctx):
+	if not ctx.variant:
+		str  = "You must provide a build variant:\n"
+		str += "\n"
+		str += "./waf build_CONFIG_SYSTEM_ARCH_TOOLCHAIN\n"
+		str += "\n"
+		str += "where parameters are in:\n"
+		str += "\n"
+		str += "CONFIG\n" + "\n".join(configurations) + "\n"
+		str += "\n"
+		str += "SYSTEM\n" + "\n".join(systems) + "\n"
+		str += "\n"
+		str += "ARCH\n" + "\n".join(architectures) + "\n"
+		str += "\n"
+		str += "TOOLCHAIN\n" + "\n".join(toolchains) + "\n"
+		ctx.fatal(str)
+	
+	if ctx.env.DISABLED:
+		ctx.fatal("This build variant is disabled due to a configuration error. Please run ./waf configure again and fix issues specific to this build variant.")
+	
+	includePaths = [".."]
+	sourceList = generateSourceList(ctx)
+	
+	# build shared lib on android
+	if ctx.env.TARGET_OS == "android9":
+		ctx.shlib(target = "../oak", includes = includePaths, source = sourceList)
+	else:
+		ctx.program(target = "../oak", includes = includePaths, source = sourceList)
+
+def dist(ctx):
+	ctx.base_name = "oak-0.1"
+	ctx.algo = "zip"
+
+# generate all valid build contexts for variants
+for variant in validVariants:
+	variantName = makeVariantName(variant)
+	class tmp(BuildContext):
+		cmd = "build_" + variantName
+		variant = variantName
