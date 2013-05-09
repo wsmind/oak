@@ -107,7 +107,7 @@ def generateSourceList(ctx):
 				excludes.append(tag)
 	
 	# generate the actual source file list
-	sourceList = ctx.path.parent.ant_glob("**/*.cpp", excl=["**/_" + tag for tag in excludes])
+	sourceList = ctx.path.parent.ant_glob("engine/**/*.cpp", excl=["**/_" + tag for tag in excludes])
 	
 	return sourceList
 
@@ -186,10 +186,10 @@ def build(ctx):
 	sourceList = generateSourceList(ctx)
 	
 	if ctx.env.TARGET_OS == "windows":
-		deps = ["glfw"]
+		deps = ["glfw", "glm"]
 		libs = ["opengl32", "winmm", "gdi32", "user32"]
 	else:
-		deps = []
+		deps = ["glm"]
 		libs = []
 	
 	# build shared lib on android

@@ -26,6 +26,7 @@
 #include <engine/graphics/GraphicDriver.hpp>
 
 #include <GL/glfw.h>
+#include <glm/glm.hpp>
 
 namespace oak {
 

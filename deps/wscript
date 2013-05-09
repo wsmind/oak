@@ -26,6 +26,7 @@
 import os
 
 def build(ctx):
+	# GLFW
 	glfwSources = ctx.path.ant_glob("glfw-2.7.8/lib/*.c") + ctx.path.ant_glob("glfw-2.7.8/lib/win32/*.c")
 	glfwIncludes = ["glfw-2.7.8/lib", "glfw-2.7.8/lib/win32"]
 	glfwDefines = ["GLFW_BUILD_DLL", "_GLFW_NO_DLOAD_GDI32", "_GLFW_NO_DLOAD_WINMM"]
@@ -40,4 +41,10 @@ def build(ctx):
 		name = "glfw",
 		export_includes = "glfw-2.7.8/include",
 		export_defines = "GLFW_DLL"
+	)
+	
+	# GLM (header-only)
+	ctx(
+		name = "glm",
+		export_includes = "glm-0.9.4.3",
 	)
