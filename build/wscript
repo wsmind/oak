@@ -43,10 +43,10 @@ toolchains = ["msvc", "gcc", "ndk", "emcc"]
 # Ex: on linux, the "posix" tag will be active, and all folders named "_posix"
 # will be included in the build.
 systemTags = {
-	"windows": ["windows"],
-	"linux": ["linux", "posix"],
+	"windows": ["windows", "gl"],
+	"linux": ["linux", "posix", "gl"],
 	"android9": ["android", "posix"],
-	"browser": ["browser"]
+	"browser": ["browser", "gl"]
 }
 
 # define the valid subset of all possible parameter combinations
@@ -178,14 +178,26 @@ def build(ctx):
 	if ctx.env.DISABLED:
 		ctx.fatal("This build variant is disabled due to a configuration error. Please run ./waf configure again and fix issues specific to this build variant.")
 	
+	# external dependencies
+	ctx.recurse("../deps")
+	
+	# engine sources
 	includePaths = [".."]
 	sourceList = generateSourceList(ctx)
 	
-	# build shared lib on android
-	if ctx.env.TARGET_OS == "android9":
-		ctx.shlib(target = "../oak", includes = includePaths, source = sourceList)
+	if ctx.env.TARGET_OS == "windows":
+		deps = ["glfw"]
+		libs = ["opengl32", "winmm", "gdi32", "user32"]
 	else:
-		ctx.program(target = "../oak", includes = includePaths, source = sourceList)
+		deps = []
+		libs = []
+	
+	# build shared lib on android
+	exePath = os.path.join("..", "oak")
+	if ctx.env.TARGET_OS == "android9":
+		ctx.shlib(target = exePath, includes = includePaths, source = sourceList)
+	else:
+		ctx.program(target = exePath, includes = includePaths, source = sourceList, use = deps, lib = libs)
 
 def dist(ctx):
 	ctx.base_name = "oak-0.1"
