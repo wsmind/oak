@@ -25,16 +25,46 @@
 
 #pragma once
 
-#include <glm/glm.hpp>
+#include <string>
+
+struct lua_State;
 
 namespace oak {
 
-class GraphicDriver
+class GraphicsEngine;
+
+class ScriptEngine
 {
 	public:
-		void setClearColor(const glm::vec3 &color);
-		void setClearDepth(float depth);
-		void clear(bool colorBuffer, bool depthBuffer);
+		ScriptEngine();
+		~ScriptEngine();
+		
+		void initialize();
+		void shutdown();
+		
+		// script file loading
+		void loadFile(const std::string &filename);
+		
+		// function call api
+		bool startCall(const std::string &functionName);
+		void appendParameter(double value);
+		void endCall();
+		
+		// bound modules
+		void registerGraphics(GraphicsEngine *graphics);
+		
+	private:
+		static int luaErrorHandler(lua_State *L);
+		
+		// temp
+		static int plop(lua_State *L);
+		
+		lua_State *L;
+		int errorHandlerStackIndex;
+		
+		// function call state
+		bool callingFunction;
+		int callParameterCount;
 };
 
 } // oak namespace

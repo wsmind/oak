@@ -43,8 +43,8 @@ toolchains = ["msvc", "gcc", "ndk", "emcc"]
 # Ex: on linux, the "posix" tag will be active, and all folders named "_posix"
 # will be included in the build.
 systemTags = {
-	"windows": ["windows", "gl"],
-	"linux": ["linux", "posix", "gl"],
+	"windows": ["windows", "gl", "glfw"],
+	"linux": ["linux", "posix", "gl", "glfw"],
 	"android9": ["android", "posix"],
 	"browser": ["browser", "gl"]
 }
@@ -186,16 +186,16 @@ def build(ctx):
 	sourceList = generateSourceList(ctx)
 	
 	if ctx.env.TARGET_OS == "windows":
-		deps = ["glfw", "glm"]
+		deps = ["glfw", "glm", "lua"]
 		libs = ["opengl32", "winmm", "gdi32", "user32"]
 	else:
-		deps = ["glm"]
+		deps = ["glm", "lua"]
 		libs = []
 	
 	# build shared lib on android
 	exePath = os.path.join("..", "oak")
 	if ctx.env.TARGET_OS == "android9":
-		ctx.shlib(target = exePath, includes = includePaths, source = sourceList)
+		ctx.shlib(target = exePath, includes = includePaths, source = sourceList, use = deps, lib = libs)
 	else:
 		ctx.program(target = exePath, includes = includePaths, source = sourceList, use = deps, lib = libs)
 

@@ -25,16 +25,24 @@
 
 #pragma once
 
-#include <glm/glm.hpp>
+#include <string>
 
 namespace oak {
 
-class GraphicDriver
+class GraphicsEngine;
+class ScriptEngine;
+
+class Application
 {
 	public:
-		void setClearColor(const glm::vec3 &color);
-		void setClearDepth(float depth);
-		void clear(bool colorBuffer, bool depthBuffer);
+		void initialize(const std::string &baseFolder);
+		void shutdown();
+		
+		void update(float dt);
+		
+	private:
+		GraphicsEngine *graphics;
+		ScriptEngine *script;
 };
 
 } // oak namespace

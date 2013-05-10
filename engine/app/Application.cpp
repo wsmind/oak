@@ -23,18 +23,47 @@
  * 
  *****************************************************************************/
 
-#pragma once
+#include <engine/app/Application.hpp>
 
 #include <glm/glm.hpp>
 
+#include <engine/graphics/GraphicsEngine.hpp>
+#include <engine/script/ScriptEngine.hpp>
+
 namespace oak {
 
-class GraphicDriver
+void Application::initialize(const std::string &baseFolder)
 {
-	public:
-		void setClearColor(const glm::vec3 &color);
-		void setClearDepth(float depth);
-		void clear(bool colorBuffer, bool depthBuffer);
-};
+	this->graphics = new GraphicsEngine;
+	
+	this->script = new ScriptEngine;
+	this->script->initialize();
+	
+	this->script->registerGraphics(this->graphics);
+	
+	this->script->loadFile(baseFolder + "/main.lua");
+	
+	this->script->startCall("initialize");
+	this->script->endCall();
+}
+
+void Application::shutdown()
+{
+	this->script->startCall("shutdown");
+	this->script->endCall();
+	
+	this->script->shutdown();
+	delete this->script;
+	delete this->graphics;
+}
+
+void Application::update(float dt)
+{
+	this->script->startCall("update");
+	this->script->appendParameter((double)dt);
+	this->script->endCall();
+	
+	this->graphics->renderFrame();
+}
 
 } // oak namespace

@@ -23,18 +23,28 @@
  * 
  *****************************************************************************/
 
-#pragma once
-
-#include <glm/glm.hpp>
+#include <engine/graphics/GraphicsEngine.hpp>
+#include <engine/graphics/GraphicDriver.hpp>
 
 namespace oak {
 
-class GraphicDriver
+GraphicsEngine::GraphicsEngine()
 {
-	public:
-		void setClearColor(const glm::vec3 &color);
-		void setClearDepth(float depth);
-		void clear(bool colorBuffer, bool depthBuffer);
-};
+	this->driver = new GraphicDriver;
+	
+	this->backgroundColor = glm::vec3(0.0f, 0.0f, 0.0f);
+}
+
+GraphicsEngine::~GraphicsEngine()
+{
+	delete this->driver;
+}
+
+void GraphicsEngine::renderFrame()
+{
+	this->driver->setClearColor(this->backgroundColor);
+	this->driver->setClearDepth(1.0f);
+	this->driver->clear(true, true);
+}
 
 } // oak namespace

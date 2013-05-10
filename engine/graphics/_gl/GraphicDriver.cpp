@@ -30,9 +30,9 @@
 
 namespace oak {
 
-void GraphicDriver::setClearColor(float r, float g, float b)
+void GraphicDriver::setClearColor(const glm::vec3 &color)
 {
-	glClearColor(r, g, b, 0.0f);
+	glClearColor(color.x, color.y, color.z, 0.0f);
 }
 
 void GraphicDriver::setClearDepth(float depth)

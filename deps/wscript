@@ -48,3 +48,23 @@ def build(ctx):
 		name = "glm",
 		export_includes = "glm-0.9.4.3",
 	)
+	
+	# Lua
+	luaSources = ctx.path.ant_glob("lua-5.2.2/src/*.c", excl = ["lua-5.2.2/src/lua.c", "lua-5.2.2/src/luac.c"])
+	luaIncludes = ["lua-5.2.2/src"]
+	if ctx.env.TARGET_OS == "android9":
+		luaDefines = ["getlocaledecpoint()=(',')"] # workaround for android libc
+	else:
+		luaDefines = []
+	luaLibs = []
+	ctx.stlib(
+		target = os.path.join("..", "lua"),
+		source = luaSources,
+		includes = luaIncludes,
+		defines = luaDefines,
+		lib = luaLibs,
+		
+		name = "lua",
+		export_includes = "lua-5.2.2/src",
+		export_defines = []
+	)

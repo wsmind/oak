@@ -23,13 +23,20 @@
  * 
  *****************************************************************************/
 
-#include <engine/system/Log.hpp>
+#pragma once
 
-using namespace oak;
+struct lua_State;
 
-int main()
+namespace oak {
+
+class GraphicsEngine;
+
+class GraphicsBind
 {
-	Log::info("plop from windows!\n");
-	
-	return 0;
-}
+	public:
+		static void registerFunctions(lua_State *L, GraphicsEngine *graphics);
+		
+		static int setBackgroundColor(lua_State *L);
+};
+
+} // oak namespace

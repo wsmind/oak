@@ -23,18 +23,46 @@
  * 
  *****************************************************************************/
 
-#pragma once
+#include <engine/script/bind/GraphicsBind.hpp>
 
-#include <glm/glm.hpp>
+#include <engine/graphics/GraphicsEngine.hpp>
+#include <engine/system/Log.hpp>
+
+#include <lua.hpp>
 
 namespace oak {
 
-class GraphicDriver
+void GraphicsBind::registerFunctions(lua_State *L, GraphicsEngine *graphics)
 {
-	public:
-		void setClearColor(const glm::vec3 &color);
-		void setClearDepth(float depth);
-		void clear(bool colorBuffer, bool depthBuffer);
-};
+	// temp function
+	/*luaL_Reg api[] = {
+		{"setBackgroundColor", GraphicsBind::setBackgroundColor},
+		{NULL, NULL}
+	};
+	luaL_register(L, "graphics", api);*/
+	lua_register(L, "graphics_setBackgroundColor", GraphicsBind::setBackgroundColor);
+	
+	// save pointer for later
+	lua_pushlightuserdata(L, graphics);
+	lua_setfield(L, LUA_REGISTRYINDEX, "__oak_graphics");
+}
+
+int GraphicsBind::setBackgroundColor(lua_State *L)
+{
+	Log::info("Set background color!!!");
+	
+	lua_getfield(L, LUA_REGISTRYINDEX, "__oak_graphics");
+	GraphicsEngine *graphics = (GraphicsEngine *)lua_touserdata(L, -1);
+	lua_pop(L, 1);
+	
+	double r = lua_tonumber(L, -3);
+	double g = lua_tonumber(L, -2);
+	double b = lua_tonumber(L, -1);
+	lua_pop(L, 3);
+	
+	graphics->setBackgroundColor(glm::vec3((float)r, (float)g, (float)b));
+	
+	return 3;
+}
 
 } // oak namespace

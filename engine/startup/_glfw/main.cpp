@@ -23,18 +23,46 @@
  * 
  *****************************************************************************/
 
-#pragma once
+#include <GL/glfw.h>
 
-#include <glm/glm.hpp>
+#include <engine/app/Application.hpp>
+#include <engine/system/Log.hpp>
 
-namespace oak {
+using namespace oak;
 
-class GraphicDriver
+int main()
 {
-	public:
-		void setClearColor(const glm::vec3 &color);
-		void setClearDepth(float depth);
-		void clear(bool colorBuffer, bool depthBuffer);
-};
-
-} // oak namespace
+	Log::info("plop from glfw platforms!\n");
+	
+	glfwInit();
+	
+	if (glfwOpenWindow(1280, 800, 8, 8, 8, 8, 24, 8, GLFW_WINDOW) == GL_FALSE)
+	{
+		Log::error("Failed to open a GLFW window! Exiting...");
+		glfwTerminate();
+		
+		return 1;
+	}
+	
+	Application *application = new Application;
+	
+	application->initialize("D:/proj/oak/samples/hello");
+	glfwSetTime(0.0);
+	while (glfwGetWindowParam(GLFW_OPENED))
+	{
+		float dt = (float)glfwGetTime();
+		glfwSetTime(0.0);
+		
+		application->update(dt);
+		
+		glfwSwapBuffers();
+	}
+	application->shutdown();
+	
+	delete application;
+	
+	glfwCloseWindow();
+	glfwTerminate();
+	
+	return 0;
+}

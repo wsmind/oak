@@ -29,12 +29,24 @@
 
 namespace oak {
 
-class GraphicDriver
+class GraphicDriver;
+class ScriptEngine;
+
+class GraphicsEngine
 {
 	public:
-		void setClearColor(const glm::vec3 &color);
-		void setClearDepth(float depth);
-		void clear(bool colorBuffer, bool depthBuffer);
+		GraphicsEngine();
+		~GraphicsEngine();
+		
+		void renderFrame();
+		
+		glm::vec3 getBackgroundColor() const { return this->backgroundColor; }
+		void setBackgroundColor(const glm::vec3 &color) { this->backgroundColor = color; }
+		
+	private:
+		GraphicDriver *driver;
+		
+		glm::vec3 backgroundColor;
 };
 
 } // oak namespace
