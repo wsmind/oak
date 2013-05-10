@@ -78,7 +78,9 @@ def emxx_modifier_platform(conf):
 	if emxx_modifier_func:
 		emxx_modifier_func()
 def configure(conf):
+	conf.load('emcc', tooldir="waf-tools")
 	conf.find_emxx()
+	conf.load('emar', tooldir="waf-tools")
 	conf.emxx_common_flags()
 	conf.emxx_modifier_platform()
 	conf.cxx_load_tools()

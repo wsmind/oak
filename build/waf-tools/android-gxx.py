@@ -139,6 +139,7 @@ def configure(conf):
 	if not conf.options.ndk:
 		raise "no NDK path"
 	
+	conf.load('android-gcc', tooldir="waf-tools")
 	conf.find_android_gxx()
 	conf.load('android-ar', tooldir="waf-tools")
 	conf.android_gxx_common_flags()
