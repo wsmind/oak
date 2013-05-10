@@ -26,6 +26,7 @@
 #include <engine/system/Log.hpp>
 
 #include <windows.h>
+#include <cassert>
 
 namespace oak {
 
@@ -42,6 +43,16 @@ void Log::warning(const std::string &message)
 void Log::error(const std::string &message)
 {
 	OutputDebugString(message.c_str());
+}
+
+void Log::checkAssert(bool condition, const std::string &conditionString, const std::string &message)
+{
+	if (!condition)
+	{
+		Log::error(conditionString);
+		Log::error(message);
+		assert(condition); // trigger system assert
+	}
 }
 
 } // oak namespace
