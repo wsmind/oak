@@ -30,6 +30,16 @@
 
 using namespace oak;
 
+#ifdef EMSCRIPTEN
+#include <emscripten.h>
+
+Application *app = NULL;
+void main_loop()
+{
+	app->update(0.0);
+}
+#endif
+
 int main()
 {
 	Log::info("plop from glfw platforms!\n");
@@ -48,15 +58,22 @@ int main()
 	
 	application->initialize("D:/proj/oak/samples/hello");
 	glfwSetTime(0.0);
-	while (glfwGetWindowParam(GLFW_OPENED))
-	{
-		float dt = (float)glfwGetTime();
-		glfwSetTime(0.0);
-		
-		application->update(dt);
-		
-		glfwSwapBuffers();
-	}
+	
+	#ifdef EMSCRIPTEN
+		app = application;
+		emscripten_set_main_loop(main_loop, 0, 0);
+	#else
+		while (glfwGetWindowParam(GLFW_OPENED))
+		{
+			float dt = (float)glfwGetTime();
+			glfwSetTime(0.0);
+			
+			application->update(dt);
+			
+			glfwSwapBuffers();
+		}
+	#endif
+	
 	application->shutdown();
 	
 	delete application;

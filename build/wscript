@@ -45,8 +45,8 @@ toolchains = ["msvc", "gcc", "ndk", "emcc"]
 systemTags = {
 	"windows": ["windows", "gl", "glfw"],
 	"linux": ["linux", "posix", "gl", "glfw"],
-	"android9": ["android", "posix"],
-	"browser": ["browser", "gl"]
+	"android9": ["android", "posix", "gl"],
+	"browser": ["browser", "gl", "glfw"]
 }
 
 # define the valid subset of all possible parameter combinations
