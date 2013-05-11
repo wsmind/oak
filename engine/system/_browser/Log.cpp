@@ -44,4 +44,13 @@ void Log::error(const std::string &message)
 	printf("[ERR ] %s", message.c_str());
 }
 
+void Log::checkAssert(bool condition, const std::string &conditionString, const std::string &message)
+{
+	if (!condition)
+	{
+		Log::error(conditionString);
+		Log::error(message);
+	}
+}
+
 } // oak namespace
