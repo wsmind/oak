@@ -27,22 +27,27 @@
 
 #include <android_native_app_glue.h>
 
+#include <engine/app/Application.hpp>
 #include <engine/system/Log.hpp>
 
 namespace oak {
 
-void AndroidActivity::run(android_app *app)
+void AndroidActivity::run(android_app *androidApp)
 {
 	Log::info("Oak application startup\n");
 	
 	this->animating = false;
 	
-	app->userData = this; // save this for later, when receiving the android_app in callbacks
+	androidApp->userData = this; // save this for later, when receiving the android_app in callbacks
 	
 	// hook to various events
-	app->onAppCmd = AndroidActivity::onAppCmd;
-	app->onInputEvent = AndroidActivity::onInputEvent;
+	androidApp->onAppCmd = AndroidActivity::onAppCmd;
+	androidApp->onInputEvent = AndroidActivity::onInputEvent;
 	
+	Application gameApplication;
+	gameApplication.initialize("hello");
+	
+	// main loop
 	bool running = true;
 	while (running)
 	{
@@ -56,15 +61,18 @@ void AndroidActivity::run(android_app *app)
 		{
 			// process this event
 			if (source)
-				source->process(app, source);
+				source->process(androidApp, source);
 			
 			// check if we should exit
-			if (app->destroyRequested)
+			if (androidApp->destroyRequested)
 				running = false;
 		}
 		
 		// run a frame
+		gameApplication.update(0.0f);
 	}
+	
+	gameApplication.shutdown();
 }
 
 void AndroidActivity::createWindow()
@@ -85,9 +93,9 @@ void AndroidActivity::stopAnimating()
 	this->animating = false;
 }
 
-void AndroidActivity::onAppCmd(android_app *app, int32_t command)
+void AndroidActivity::onAppCmd(android_app *androidApp, int32_t command)
 {
-	AndroidActivity *activity = (AndroidActivity *)app->userData;
+	AndroidActivity *activity = (AndroidActivity *)androidApp->userData;
 	
 	switch (command)
 	{
@@ -117,7 +125,7 @@ void AndroidActivity::onAppCmd(android_app *app, int32_t command)
 	}
 }
 
-int32_t AndroidActivity::onInputEvent(android_app *app, AInputEvent* event)
+int32_t AndroidActivity::onInputEvent(android_app *androidApp, AInputEvent* event)
 {
 	return 0;
 }
