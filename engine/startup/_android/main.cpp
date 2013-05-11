@@ -28,11 +28,12 @@ extern "C" {
 #include <android_native_app_glue.c>
 }
 
-#include <engine/system/Log.hpp>
+#include <engine/startup/_android/AndroidActivity.hpp>
 
 using namespace oak;
 
-void android_main(android_app *state)
+void android_main(android_app *app)
 {
-	Log::info("plop from android!\n");
+	AndroidActivity activity;
+	activity.run(app);
 }

@@ -23,35 +23,28 @@
  * 
  *****************************************************************************/
 
-#include <engine/graphics/GraphicDriver.hpp>
+#pragma once
 
-#ifdef ANDROID
-#	include <GLES/gl.h>
-#else
-#	include <GL/glfw.h>
-#endif
-
-#include <glm/glm.hpp>
+#include <android_native_app_glue.h>
 
 namespace oak {
 
-void GraphicDriver::setClearColor(const glm::vec3 &color)
+class AndroidActivity
 {
-	glClearColor(color.x, color.y, color.z, 0.0f);
-}
-
-void GraphicDriver::setClearDepth(float depth)
-{
-	//glClearDepth(depth);
-}
-
-void GraphicDriver::clear(bool colorBuffer, bool depthBuffer)
-{
-	GLuint clearFlags = 0;
-	clearFlags |= colorBuffer ? GL_COLOR_BUFFER_BIT : 0;
-	clearFlags |= depthBuffer ? GL_DEPTH_BUFFER_BIT : 0;
+	public:
+		void run(android_app *app);
 	
-	glClear(clearFlags);
-}
+	private:
+		void createWindow();
+		void destroyWindow();
+		
+		void startAnimating();
+		void stopAnimating();
+		
+		static void onAppCmd(android_app *app, int32_t command);
+		static int32_t onInputEvent(android_app *app, AInputEvent* event);
+		
+		bool animating; // app is in focus, the game is running at 60fps
+};
 
 } // oak namespace
