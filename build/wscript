@@ -190,7 +190,7 @@ def build(ctx):
 		libs = ["opengl32", "winmm", "gdi32", "user32"]
 	else:
 		deps = ["glm", "lua"]
-		libs = []
+		libs = ["m"]
 	
 	# build shared lib on android
 	exePath = os.path.join("..", "oak")
