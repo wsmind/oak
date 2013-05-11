@@ -48,7 +48,7 @@ def emxx_common_flags(conf):
 	v['DEFINES_ST']='-D%s'
 	v['LIB_ST']='-l%s'
 	v['LIBPATH_ST']='-L%s'
-	v['STLIB_ST']='-l%s'
+	v['STLIB_ST']='lib%s.a'
 	v['STLIBPATH_ST']='-L%s'
 	v['RPATH_ST']='-Wl,-rpath,%s'
 	v['SONAME_ST']='-Wl,-h,%s'
@@ -57,7 +57,7 @@ def emxx_common_flags(conf):
 	v['cxxprogram_PATTERN']='%s'
 	v['CXXFLAGS_cxxshlib']=['-fPIC']
 	v['LINKFLAGS_cxxshlib']=['-shared']
-	v['cxxshlib_PATTERN']='lib%s.so'
+	v['cxxshlib_PATTERN']='lib%s.js'
 	v['LINKFLAGS_cxxstlib']=['-Wl,-Bstatic']
 	v['cxxstlib_PATTERN']='lib%s.a'
 	v['LINKFLAGS_MACBUNDLE']=['-bundle','-undefined','dynamic_lookup']
@@ -67,8 +67,8 @@ def emxx_common_flags(conf):
 def emxx_modifier_browser(conf):
 	v=conf.env
 	v['cxxprogram_PATTERN']='%s.html'
-	v['cxxshlib_PATTERN']='%s.dll'
-	v['implib_PATTERN']='lib%s.dll.a'
+	v['cxxshlib_PATTERN']='%s.js'
+	v['implib_PATTERN']='lib%s.js.a'
 	v['IMPLIB_ST']='-Wl,--out-implib,%s'
 	v['CXXFLAGS_cxxshlib']=[]
 	v.append_value('LINKFLAGS',['-Wl,--enable-auto-import'])
@@ -78,8 +78,8 @@ def emxx_modifier_platform(conf):
 	if emxx_modifier_func:
 		emxx_modifier_func()
 def configure(conf):
-	conf.load('emcc', tooldir="waf-tools")
 	conf.find_emxx()
+	conf.load('emcc', tooldir="waf-tools")
 	conf.load('emar', tooldir="waf-tools")
 	conf.emxx_common_flags()
 	conf.emxx_modifier_platform()
