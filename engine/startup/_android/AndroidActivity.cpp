@@ -43,7 +43,7 @@ void AndroidActivity::run(android_app *androidApp)
 	androidApp->onInputEvent = AndroidActivity::onInputEvent;
 	
 	Application gameApplication;
-	gameApplication.initialize("hello");
+	gameApplication.initialize("assets/hello");
 	
 	// main loop
 	bool running = true;
