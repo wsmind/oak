@@ -25,8 +25,6 @@
 
 #include <engine/startup/_android/AndroidActivity.hpp>
 
-#include <android_native_app_glue.h>
-
 #include <engine/app/Application.hpp>
 #include <engine/system/Log.hpp>
 
@@ -75,12 +73,41 @@ void AndroidActivity::run(android_app *androidApp)
 	gameApplication.shutdown();
 }
 
-void AndroidActivity::createWindow()
+void AndroidActivity::createWindow(ANativeWindow *window)
 {
+	const EGLint attribs[] = {
+		EGL_SURFACE_TYPE, EGL_WINDOW_BIT,
+		EGL_BLUE_SIZE, 8,
+		EGL_GREEN_SIZE, 8,
+		EGL_RED_SIZE, 8,
+		EGL_NONE
+	};
+	
+	this->eglDisplay = eglGetDisplay(EGL_DEFAULT_DISPLAY);
+	eglInitialize(this->eglDisplay, 0, 0);
+	
+	EGLConfig config;
+	EGLint configCount;
+	eglChooseConfig(this->eglDisplay, attribs, &config, 1, &configCount);
+	
+	EGLint format;
+	eglGetConfigAttrib(this->eglDisplay, config, EGL_NATIVE_VISUAL_ID, &format);
+	ANativeWindow_setBuffersGeometry(window, 0, 0, format);
+	
+	this->eglSurface = eglCreateWindowSurface(this->eglDisplay, config, window, NULL);
+	this->eglContext = eglCreateContext(this->eglDisplay, config, NULL, NULL);
+	
+	if (eglMakeCurrent(this->eglDisplay, this->eglSurface, this->eglSurface, this->eglContext) == EGL_FALSE) {
+		Log::error("Failed to set the current EGL context");
+	}
 }
 
 void AndroidActivity::destroyWindow()
 {
+	eglMakeCurrent(this->eglDisplay, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT);
+	eglDestroyContext(this->eglDisplay, this->eglContext);
+	eglDestroySurface(this->eglDisplay, this->eglSurface);
+	eglTerminate(this->eglDisplay);
 }
 
 void AndroidActivity::startAnimating()
@@ -101,7 +128,7 @@ void AndroidActivity::onAppCmd(android_app *androidApp, int32_t command)
 	{
 		case APP_CMD_INIT_WINDOW:
 		{
-			activity->createWindow();
+			activity->createWindow(androidApp->window);
 			break;
 		}
 		

@@ -26,6 +26,7 @@
 #pragma once
 
 #include <android_native_app_glue.h>
+#include <EGL/egl.h>
 
 namespace oak {
 
@@ -35,7 +36,7 @@ class AndroidActivity
 		void run(android_app *app);
 	
 	private:
-		void createWindow();
+		void createWindow(ANativeWindow* window);
 		void destroyWindow();
 		
 		void startAnimating();
@@ -45,6 +46,11 @@ class AndroidActivity
 		static int32_t onInputEvent(android_app *app, AInputEvent* event);
 		
 		bool animating; // app is in focus, the game is running at 60fps
+		
+		// EGL parameters
+		EGLDisplay eglDisplay;
+		EGLSurface eglSurface;
+		EGLContext eglContext;
 };
 
 } // oak namespace
