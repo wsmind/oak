@@ -44,4 +44,13 @@ void Log::error(const std::string &message)
 	__android_log_write(ANDROID_LOG_ERROR, "oak", message.c_str());
 }
 
+void Log::checkAssert(bool condition, const std::string &conditionString, const std::string &message)
+{
+	if (!condition)
+	{
+		Log::error(conditionString);
+		Log::error(message);
+	}
+}
+
 } // oak namespace
