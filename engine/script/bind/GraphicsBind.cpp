@@ -32,11 +32,13 @@
 namespace oak {
 
 OAK_BIND_MODULE(GraphicsEngine)
+OAK_BIND_WRET_FUNCTION0(GraphicsEngine, getBackgroundColor)
 OAK_BIND_VOID_FUNCTION1(GraphicsEngine, setBackgroundColor, glm::vec3)
 
 void GraphicsBind::registerFunctions(lua_State *L, GraphicsEngine *graphics)
 {
 	OAK_REGISTER_MODULE(L, GraphicsEngine, graphics, graphics)
+	OAK_REGISTER_FUNCTION(L, GraphicsEngine, graphics, getBackgroundColor)
 	OAK_REGISTER_FUNCTION(L, GraphicsEngine, graphics, setBackgroundColor)
 }
 

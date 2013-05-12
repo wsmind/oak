@@ -54,9 +54,9 @@ inline float popArgument(lua_State *L)
 template <>
 inline glm::vec3 popArgument(lua_State *L)
 {
-	double r = lua_tonumber(L, -3);
-	double g = lua_tonumber(L, -2);
-	double b = lua_tonumber(L, -1);
+	lua_Number r = lua_tonumber(L, -3);
+	lua_Number g = lua_tonumber(L, -2);
+	lua_Number b = lua_tonumber(L, -1);
 	lua_pop(L, 3);
 	
 	return glm::vec3((float)r, (float)g, (float)b);
@@ -100,11 +100,19 @@ inline int pushReturnValue(lua_State *L, const std::string &value)
 #define OAK_BIND_MODULE(ModuleType) \
 	ModuleType *oak_module_ptr_##ModuleType = NULL;
 
+#define OAK_BIND_VOID_FUNCTION0(ModuleType, functionName) \
+	int oak_function_##ModuleType##_##functionName(lua_State *L) \
+	{ \
+		ModuleType *module = oak_module_ptr_##ModuleType; \
+		 \
+		module->functionName(); \
+		 \
+		return 0; \
+	}
+
 #define OAK_BIND_VOID_FUNCTION1(ModuleType, functionName, ArgType1) \
 	int oak_function_##ModuleType##_##functionName(lua_State *L) \
 	{ \
-		Log::info("oak_function_"#ModuleType"_"#functionName); \
-		 \
 		ModuleType *module = oak_module_ptr_##ModuleType; \
 		 \
 		ArgType1 arg1 = oak::bind::popArgument<ArgType1>(L); \
@@ -113,14 +121,18 @@ inline int pushReturnValue(lua_State *L, const std::string &value)
 		return 0; \
 	}
 
-#define OAK_BIND_WRET_FUNCTION1(ModuleType, moduleName, functionName, ArgType1) \
-	int oak_function_##moduleName##_##functionName(lua_State *L) \
+#define OAK_BIND_WRET_FUNCTION0(ModuleType, functionName) \
+	int oak_function_##ModuleType##_##functionName(lua_State *L) \
 	{ \
-		Log::info("oak_function_"#moduleName"_"#functionName); \
+		ModuleType *module = oak_module_ptr_##ModuleType; \
 		 \
-		lua_getfield(L, LUA_REGISTRYINDEX, "__oak_"#moduleName); \
-		ModuleType *module = (ModuleType *)lua_touserdata(L, -1); \
-		lua_pop(L, 1); \
+		return oak::bind::pushReturnValue(L, module->functionName()); \
+	}
+
+#define OAK_BIND_WRET_FUNCTION1(ModuleType, functionName, ArgType1) \
+	int oak_function_##ModuleType##_##functionName(lua_State *L) \
+	{ \
+		ModuleType *module = oak_module_ptr_##ModuleType; \
 		 \
 		ArgType1 arg1 = oak::bind::popArgument<ArgType1>(L); \
 		return oak::bind::pushReturnValue(L, module->functionName(arg1)); \

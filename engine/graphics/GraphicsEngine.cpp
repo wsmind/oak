@@ -32,7 +32,8 @@ GraphicsEngine::GraphicsEngine()
 {
 	this->driver = new GraphicDriver;
 	
-	this->backgroundColor = glm::vec3(0.0f, 0.0f, 0.0f);
+	// default color
+	this->backgroundColor = glm::vec3(0.4f, 0.6f, 0.7f);
 }
 
 GraphicsEngine::~GraphicsEngine()
