@@ -50,14 +50,14 @@ class ScriptEngine
 		void appendParameter(double value);
 		void endCall();
 		
-		// bound modules
+		// modules to bind
 		void registerGraphics(GraphicsEngine *graphics);
+		
+		// temp
+		void plop(const std::string &message);
 		
 	private:
 		static int luaErrorHandler(lua_State *L);
-		
-		// temp
-		static int plop(lua_State *L);
 		
 		lua_State *L;
 		int errorHandlerStackIndex;

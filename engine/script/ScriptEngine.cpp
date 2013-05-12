@@ -25,6 +25,7 @@
 
 #include <engine/script/ScriptEngine.hpp>
 
+#include <engine/script/bind/Bind.hpp>
 #include <engine/script/bind/GraphicsBind.hpp>
 
 #include <engine/system/Log.hpp>
@@ -47,6 +48,9 @@ ScriptEngine::~ScriptEngine()
 	OAK_ASSERT(this->L == NULL, "ScriptEngine is destroyed, but was not shut down");
 }
 
+OAK_BIND_MODULE(ScriptEngine)
+OAK_BIND_VOID_FUNCTION1(ScriptEngine, plop, std::string)
+
 void ScriptEngine::initialize()
 {
 	// create the state
@@ -59,14 +63,13 @@ void ScriptEngine::initialize()
 	lua_pushcfunction(this->L, ScriptEngine::luaErrorHandler);
 	this->errorHandlerStackIndex = lua_gettop(this->L);
 	
+	// global oak namespace
+	lua_createtable(L, 0, 0);
+	lua_setglobal(L, "oak");
+	
 	// temp function
-	luaL_Reg api[] = {
-		{"plop", ScriptEngine::plop},
-		{NULL, NULL}
-	};
-	//lua_register(L, "plop", ScriptEngine::plop);
-	//luaL_register(L, "oak", api);
-	lua_register(L, "plop", ScriptEngine::plop);
+	OAK_REGISTER_MODULE(L, ScriptEngine, script, this)
+	OAK_REGISTER_FUNCTION(L, ScriptEngine, script, plop)
 }
 
 void ScriptEngine::shutdown()
@@ -131,15 +134,9 @@ int ScriptEngine::luaErrorHandler(lua_State *L)
 	return 0;
 }
 
-// temp
-int ScriptEngine::plop(lua_State *L)
+void ScriptEngine::plop(const std::string &message)
 {
-	const char *message = lua_tostring(L, -1);
-	lua_pop(L, 1);
-	
-	Log::info(std::string(message));
-	
-	return 1;
+	Log::info(message);
 }
 
 } // oak namespace

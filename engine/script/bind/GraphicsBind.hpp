@@ -35,8 +35,6 @@ class GraphicsBind
 {
 	public:
 		static void registerFunctions(lua_State *L, GraphicsEngine *graphics);
-		
-		static int setBackgroundColor(lua_State *L);
 };
 
 } // oak namespace

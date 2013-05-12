@@ -26,43 +26,18 @@
 #include <engine/script/bind/GraphicsBind.hpp>
 
 #include <engine/graphics/GraphicsEngine.hpp>
+#include <engine/script/bind/Bind.hpp>
 #include <engine/system/Log.hpp>
-
-#include <lua.hpp>
 
 namespace oak {
 
+OAK_BIND_MODULE(GraphicsEngine)
+OAK_BIND_VOID_FUNCTION1(GraphicsEngine, setBackgroundColor, glm::vec3)
+
 void GraphicsBind::registerFunctions(lua_State *L, GraphicsEngine *graphics)
 {
-	// temp function
-	/*luaL_Reg api[] = {
-		{"setBackgroundColor", GraphicsBind::setBackgroundColor},
-		{NULL, NULL}
-	};
-	luaL_register(L, "graphics", api);*/
-	lua_register(L, "graphics_setBackgroundColor", GraphicsBind::setBackgroundColor);
-	
-	// save pointer for later
-	lua_pushlightuserdata(L, graphics);
-	lua_setfield(L, LUA_REGISTRYINDEX, "__oak_graphics");
-}
-
-int GraphicsBind::setBackgroundColor(lua_State *L)
-{
-	Log::info("Set background color!!!");
-	
-	lua_getfield(L, LUA_REGISTRYINDEX, "__oak_graphics");
-	GraphicsEngine *graphics = (GraphicsEngine *)lua_touserdata(L, -1);
-	lua_pop(L, 1);
-	
-	double r = lua_tonumber(L, -3);
-	double g = lua_tonumber(L, -2);
-	double b = lua_tonumber(L, -1);
-	lua_pop(L, 3);
-	
-	graphics->setBackgroundColor(glm::vec3((float)r, (float)g, (float)b));
-	
-	return 3;
+	OAK_REGISTER_MODULE(L, GraphicsEngine, graphics, graphics)
+	OAK_REGISTER_FUNCTION(L, GraphicsEngine, graphics, setBackgroundColor)
 }
 
 } // oak namespace
