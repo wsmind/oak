@@ -25,10 +25,11 @@
 
 #include <engine/startup/_android/AndroidActivity.hpp>
 
-#include <android/asset_manager.h>
-
 #include <engine/app/Application.hpp>
 #include <engine/system/Log.hpp>
+
+// ugly hack;
+AAssetManager *assetManager = NULL;
 
 namespace oak {
 
@@ -44,23 +45,11 @@ void AndroidActivity::run(android_app *androidApp)
 	androidApp->onAppCmd = AndroidActivity::onAppCmd;
 	androidApp->onInputEvent = AndroidActivity::onInputEvent;
 	
-	// lua test
-	/*AAssetManager *assetManager = androidApp->activity->assetManager;
-	AAsset *file = AAssetManager_open(assetManager, "hello/main.lua", AASSET_MODE_UNKNOWN);
-	if (file)
-	{
-		char buf[256];
-		int size = 0;
-		while ((size = AAsset_read(file, buf, 256)) > 0)
-		{
-			std::string str(buf, size);
-			Log::info(str);
-		}
-		AAsset_close(file);
-	}*/
+	// ugly hack
+	assetManager = androidApp->activity->assetManager;
 	
 	Application gameApplication;
-	gameApplication.initialize("assets/hello");
+	gameApplication.initialize("hello");
 	
 	// main loop
 	bool running = true;

@@ -32,6 +32,13 @@
 
 #include <lua.hpp>
 
+#ifdef ANDROID
+#	include <android/asset_manager.h>
+
+	// ugly hack
+	extern AAssetManager *assetManager;
+#endif
+
 namespace oak {
 
 ScriptEngine::ScriptEngine()
@@ -80,7 +87,32 @@ void ScriptEngine::shutdown()
 
 void ScriptEngine::loadFile(const std::string &filename)
 {
-	luaL_dofile(this->L, filename.c_str());
+	// temp way to load file from .apk on android
+	#ifdef ANDROID
+		AAsset *file = AAssetManager_open(assetManager, filename.c_str(), AASSET_MODE_UNKNOWN);
+		if (file)
+		{
+			std::string code;
+			
+			char buf[256];
+			int size = 0;
+			while ((size = AAsset_read(file, buf, 256)) > 0)
+			{
+				std::string str(buf, size);
+				code += str;
+			}
+			AAsset_close(file);
+			
+			Log::info("loading lua: " + code + "\n");
+			int ret = luaL_loadstring(this->L, code.c_str());
+			if (ret != 0)
+				Log::error("Failed to load lua code!");
+			else
+				lua_pcall(this->L, 0, 0, this->errorHandlerStackIndex);
+		}
+	#else
+		luaL_dofile(this->L, filename.c_str());
+	#endif
 }
 
 bool ScriptEngine::startCall(const std::string &functionName)
