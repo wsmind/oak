@@ -73,13 +73,13 @@ void GraphicDriver::destroyVertexBuffer(VertexBuffer *buffer)
 
 void GraphicDriver::fillVertexBuffer(VertexBuffer *buffer, void *data, unsigned int size)
 {
-	glBindBuffer(Gl_ARRAY_BUFFER, buffer->name);
-	glBufferData(Gl_ARRAY_BUFFER, size, data, GL_STATIC_DRAW);
+	glBindBuffer(GL_ARRAY_BUFFER, buffer->name);
+	glBufferData(GL_ARRAY_BUFFER, size, data, GL_STATIC_DRAW);
 }
 
 void GraphicDriver::bindVertexBuffer(VertexBuffer *buffer)
 {
-	glBindBuffer(Gl_ARRAY_BUFFER, buffer->name);
+	glBindBuffer(GL_ARRAY_BUFFER, buffer->name);
 	
 	// TODO: bind to vertex attibutes
 }
