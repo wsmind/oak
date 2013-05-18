@@ -23,32 +23,7 @@
  * 
  *****************************************************************************/
 
-#include <engine/graphics/GraphicsEngine.hpp>
-#include <engine/graphics/GraphicDriver.hpp>
-
-#include <engine/graphics/shaders/test.vs.h>
-#include <engine/graphics/shaders/test.fs.h>
-
-namespace oak {
-
-GraphicsEngine::GraphicsEngine()
+void main()
 {
-	this->driver = new GraphicDriver;
-	
-	// default color
-	this->backgroundColor = glm::vec3(0.4f, 0.6f, 0.7f);
+	gl_FragColor = vec4(0.0, 1.0, 0.0, 1.0);
 }
-
-GraphicsEngine::~GraphicsEngine()
-{
-	delete this->driver;
-}
-
-void GraphicsEngine::renderFrame()
-{
-	this->driver->setClearColor(this->backgroundColor);
-	this->driver->setClearDepth(1.0f);
-	this->driver->clear(true, true);
-}
-
-} // oak namespace

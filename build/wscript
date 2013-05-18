@@ -178,6 +178,8 @@ def build(ctx):
 	if ctx.env.DISABLED:
 		ctx.fatal("This build variant is disabled due to a configuration error. Please run ./waf configure again and fix issues specific to this build variant.")
 	
+	ctx.load("shaders", tooldir = "waf-tools")
+	
 	# external dependencies
 	ctx.recurse("../deps")
 	
@@ -192,12 +194,18 @@ def build(ctx):
 		deps = ["glm", "lua"]
 		libs = ["m"]
 	
+	if ctx.env.TARGET_OS == "browser":	
+		ctx.env.append_unique("LINKFLAGS", "--preload-file ../samples/hello")
+	
 	# build shared lib on android
 	exePath = os.path.join("..", "oak")
 	if ctx.env.TARGET_OS == "android9":
 		ctx.shlib(target = exePath, includes = includePaths, source = sourceList, use = deps, lib = libs)
 	else:
 		ctx.program(target = exePath, includes = includePaths, source = sourceList, use = deps, lib = libs)
+	
+	# build shaders
+	ctx(source = ctx.path.parent.ant_glob("engine/graphics/shaders/*.vs") + ctx.path.parent.ant_glob("engine/graphics/shaders/*.fs"))
 
 def dist(ctx):
 	ctx.base_name = "oak-0.1"
