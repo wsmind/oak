@@ -23,39 +23,18 @@
  * 
  *****************************************************************************/
 
-#include <engine/graphics/GraphicsEngine.hpp>
-#include <engine/graphics/GraphicDriver.hpp>
+#pragma once
 
-#include <engine/graphics/shaders/test.vs.h>
-#include <engine/graphics/shaders/test.fs.h>
+#include <engine/graphics/GraphicDriver.hpp>
+#include <engine/graphics/_gl/gl_includes.hpp>
 
 namespace oak {
 
-GraphicsEngine::GraphicsEngine()
+struct ShaderProgram
 {
-	this->driver = new GraphicDriver;
-	
-	// default color
-	this->backgroundColor = glm::vec3(0.4f, 0.6f, 0.7f);
-	
-	// test shader
-	this->shader = this->driver->createShaderProgram(testVSString, testFSString);
-}
-
-GraphicsEngine::~GraphicsEngine()
-{
-	this->driver->destroyShaderProgram(this->shader);
-	
-	delete this->driver;
-}
-
-void GraphicsEngine::renderFrame()
-{
-	this->driver->setClearColor(this->backgroundColor);
-	this->driver->setClearDepth(1.0f);
-	this->driver->clear(true, true);
-	
-	this->driver->bindShaderProgram(this->shader);
-}
+	GLuint programName;
+	GLuint vertexShaderName;
+	GLuint fragmentShaderName;
+};
 
 } // oak namespace

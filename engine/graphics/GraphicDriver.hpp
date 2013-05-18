@@ -25,15 +25,20 @@
 
 #pragma once
 
+#include <string>
+
 #include <glm/glm.hpp>
 
 namespace oak {
 
 struct VertexBuffer;
+struct ShaderProgram;
 
 class GraphicDriver
 {
 	public:
+		GraphicDriver();
+		
 		void setClearColor(const glm::vec3 &color);
 		void setClearDepth(float depth);
 		void clear(bool colorBuffer, bool depthBuffer);
@@ -46,6 +51,10 @@ class GraphicDriver
 		void destroyVertexBuffer(VertexBuffer *buffer);
 		void fillVertexBuffer(VertexBuffer *buffer, void *data, unsigned int size);
 		void bindVertexBuffer(VertexBuffer *buffer);
+		
+		ShaderProgram *createShaderProgram(const std::string &vertexCode, const std::string &fragmentCode);
+		void destroyShaderProgram(ShaderProgram *program);
+		void bindShaderProgram(ShaderProgram *program);
 };
 
 } // oak namespace

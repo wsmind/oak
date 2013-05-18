@@ -26,11 +26,55 @@
 #include <engine/graphics/GraphicDriver.hpp>
 
 #include <engine/graphics/_gl/gl_includes.hpp>
+#include <engine/graphics/_gl/ShaderProgram.hpp>
 #include <engine/graphics/_gl/VertexBuffer.hpp>
+
+#include <engine/system/Log.hpp>
 
 #include <glm/glm.hpp>
 
 namespace oak {
+
+namespace { // private section
+
+const unsigned int maxInfoLogLength = 2048;
+
+GLuint compileShader(GLenum type, const std::string &code)
+{
+	GLuint name = glCreateShader(type);
+	
+	const char *codeString = code.c_str();
+	glShaderSource(name, 1, &codeString, NULL);
+	glCompileShader(name);
+	
+	// check compilation status
+	GLint compileStatus;
+	glGetShaderiv(name, GL_COMPILE_STATUS, &compileStatus);
+	if (compileStatus != GL_TRUE)
+	{
+		char errorLog[maxInfoLogLength];
+		GLsizei length;
+		glGetShaderInfoLog(name, maxInfoLogLength, &length, errorLog);
+		
+		switch (type)
+		{
+			case GL_VERTEX_SHADER: Log::error("Failed to compile vertex shader:\n"); break;
+			case GL_FRAGMENT_SHADER: Log::error("Failed to compile fragment shader:\n"); break;
+		}
+		
+		Log::error(std::string(errorLog));
+		Log::error("\n");
+	}
+	
+	return name;
+}
+
+} // end of private section
+
+GraphicDriver::GraphicDriver()
+{
+	glewInit();
+}
 
 void GraphicDriver::setClearColor(const glm::vec3 &color)
 {
@@ -82,6 +126,48 @@ void GraphicDriver::bindVertexBuffer(VertexBuffer *buffer)
 	glBindBuffer(GL_ARRAY_BUFFER, buffer->name);
 	
 	// TODO: bind to vertex attibutes
+}
+
+ShaderProgram *GraphicDriver::createShaderProgram(const std::string &vertexCode, const std::string &fragmentCode)
+{
+	ShaderProgram *program = new ShaderProgram;
+	
+	program->programName = glCreateProgram();
+	program->vertexShaderName = compileShader(GL_VERTEX_SHADER, vertexCode);
+	program->fragmentShaderName = compileShader(GL_FRAGMENT_SHADER, fragmentCode);
+	
+	glAttachShader(program->programName, program->vertexShaderName);
+	glAttachShader(program->programName, program->fragmentShaderName);
+	glLinkProgram(program->programName);
+	
+	// check link status
+	GLint linkStatus;
+	glGetProgramiv(program->programName, GL_LINK_STATUS, &linkStatus);
+	if (linkStatus != GL_TRUE)
+	{
+		char errorLog[maxInfoLogLength];
+		GLsizei length;
+		glGetProgramInfoLog(program->programName, maxInfoLogLength, &length, errorLog);
+		
+		Log::error("Failed to link shader program:\n");
+		Log::error(std::string(errorLog));
+		Log::error("\n");
+	}
+	
+	return program;
+}
+
+void GraphicDriver::destroyShaderProgram(ShaderProgram *program)
+{
+	glDeleteShader(program->vertexShaderName);
+	glDeleteShader(program->fragmentShaderName);
+	glDeleteProgram(program->programName);
+	delete program;
+}
+
+void GraphicDriver::bindShaderProgram(ShaderProgram *program)
+{
+	glUseProgram(program->programName);
 }
 
 } // oak namespace

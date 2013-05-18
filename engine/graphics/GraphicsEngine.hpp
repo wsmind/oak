@@ -31,6 +31,7 @@ namespace oak {
 
 class GraphicDriver;
 class ScriptEngine;
+struct ShaderProgram;
 
 class GraphicsEngine
 {
@@ -47,6 +48,8 @@ class GraphicsEngine
 		GraphicDriver *driver;
 		
 		glm::vec3 backgroundColor;
+		
+		ShaderProgram *shader;
 };
 
 } // oak namespace
