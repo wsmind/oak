@@ -25,53 +25,18 @@
 
 #pragma once
 
-#include <string>
-
-#include <glm/glm.hpp>
+#include <engine/graphics/GraphicDriver.hpp>
+#include <engine/graphics/_gl/gl_includes.hpp>
 
 namespace oak {
 
-struct GraphicDriverState;
-struct VertexBuffer;
-struct ShaderProgram;
-
-class GraphicDriver
+struct GraphicDriverState
 {
-	public:
-		GraphicDriver();
-		~GraphicDriver();
-		
-		void setClearColor(const glm::vec3 &color);
-		void setClearDepth(float depth);
-		void clear(bool colorBuffer, bool depthBuffer);
-		
-		// pack vertex structure data
-		#pragma pack(push)
-		#pragma pack(1)
-		
-		struct Simple2DVertex
-		{
-			glm::vec2 position;
-		};
-		
-		// end of vertex structures
-		#pragma pack(pop)
-		
-		enum VertexFormat
-		{
-			Position2D
-		};
-		VertexBuffer *createVertexBuffer(VertexFormat format, unsigned int size);
-		void destroyVertexBuffer(VertexBuffer *buffer);
-		void fillVertexBuffer(VertexBuffer *buffer, void *data, unsigned int size);
-		void bindVertexBuffer(VertexBuffer *buffer);
-		
-		ShaderProgram *createShaderProgram(const std::string &vertexCode, const std::string &fragmentCode);
-		void destroyShaderProgram(ShaderProgram *program);
-		void bindShaderProgram(ShaderProgram *program);
-		
-	private:
-		GraphicDriverState *state;
+	ShaderProgram *currentShader;
+	
+	GraphicDriverState()
+		: currentShader(NULL)
+	{}
 };
 
 } // oak namespace

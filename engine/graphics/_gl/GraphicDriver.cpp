@@ -26,6 +26,7 @@
 #include <engine/graphics/GraphicDriver.hpp>
 
 #include <engine/graphics/_gl/gl_includes.hpp>
+#include <engine/graphics/_gl/GraphicDriverState.hpp>
 #include <engine/graphics/_gl/ShaderProgram.hpp>
 #include <engine/graphics/_gl/VertexBuffer.hpp>
 
@@ -74,6 +75,13 @@ GLuint compileShader(GLenum type, const std::string &code)
 GraphicDriver::GraphicDriver()
 {
 	glewInit();
+	
+	this->state = new GraphicDriverState;
+}
+
+GraphicDriver::~GraphicDriver()
+{
+	delete this->state;
 }
 
 void GraphicDriver::setClearColor(const glm::vec3 &color)
@@ -126,6 +134,19 @@ void GraphicDriver::bindVertexBuffer(VertexBuffer *buffer)
 	glBindBuffer(GL_ARRAY_BUFFER, buffer->name);
 	
 	// TODO: bind to vertex attibutes
+	ShaderProgram *currentShader = this->state->currentShader;
+	if (currentShader)
+	{
+		switch (buffer->format)
+		{
+			case Position2D:
+			{
+				GLint positionAttribute = glGetAttribLocation(currentShader->programName, "position");
+				glVertexAttribPointer(positionAttribute, 2, GL_FLOAT, GL_FALSE, 0, 0);
+				break;
+			}
+		}
+	}
 }
 
 ShaderProgram *GraphicDriver::createShaderProgram(const std::string &vertexCode, const std::string &fragmentCode)
@@ -159,6 +180,9 @@ ShaderProgram *GraphicDriver::createShaderProgram(const std::string &vertexCode,
 
 void GraphicDriver::destroyShaderProgram(ShaderProgram *program)
 {
+	if (this->state->currentShader == program)
+		this->state->currentShader = NULL;
+	
 	glDeleteShader(program->vertexShaderName);
 	glDeleteShader(program->fragmentShaderName);
 	glDeleteProgram(program->programName);
@@ -167,6 +191,7 @@ void GraphicDriver::destroyShaderProgram(ShaderProgram *program)
 
 void GraphicDriver::bindShaderProgram(ShaderProgram *program)
 {
+	this->state->currentShader = program;
 	glUseProgram(program->programName);
 }
 
