@@ -25,27 +25,12 @@
 
 #pragma once
 
-#include <glm/glm.hpp>
+// extensions
+#include <GL/glew.h>
 
-namespace oak {
-
-struct VertexBuffer;
-
-class GraphicDriver
-{
-	public:
-		void setClearColor(const glm::vec3 &color);
-		void setClearDepth(float depth);
-		void clear(bool colorBuffer, bool depthBuffer);
-		
-		enum VertexFormat
-		{
-			Position2D
-		};
-		VertexBuffer *createVertexBuffer(VertexFormat format, unsigned int size);
-		void destroyVertexBuffer(VertexBuffer *buffer);
-		void fillVertexBuffer(VertexBuffer *buffer, void *data, unsigned int size);
-		void bindVertexBuffer(VertexBuffer *buffer);
-};
-
-} // oak namespace
+// platform-specific implementation
+#ifdef ANDROID
+#	include <GLES/gl.h>
+#else
+#	include <GL/glfw.h>
+#endif

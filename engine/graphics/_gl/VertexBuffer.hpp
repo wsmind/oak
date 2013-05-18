@@ -25,27 +25,15 @@
 
 #pragma once
 
-#include <glm/glm.hpp>
+#include <engine/graphics/GraphicDriver.hpp>
+#include <engine/graphics/_gl/gl_includes.hpp>
 
 namespace oak {
 
-struct VertexBuffer;
-
-class GraphicDriver
+struct VertexBuffer
 {
-	public:
-		void setClearColor(const glm::vec3 &color);
-		void setClearDepth(float depth);
-		void clear(bool colorBuffer, bool depthBuffer);
-		
-		enum VertexFormat
-		{
-			Position2D
-		};
-		VertexBuffer *createVertexBuffer(VertexFormat format, unsigned int size);
-		void destroyVertexBuffer(VertexBuffer *buffer);
-		void fillVertexBuffer(VertexBuffer *buffer, void *data, unsigned int size);
-		void bindVertexBuffer(VertexBuffer *buffer);
+	GLuint name;
+	GraphicDriver::VertexFormat format;
 };
 
 } // oak namespace

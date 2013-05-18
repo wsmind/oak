@@ -25,11 +25,8 @@
 
 #include <engine/graphics/GraphicDriver.hpp>
 
-#ifdef ANDROID
-#	include <GLES/gl.h>
-#else
-#	include <GL/glfw.h>
-#endif
+#include <engine/graphics/_gl/gl_includes.hpp>
+#include <engine/graphics/_gl/VertexBuffer.hpp>
 
 #include <glm/glm.hpp>
 
@@ -42,7 +39,11 @@ void GraphicDriver::setClearColor(const glm::vec3 &color)
 
 void GraphicDriver::setClearDepth(float depth)
 {
-	//glClearDepth(depth);
+	#ifdef ANDROID
+		glClearDepthf(depth);
+	#else
+		glClearDepth(depth);
+	#endif
 }
 
 void GraphicDriver::clear(bool colorBuffer, bool depthBuffer)
@@ -52,6 +53,35 @@ void GraphicDriver::clear(bool colorBuffer, bool depthBuffer)
 	clearFlags |= depthBuffer ? GL_DEPTH_BUFFER_BIT : 0;
 	
 	glClear(clearFlags);
+}
+
+VertexBuffer *GraphicDriver::createVertexBuffer(VertexFormat format, unsigned int size)
+{
+	VertexBuffer *buffer = new VertexBuffer;
+	buffer->format = format;
+	
+	glGenBuffers(1, &buffer->name);
+	
+	return buffer;
+}
+
+void GraphicDriver::destroyVertexBuffer(VertexBuffer *buffer)
+{
+	glDeleteBuffers(1, &buffer->name);
+	delete buffer;
+}
+
+void GraphicDriver::fillVertexBuffer(VertexBuffer *buffer, void *data, unsigned int size)
+{
+	glBindBuffer(Gl_ARRAY_BUFFER, buffer->name);
+	glBufferData(Gl_ARRAY_BUFFER, size, data, GL_STATIC_DRAW);
+}
+
+void GraphicDriver::bindVertexBuffer(VertexBuffer *buffer)
+{
+	glBindBuffer(Gl_ARRAY_BUFFER, buffer->name);
+	
+	// TODO: bind to vertex attibutes
 }
 
 } // oak namespace
