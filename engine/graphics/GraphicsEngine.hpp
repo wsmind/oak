@@ -32,6 +32,7 @@ namespace oak {
 class GraphicDriver;
 class ScriptEngine;
 struct ShaderProgram;
+struct VertexBuffer;
 
 class GraphicsEngine
 {
@@ -49,6 +50,7 @@ class GraphicsEngine
 		
 		glm::vec3 backgroundColor;
 		
+		VertexBuffer *vertexBuffer;
 		ShaderProgram *shader;
 };
 

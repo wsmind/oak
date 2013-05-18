@@ -23,12 +23,13 @@
  * 
  *****************************************************************************/
 
-attribute vec2 position;
+#pragma once
 
-varying vec2 vertexPosition;
+namespace oak {
 
-void main()
+VertexBuffer *GraphicDriver::createVertexBuffer(Simple2DVertex *vertices, unsigned int elementCount)
 {
-	vertexPosition = position;
-	gl_Position = vec4(position, 0.0, 1.0);
+	return this->createVertexBuffer(vertices, sizeof(Simple2DVertex) * elementCount, Simple2DVertexFormat, elementCount);
 }
+
+} // oak namespace

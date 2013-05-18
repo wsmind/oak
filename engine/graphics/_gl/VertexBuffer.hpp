@@ -34,6 +34,13 @@ struct VertexBuffer
 {
 	GLuint name;
 	GraphicDriver::VertexFormat format;
+	unsigned int elementCount;
+	
+	VertexBuffer()
+		: name(0)
+		, format(GraphicDriver::Simple2DVertexFormat)
+		, elementCount(0)
+	{}
 };
 
 } // oak namespace

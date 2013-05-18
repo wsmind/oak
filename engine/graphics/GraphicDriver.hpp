@@ -59,19 +59,25 @@ class GraphicDriver
 		
 		enum VertexFormat
 		{
-			Position2D
+			Simple2DVertexFormat
 		};
-		VertexBuffer *createVertexBuffer(VertexFormat format, unsigned int size);
+		VertexBuffer *createVertexBuffer(void *data, unsigned int size, VertexFormat format, unsigned int elementCount);
 		void destroyVertexBuffer(VertexBuffer *buffer);
-		void fillVertexBuffer(VertexBuffer *buffer, void *data, unsigned int size);
 		void bindVertexBuffer(VertexBuffer *buffer);
+		
+		// vertex buffer creation helpers
+		inline VertexBuffer *createVertexBuffer(Simple2DVertex *vertices, unsigned int elementCount);
 		
 		ShaderProgram *createShaderProgram(const std::string &vertexCode, const std::string &fragmentCode);
 		void destroyShaderProgram(ShaderProgram *program);
 		void bindShaderProgram(ShaderProgram *program);
+		
+		void drawTriangleStrip(unsigned int startElement, unsigned int elementCount);
 		
 	private:
 		GraphicDriverState *state;
 };
 
 } // oak namespace
+
+#include <engine/graphics/GraphicDriver.inline.hpp>

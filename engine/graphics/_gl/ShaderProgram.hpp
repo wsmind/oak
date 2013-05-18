@@ -35,6 +35,12 @@ struct ShaderProgram
 	GLuint programName;
 	GLuint vertexShaderName;
 	GLuint fragmentShaderName;
+	
+	ShaderProgram()
+		: programName(0)
+		, vertexShaderName(0)
+		, fragmentShaderName(0)
+	{}
 };
 
 } // oak namespace

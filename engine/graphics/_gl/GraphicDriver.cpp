@@ -107,12 +107,17 @@ void GraphicDriver::clear(bool colorBuffer, bool depthBuffer)
 	glClear(clearFlags);
 }
 
-VertexBuffer *GraphicDriver::createVertexBuffer(VertexFormat format, unsigned int size)
+VertexBuffer *GraphicDriver::createVertexBuffer(void *data, unsigned int size, VertexFormat format, unsigned int elementCount)
 {
+	OAK_ASSERT((size % elementCount) == 0, "Vertex buffer size is not align on a vertex boundary");
+	
 	VertexBuffer *buffer = new VertexBuffer;
 	buffer->format = format;
+	buffer->elementCount = elementCount;
 	
 	glGenBuffers(1, &buffer->name);
+	glBindBuffer(GL_ARRAY_BUFFER, buffer->name);
+	glBufferData(GL_ARRAY_BUFFER, size, data, GL_STATIC_DRAW);
 	
 	return buffer;
 }
@@ -121,12 +126,6 @@ void GraphicDriver::destroyVertexBuffer(VertexBuffer *buffer)
 {
 	glDeleteBuffers(1, &buffer->name);
 	delete buffer;
-}
-
-void GraphicDriver::fillVertexBuffer(VertexBuffer *buffer, void *data, unsigned int size)
-{
-	glBindBuffer(GL_ARRAY_BUFFER, buffer->name);
-	glBufferData(GL_ARRAY_BUFFER, size, data, GL_STATIC_DRAW);
 }
 
 void GraphicDriver::bindVertexBuffer(VertexBuffer *buffer)
@@ -139,9 +138,10 @@ void GraphicDriver::bindVertexBuffer(VertexBuffer *buffer)
 	{
 		switch (buffer->format)
 		{
-			case Position2D:
+			case Simple2DVertexFormat:
 			{
 				GLint positionAttribute = glGetAttribLocation(currentShader->programName, "position");
+				glEnableVertexAttribArray(positionAttribute);
 				glVertexAttribPointer(positionAttribute, 2, GL_FLOAT, GL_FALSE, 0, 0);
 				break;
 			}
@@ -193,6 +193,11 @@ void GraphicDriver::bindShaderProgram(ShaderProgram *program)
 {
 	this->state->currentShader = program;
 	glUseProgram(program->programName);
+}
+
+void GraphicDriver::drawTriangleStrip(unsigned int startElement, unsigned int elementCount)
+{
+	glDrawArrays(GL_TRIANGLE_STRIP, startElement, elementCount);
 }
 
 } // oak namespace

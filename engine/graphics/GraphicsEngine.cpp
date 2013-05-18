@@ -38,12 +38,22 @@ GraphicsEngine::GraphicsEngine()
 	// default color
 	this->backgroundColor = glm::vec3(0.4f, 0.6f, 0.7f);
 	
+	// test buffer
+	GraphicDriver::Simple2DVertex vertices[] = {
+		{ glm::vec2(-1.0f, -1.0f) },
+		{ glm::vec2(-1.0f, 1.0f) },
+		{ glm::vec2(1.0f, -1.0f) },
+		{ glm::vec2(1.0f, 1.0f) }
+	};
+	this->vertexBuffer = this->driver->createVertexBuffer(vertices, 4);
+	
 	// test shader
 	this->shader = this->driver->createShaderProgram(testVSString, testFSString);
 }
 
 GraphicsEngine::~GraphicsEngine()
 {
+	this->driver->destroyVertexBuffer(this->vertexBuffer);
 	this->driver->destroyShaderProgram(this->shader);
 	
 	delete this->driver;
@@ -56,6 +66,8 @@ void GraphicsEngine::renderFrame()
 	this->driver->clear(true, true);
 	
 	this->driver->bindShaderProgram(this->shader);
+	this->driver->bindVertexBuffer(this->vertexBuffer);
+	this->driver->drawTriangleStrip(0, 4);
 }
 
 } // oak namespace
