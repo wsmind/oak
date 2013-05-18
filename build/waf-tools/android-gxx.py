@@ -123,7 +123,7 @@ def android_gxx_modifier_android9(conf):
 	v.append_unique('INCLUDES', [os.path.join(conf.options.ndk, 'sources/android/native_app_glue/')])
 	
 	v.append_unique('LIBPATH', [os.path.join(conf.options.ndk, 'sources/cxx-stl/gnu-libstdc++/4.6/libs/armeabi-v7a')])
-	v.append_unique('LIB', ["supc++", "gnustl_static", "android", "log", "EGL", "GLESv1_CM"])
+	v.append_unique('LIB', ["supc++", "gnustl_static", "android", "log", "EGL", "GLESv2"])
 	
 	# save NDK path for later steps
 	v.NDK_ROOT = conf.options.ndk

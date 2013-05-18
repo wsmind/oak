@@ -25,12 +25,11 @@
 
 #pragma once
 
-// extensions
-#include <GL/glew.h>
-
-// platform-specific implementation
+// platform-specific GL implementation
 #ifdef ANDROID
-#	include <GLES/gl.h>
+#	include <GLES2/gl2.h>
+#	include <GLES2/gl2ext.h>
 #else
+#	include <GL/glew.h>
 #	include <GL/glfw.h>
 #endif

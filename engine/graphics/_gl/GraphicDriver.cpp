@@ -74,7 +74,9 @@ GLuint compileShader(GLenum type, const std::string &code)
 
 GraphicDriver::GraphicDriver()
 {
-	glewInit();
+	#ifndef ANDROID
+		glewInit();
+	#endif
 	
 	this->state = new GraphicDriverState;
 }
