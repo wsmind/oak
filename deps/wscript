@@ -29,7 +29,7 @@ def build(ctx):
 	# GLFW
 	glfwSources = ctx.path.ant_glob("glfw-2.7.8/lib/*.c") + ctx.path.ant_glob("glfw-2.7.8/lib/win32/*.c")
 	glfwIncludes = ["glfw-2.7.8/lib", "glfw-2.7.8/lib/win32"]
-	glfwDefines = ["GLFW_BUILD_DLL", "_GLFW_NO_DLOAD_GDI32", "_GLFW_NO_DLOAD_WINMM"]
+	glfwDefines = ["GLFW_BUILD_DLL", "_GLFW_NO_DLOAD_GDI32", "_GLFW_NO_DLOAD_WINMM", "GLFW_NO_GLU"]
 	glfwLibs = ["opengl32", "winmm", "gdi32", "user32"]
 	ctx.shlib(
 		target = os.path.join("..", "glfw"),
@@ -40,13 +40,30 @@ def build(ctx):
 		
 		name = "glfw",
 		export_includes = "glfw-2.7.8/include",
-		export_defines = "GLFW_DLL"
+		export_defines = ["GLFW_DLL", "GLFW_NO_GLU"]
 	)
 	
 	# GLM (header-only)
 	ctx(
 		name = "glm",
 		export_includes = "glm-0.9.4.3",
+	)
+	
+	# GLEW
+	glewSources = ["glew-1.9.0/src/glew.c"]
+	glewIncludes = ["glew-1.9.0/include"]
+	glewDefines = ["GLEW_NO_GLU", "GLEW_STATIC"]
+	glewLibs = []
+	ctx.stlib(
+		target = os.path.join("..", "glew"),
+		source = glewSources,
+		includes = glewIncludes,
+		defines = glewDefines,
+		lib = glewLibs,
+		
+		name = "glew",
+		export_includes = "glew-1.9.0/include",
+		export_defines = ["GLEW_NO_GLU", "GLEW_STATIC"]
 	)
 	
 	# Lua
