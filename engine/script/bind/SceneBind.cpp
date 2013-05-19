@@ -30,6 +30,8 @@
 
 namespace oak {
 
+OAK_BIND_POINTER_TYPE(Scene)
+
 OAK_BIND_MODULE(SceneManager)
 OAK_BIND_WRET_FUNCTION0(SceneManager, createScene)
 OAK_BIND_VOID_FUNCTION1(SceneManager, destroyScene, Scene *)

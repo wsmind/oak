@@ -105,21 +105,16 @@ inline int pushReturnValue(lua_State *L, void *value)
 } // oak namespace
 
 #define OAK_BIND_POINTER_TYPE(PointerType) \
-	namespace oak { \
 	class PointerType; \
-	 \
 	namespace bind { \
 	template <> \
-	inline ::oak::PointerType *popArgument(lua_State *L) \
+	inline PointerType *popArgument(lua_State *L) \
 	{ \
-		::oak::PointerType *ptr = (::oak::PointerType *)lua_touserdata(L, -1); \
+		PointerType *ptr = (PointerType *)lua_touserdata(L, -1); \
 		lua_pop(L, 1); \
 		return ptr; \
 	} \
-	} \
 	}
-
-OAK_BIND_POINTER_TYPE(Scene);
 
 #define OAK_BIND_MODULE(ModuleType) \
 	ModuleType *oak_module_ptr_##ModuleType = NULL;
