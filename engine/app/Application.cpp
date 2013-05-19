@@ -28,6 +28,7 @@
 #include <glm/glm.hpp>
 
 #include <engine/graphics/GraphicsEngine.hpp>
+#include <engine/scene/SceneManager.hpp>
 #include <engine/script/ScriptEngine.hpp>
 #include <engine/system/Log.hpp>
 
@@ -37,11 +38,15 @@ void Application::initialize(const std::string &baseFolder)
 {
 	Log::info("Application::initialize");
 	
+	this->sceneManager = new SceneManager;
+	
 	this->graphics = new GraphicsEngine;
 	
 	this->script = new ScriptEngine;
 	this->script->initialize();
 	
+	// script bindings
+	this->script->registerScene(this->sceneManager);
 	this->script->registerGraphics(this->graphics);
 	
 	this->script->loadFile(baseFolder + "/main.lua");
@@ -59,7 +64,10 @@ void Application::shutdown()
 	
 	this->script->shutdown();
 	delete this->script;
+	
 	delete this->graphics;
+	
+	delete this->sceneManager;
 }
 
 void Application::update(float dt)

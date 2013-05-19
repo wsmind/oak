@@ -19,6 +19,9 @@ function initialize()
 	oak.system.logInfo("yeeeahhaaa")
 	oak.system.logWarning("oh la la")
 	oak.system.logError("ouch")
+	
+	scene1 = oak.scene.createScene()
+	scene2 = oak.scene.createScene()
 end
 
 local t = 0
@@ -32,5 +35,7 @@ function update(dt)
 end
 
 function shutdown()
+	oak.scene.destroyScene(scene1)
+	oak.scene.destroyScene(scene2)
 	oak.system.logInfo("shutting down")
 end

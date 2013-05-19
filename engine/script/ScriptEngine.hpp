@@ -32,6 +32,7 @@ struct lua_State;
 namespace oak {
 
 class GraphicsEngine;
+class SceneManager;
 class SystemWrapper;
 
 class ScriptEngine
@@ -52,6 +53,7 @@ class ScriptEngine
 		void endCall();
 		
 		// modules to bind
+		void registerScene(SceneManager *scene);
 		void registerGraphics(GraphicsEngine *graphics);
 		
 	private:

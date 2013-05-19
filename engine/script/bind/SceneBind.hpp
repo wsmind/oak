@@ -25,26 +25,16 @@
 
 #pragma once
 
-#include <string>
+struct lua_State;
 
 namespace oak {
 
-class GraphicsEngine;
 class SceneManager;
-class ScriptEngine;
 
-class Application
+class SceneBind
 {
 	public:
-		void initialize(const std::string &baseFolder);
-		void shutdown();
-		
-		void update(float dt);
-		
-	private:
-		SceneManager *sceneManager;
-		GraphicsEngine *graphics;
-		ScriptEngine *script;
+		static void registerFunctions(lua_State *L, SceneManager *graphics);
 };
 
 } // oak namespace

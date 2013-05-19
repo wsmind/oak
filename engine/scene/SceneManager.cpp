@@ -23,28 +23,33 @@
  * 
  *****************************************************************************/
 
-#pragma once
+#include <engine/scene/SceneManager.hpp>
 
-#include <string>
+#include <engine/scene/Scene.hpp>
+#include <engine/system/Log.hpp>
+
+#include <algorithm>
 
 namespace oak {
 
-class GraphicsEngine;
-class SceneManager;
-class ScriptEngine;
-
-class Application
+Scene *SceneManager::createScene()
 {
-	public:
-		void initialize(const std::string &baseFolder);
-		void shutdown();
-		
-		void update(float dt);
-		
-	private:
-		SceneManager *sceneManager;
-		GraphicsEngine *graphics;
-		ScriptEngine *script;
-};
+	Scene *scene = new Scene;
+	this->scenes.push_back(scene);
+	
+	return scene;
+}
+
+void SceneManager::destroyScene(Scene *scene)
+{
+	SceneVector::iterator it = std::find(this->scenes.begin(), this->scenes.end(), scene);
+	OAK_ASSERT(it != this->scenes.end(), "Trying to destroy an unexisting scene");
+	
+	// remove the scene in-place
+	*it = this->scenes[this->scenes.size() - 1];
+	this->scenes.pop_back();
+	
+	delete scene;
+}
 
 } // oak namespace

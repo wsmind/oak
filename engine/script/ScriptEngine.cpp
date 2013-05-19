@@ -27,6 +27,7 @@
 
 #include <engine/script/bind/Bind.hpp>
 #include <engine/script/bind/GraphicsBind.hpp>
+#include <engine/script/bind/SceneBind.hpp>
 #include <engine/script/bind/SystemBind.hpp>
 #include <engine/script/bind/SystemWrapper.hpp>
 
@@ -159,6 +160,11 @@ void ScriptEngine::endCall()
 void ScriptEngine::registerGraphics(GraphicsEngine *graphics)
 {
 	GraphicsBind::registerFunctions(this->L, graphics);
+}
+
+void ScriptEngine::registerScene(SceneManager *scene)
+{
+	SceneBind::registerFunctions(this->L, scene);
 }
 
 int ScriptEngine::luaErrorHandler(lua_State *L)

@@ -25,26 +25,21 @@
 
 #pragma once
 
-#include <string>
+#include <vector>
 
 namespace oak {
 
-class GraphicsEngine;
-class SceneManager;
-class ScriptEngine;
+class Scene;
 
-class Application
+class SceneManager
 {
 	public:
-		void initialize(const std::string &baseFolder);
-		void shutdown();
-		
-		void update(float dt);
+		Scene *createScene();
+		void destroyScene(Scene *scene);
 		
 	private:
-		SceneManager *sceneManager;
-		GraphicsEngine *graphics;
-		ScriptEngine *script;
+		typedef std::vector<Scene *> SceneVector;
+		SceneVector scenes;
 };
 
 } // oak namespace

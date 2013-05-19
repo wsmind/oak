@@ -23,28 +23,22 @@
  * 
  *****************************************************************************/
 
-#pragma once
+#include <engine/script/bind/SceneBind.hpp>
 
-#include <string>
+#include <engine/scene/SceneManager.hpp>
+#include <engine/script/bind/Bind.hpp>
 
 namespace oak {
 
-class GraphicsEngine;
-class SceneManager;
-class ScriptEngine;
+OAK_BIND_MODULE(SceneManager)
+OAK_BIND_WRET_FUNCTION0(SceneManager, createScene)
+OAK_BIND_VOID_FUNCTION1(SceneManager, destroyScene, Scene *)
 
-class Application
+void SceneBind::registerFunctions(lua_State *L, SceneManager *scene)
 {
-	public:
-		void initialize(const std::string &baseFolder);
-		void shutdown();
-		
-		void update(float dt);
-		
-	private:
-		SceneManager *sceneManager;
-		GraphicsEngine *graphics;
-		ScriptEngine *script;
-};
+	OAK_REGISTER_MODULE(L, SceneManager, scene, scene)
+	OAK_REGISTER_FUNCTION(L, SceneManager, scene, createScene)
+	OAK_REGISTER_FUNCTION(L, SceneManager, scene, destroyScene)
+}
 
 } // oak namespace

@@ -23,28 +23,20 @@
  * 
  *****************************************************************************/
 
-#pragma once
+#include <engine/scene/Scene.hpp>
 
-#include <string>
+#include <engine/system/Log.hpp>
 
 namespace oak {
 
-class GraphicsEngine;
-class SceneManager;
-class ScriptEngine;
-
-class Application
+Scene::Scene()
 {
-	public:
-		void initialize(const std::string &baseFolder);
-		void shutdown();
-		
-		void update(float dt);
-		
-	private:
-		SceneManager *sceneManager;
-		GraphicsEngine *graphics;
-		ScriptEngine *script;
-};
+	Log::info("Scene created!");
+}
+
+Scene::~Scene()
+{
+	Log::info("Scene destroyed!");
+}
 
 } // oak namespace
