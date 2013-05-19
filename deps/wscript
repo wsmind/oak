@@ -30,13 +30,17 @@ def build(ctx):
 	glfwSources = ctx.path.ant_glob("glfw-2.7.8/lib/*.c") + ctx.path.ant_glob("glfw-2.7.8/lib/win32/*.c")
 	glfwIncludes = ["glfw-2.7.8/lib", "glfw-2.7.8/lib/win32"]
 	glfwDefines = ["GLFW_BUILD_DLL", "_GLFW_NO_DLOAD_GDI32", "_GLFW_NO_DLOAD_WINMM", "GLFW_NO_GLU"]
+	glfwFlags = ["/Fdglfw"] if ctx.env.TARGET_TOOLCHAIN == "msvc" else []
 	glfwLibs = ["opengl32", "winmm", "gdi32", "user32"]
+	glfwLinkFlags = ["/PDB:glfw"] if ctx.env.TARGET_TOOLCHAIN == "msvc" else []
 	ctx.shlib(
 		target = os.path.join("..", "glfw"),
 		source = glfwSources,
 		includes = glfwIncludes,
 		defines = glfwDefines,
+		cppflags = glfwFlags,
 		lib = glfwLibs,
+		linkflags = glfwLinkFlags,
 		
 		name = "glfw",
 		export_includes = "glfw-2.7.8/include",

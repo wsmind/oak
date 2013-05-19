@@ -23,6 +23,8 @@
  * 
  *****************************************************************************/
 
+#ifdef OAK_DEBUG
+
 #include <engine/system/Log.hpp>
 
 #include <stdio.h>
@@ -83,3 +85,5 @@ void Log::checkAssert(bool condition, const char *conditionString, const std::st
 }
 
 } // oak namespace
+
+#endif // OAK_DEBUG

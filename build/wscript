@@ -140,15 +140,45 @@ def configure(ctx):
 			if not validTargetOs:
 				raise "invalid target system"
 			
+			# compiler-specific config
 			if variant["toolchain"] == "gcc":
 				ctx.load("gcc")
 				ctx.load("g++")
+				ctx.env.append_unique("CPPFLAGS", ["-Wall", "-Werror"])
+				ctx.env.append_unique("LINKFLAGS", ["-Wall", "-Werror"])
 			elif variant["toolchain"] == "msvc":
 				ctx.load("msvc")
+				ctx.define("_CRT_SECURE_NO_WARNINGS", 1)
+				ctx.env.append_unique("CPPFLAGS", ["/EHsc", "/W3", "/WX", "/wd4005"])
+				ctx.env.append_unique("ARFLAGS", ["/WX"])
+				ctx.env.append_unique("LINKFLAGS", ["/WX"])
 			elif variant["toolchain"] == "ndk":
 				ctx.load("android-gxx", tooldir = "waf-tools")
+				ctx.env.append_unique("CPPFLAGS", ["-Wall", "-Werror"])
+				ctx.env.append_unique("LINKFLAGS", ["-Wall", "-Werror"])
 			elif variant["toolchain"] == "emcc":
 				ctx.load("emxx", tooldir = "waf-tools")
+				ctx.env.append_unique("CPPFLAGS", ["-Wall"])
+				ctx.env.append_unique("LINKFLAGS", ["-Wall"])
+			
+			# debug/release tweaks
+			if variant["configuration"] == "debug":
+				ctx.define("OAK_DEBUG", 1)
+				
+				# debug build flags
+				if variant["toolchain"] in ["gcc", "ndk", "emcc"]:
+					ctx.env.append_unique("CPPFLAGS", ["-O0", "-g"])
+				elif variant["toolchain"] == "msvc":
+					ctx.env.append_unique("CPPFLAGS", ["/Zi"])
+					ctx.env.append_unique("LINKFLAGS", ["/DEBUG"])
+			
+			elif variant["configuration"] == "release":
+				# release build flags
+				if variant["toolchain"] in ["gcc", "ndk", "emcc"]:
+					ctx.env.append_unique("CPPFLAGS", ["-O2"])
+				elif variant["toolchain"] == "msvc":
+					ctx.env.append_unique("CPPFLAGS", ["/Zi", "/O2"])
+					ctx.env.append_unique("LINKFLAGS", ["/DEBUG"]) # .pdb are output in release builds, but not distributed
 			
 			# configure successful for this variant
 			ctx.env.DISABLED = False
