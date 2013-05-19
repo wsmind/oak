@@ -26,30 +26,59 @@
 #include <engine/system/Log.hpp>
 
 #include <stdio.h>
+#include <assert.h>
 
 namespace oak {
 
-void Log::info(const std::string &message)
+void Log::info(const std::string &format, ...)
 {
-	printf("[INFO] %s", message.c_str());
+	std::string infoFormat = std::string("[INFO] ") + format + "\n";
+	
+	// format error message
+	va_list args;
+	va_start(args, format);
+	vprintf(infoFormat.c_str(), args);
+	va_end(args);
 }
 
-void Log::warning(const std::string &message)
+void Log::warning(const std::string &format, ...)
 {
-	printf("[WARN] %s", message.c_str());
+	std::string warningFormat = std::string("[WARN] ") + format + "\n";
+	
+	// format error message
+	va_list args;
+	va_start(args, format);
+	vprintf(warningFormat.c_str(), args);
+	va_end(args);
 }
 
-void Log::error(const std::string &message)
+void Log::error(const std::string &format, ...)
 {
-	printf("[ERR ] %s", message.c_str());
+	std::string errorFormat = std::string("[ERR ] ") + format + "\n";
+	
+	// format error message
+	va_list args;
+	va_start(args, format);
+	vprintf(errorFormat.c_str(), args);
+	va_end(args);
 }
 
-void Log::checkAssert(bool condition, const std::string &conditionString, const std::string &message)
+void Log::checkAssert(bool condition, const char *conditionString, const std::string &format, ...)
 {
 	if (!condition)
 	{
-		Log::error(conditionString);
-		Log::error(message);
+		// print failing condition
+		Log::error("Assertion failed: %s", conditionString);
+		
+		// print error message
+		std::string errorFormat = std::string("[ERR ] ") + format + "\n";
+		va_list args;
+		va_start(args, format);
+		vprintf(errorFormat.c_str(), args);
+		va_end(args);
+		
+		// trigger system assert
+		assert(condition);
 	}
 }
 

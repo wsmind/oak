@@ -32,13 +32,13 @@ namespace oak {
 class Log
 {
 	public:
-		static void info(const std::string &message);
-		static void warning(const std::string &message);
-		static void error(const std::string &message);
-		static void checkAssert(bool condition, const std::string &conditionString, const std::string &message);
+		static void info(const std::string &format, ...);
+		static void warning(const std::string &format, ...);
+		static void error(const std::string &format, ...);
+		static void checkAssert(bool condition, const char *conditionString, const std::string &format, ...);
 };
 
-#define OAK_ASSERT(condition, message) \
-	Log::checkAssert(condition, #condition, #message)
+#define OAK_ASSERT(condition, ...) \
+	Log::checkAssert(condition, #condition, __VA_ARGS__);
 
 } // oak namespace

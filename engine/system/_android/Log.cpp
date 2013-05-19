@@ -29,27 +29,45 @@
 
 namespace oak {
 
-void Log::info(const std::string &message)
+void Log::info(const std::string &format, ...)
 {
-	__android_log_write(ANDROID_LOG_INFO, "oak", message.c_str());
+	va_list args;
+	va_start(args, format);
+	__android_log_vprint(ANDROID_LOG_INFO, "oak", format.c_str(), args);
+	va_end(args);
 }
 
-void Log::warning(const std::string &message)
+void Log::warning(const std::string &format, ...)
 {
-	__android_log_write(ANDROID_LOG_WARN, "oak", message.c_str());
+	va_list args;
+	va_start(args, format);
+	__android_log_vprint(ANDROID_LOG_WARN, "oak", format.c_str(), args);
+	va_end(args);
 }
 
-void Log::error(const std::string &message)
+void Log::error(const std::string &format, ...)
 {
-	__android_log_write(ANDROID_LOG_ERROR, "oak", message.c_str());
+	va_list args;
+	va_start(args, format);
+	__android_log_vprint(ANDROID_LOG_ERROR, "oak", format.c_str(), args);
+	va_end(args);
 }
 
-void Log::checkAssert(bool condition, const std::string &conditionString, const std::string &message)
+void Log::checkAssert(bool condition, const char *conditionString, const std::string &format, ...)
 {
 	if (!condition)
 	{
-		Log::error(conditionString);
-		Log::error(message);
+		Log::error("Assertion failed: %s", conditionString);
+		
+		// format error message
+		char errorString[2048];
+		va_list args;
+		va_start(args, format);
+		vsnprintf(errorString, 2048, format.c_str(), args);
+		va_end(args);
+		
+		// raise system assert
+		__android_log_assert(conditionString, "oak", errorString);
 	}
 }
 

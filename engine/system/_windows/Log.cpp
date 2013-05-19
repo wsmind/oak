@@ -27,31 +27,70 @@
 
 #include <windows.h>
 #include <cassert>
+#include <cstdio>
 
 namespace oak {
 
-void Log::info(const std::string &message)
+void Log::info(const std::string &format, ...)
 {
-	OutputDebugString(message.c_str());
+	std::string infoFormat = std::string("[INFO] ") + format;
+	
+	// format error message
+	char errorString[2048];
+	va_list args;
+	va_start(args, format);
+	vsnprintf(errorString, 2048, infoFormat.c_str(), args);
+	va_end(args);
+	
+	OutputDebugString(errorString);
 }
 
-void Log::warning(const std::string &message)
+void Log::warning(const std::string &format, ...)
 {
-	OutputDebugString(message.c_str());
+	std::string warningFormat = std::string("[WARN] ") + format;
+	
+	// format error message
+	char errorString[2048];
+	va_list args;
+	va_start(args, format);
+	vsnprintf(errorString, 2048, warningFormat.c_str(), args);
+	va_end(args);
+	
+	OutputDebugString(errorString);
 }
 
-void Log::error(const std::string &message)
+void Log::error(const std::string &format, ...)
 {
-	OutputDebugString(message.c_str());
+	std::string errorFormat = std::string("[ERR ] ") + format;
+	
+	// format error message
+	char errorString[2048];
+	va_list args;
+	va_start(args, format);
+	vsnprintf(errorString, 2048, errorFormat.c_str(), args);
+	va_end(args);
+	
+	OutputDebugString(errorString);
 }
 
-void Log::checkAssert(bool condition, const std::string &conditionString, const std::string &message)
+void Log::checkAssert(bool condition, const char *conditionString, const std::string &format, ...)
 {
 	if (!condition)
 	{
-		Log::error(conditionString);
-		Log::error(message);
-		assert(condition); // trigger system assert
+		// print failing condition
+		Log::error("Assertion failed: %s", conditionString);
+		
+		// format error message
+		std::string errorFormat = std::string("[ERR ] ") + format;
+		char errorString[2048];
+		va_list args;
+		va_start(args, format);
+		vsnprintf(errorString, 2048, errorFormat.c_str(), args);
+		va_end(args);
+		OutputDebugString(errorString);
+		
+		// trigger system assert
+		assert(condition);
 	}
 }
 
