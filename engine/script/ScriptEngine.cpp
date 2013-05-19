@@ -103,7 +103,7 @@ void ScriptEngine::loadFile(const std::string &filename)
 			}
 			AAsset_close(file);
 			
-			Log::info("loading lua: " + code + "\n");
+			Log::info("loading lua: %s", code.c_str());
 			int ret = luaL_loadstring(this->L, code.c_str());
 			if (ret != 0)
 				Log::error("Failed to load lua code!");
@@ -161,14 +161,14 @@ void ScriptEngine::registerGraphics(GraphicsEngine *graphics)
 int ScriptEngine::luaErrorHandler(lua_State *L)
 {
 	const char *errorMessage = lua_tostring(L, -1);
-	Log::warning(std::string(errorMessage));
+	Log::warning("Lua error: %s", errorMessage);
 	
 	return 0;
 }
 
 void ScriptEngine::plop(const std::string &message)
 {
-	Log::info(message);
+	Log::info("%s", message.c_str());
 }
 
 } // oak namespace

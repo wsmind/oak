@@ -32,40 +32,46 @@
 
 namespace oak {
 
-void Log::info(const std::string &format, ...)
+void Log::info(const char *format, ...)
 {
-	std::string infoFormat = std::string("[INFO] ") + format + "\n";
+	printf("[INFO] ");
 	
 	// format error message
 	va_list args;
 	va_start(args, format);
-	vprintf(infoFormat.c_str(), args);
+	vprintf(format, args);
 	va_end(args);
+	
+	printf("\n");
 }
 
-void Log::warning(const std::string &format, ...)
+void Log::warning(const char *format, ...)
 {
-	std::string warningFormat = std::string("[WARN] ") + format + "\n";
+	printf("[WARN] ");
 	
 	// format error message
 	va_list args;
 	va_start(args, format);
-	vprintf(warningFormat.c_str(), args);
+	vprintf(format, args);
 	va_end(args);
+	
+	printf("\n");
 }
 
-void Log::error(const std::string &format, ...)
+void Log::error(const char *format, ...)
 {
-	std::string errorFormat = std::string("[ERR ] ") + format + "\n";
+	printf("[ERR ] ");
 	
 	// format error message
 	va_list args;
 	va_start(args, format);
-	vprintf(errorFormat.c_str(), args);
+	vprintf(format, args);
 	va_end(args);
+	
+	printf("\n");
 }
 
-void Log::checkAssert(bool condition, const char *conditionString, const std::string &format, ...)
+void Log::checkAssert(bool condition, const char *conditionString, const char *format, ...)
 {
 	if (!condition)
 	{
@@ -73,11 +79,12 @@ void Log::checkAssert(bool condition, const char *conditionString, const std::st
 		Log::error("Assertion failed: %s", conditionString);
 		
 		// print error message
-		std::string errorFormat = std::string("[ERR ] ") + format + "\n";
+		printf("[ERR ] ");
 		va_list args;
 		va_start(args, format);
-		vprintf(errorFormat.c_str(), args);
+		vprintf(format, args);
 		va_end(args);
+		printf("\n");
 		
 		// trigger system assert
 		assert(condition);

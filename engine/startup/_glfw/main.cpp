@@ -47,7 +47,7 @@ void main_loop()
 
 int main()
 {
-	Log::info("plop from glfw platforms!\n");
+	Log::info("plop from glfw platforms!");
 	
 	glfwInit();
 	

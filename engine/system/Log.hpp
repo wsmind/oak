@@ -25,8 +25,6 @@
 
 #pragma once
 
-#include <string>
-
 namespace oak {
 
 class Log
@@ -34,15 +32,15 @@ class Log
 	public:
 		// logging (and assert) is completely disabled in release builds
 		#ifdef OAK_DEBUG
-			static void info(const std::string &format, ...);
-			static void warning(const std::string &format, ...);
-			static void error(const std::string &format, ...);
-			static void checkAssert(bool condition, const char *conditionString, const std::string &format, ...);
+			static void info(const char *format, ...);
+			static void warning(const char *format, ...);
+			static void error(const char *format, ...);
+			static void checkAssert(bool condition, const char *conditionString, const char *format, ...);
 		#else
-			static void info(const std::string &format, ...) {}
-			static void warning(const std::string &format, ...) {}
-			static void error(const std::string &format, ...) {}
-			static void checkAssert(bool condition, const char *conditionString, const std::string &format, ...) {}
+			static void info(const char *format, ...) {}
+			static void warning(const char *format, ...) {}
+			static void error(const char *format, ...) {}
+			static void checkAssert(bool condition, const char *conditionString, const char *format, ...) {}
 		#endif // OAK_DEBUG
 };
 

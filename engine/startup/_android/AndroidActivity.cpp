@@ -34,7 +34,7 @@ namespace oak {
 
 void AndroidActivity::run(android_app *androidApp)
 {
-	Log::info("Oak application startup\n");
+	Log::info("Oak application startup");
 	
 	this->initialized = false;
 	this->animating = false;

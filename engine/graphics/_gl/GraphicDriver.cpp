@@ -42,29 +42,28 @@ const unsigned int maxInfoLogLength = 2048;
 
 GLuint compileShader(GLenum type, const std::string &code)
 {
-	GLuint name = glCreateShader(type);
+	GLuint name = GL_CHECK(glCreateShader(type));
 	
 	const char *codeString = code.c_str();
-	glShaderSource(name, 1, &codeString, NULL);
-	glCompileShader(name);
+	GL_CHECK(glShaderSource(name, 1, &codeString, NULL));
+	GL_CHECK(glCompileShader(name));
 	
 	// check compilation status
 	GLint compileStatus;
-	glGetShaderiv(name, GL_COMPILE_STATUS, &compileStatus);
+	GL_CHECK(glGetShaderiv(name, GL_COMPILE_STATUS, &compileStatus));
 	if (compileStatus != GL_TRUE)
 	{
 		char errorLog[maxInfoLogLength];
 		GLsizei length;
-		glGetShaderInfoLog(name, maxInfoLogLength, &length, errorLog);
+		GL_CHECK(glGetShaderInfoLog(name, maxInfoLogLength, &length, errorLog));
 		
 		switch (type)
 		{
-			case GL_VERTEX_SHADER: Log::error("Failed to compile vertex shader:\n"); break;
-			case GL_FRAGMENT_SHADER: Log::error("Failed to compile fragment shader:\n"); break;
+			case GL_VERTEX_SHADER: Log::error("Failed to compile vertex shader:"); break;
+			case GL_FRAGMENT_SHADER: Log::error("Failed to compile fragment shader:"); break;
 		}
 		
-		Log::error(std::string(errorLog));
-		Log::error("\n");
+		Log::error("%s", errorLog);
 	}
 	
 	return name;
@@ -88,15 +87,15 @@ GraphicDriver::~GraphicDriver()
 
 void GraphicDriver::setClearColor(const glm::vec3 &color)
 {
-	glClearColor(color.x, color.y, color.z, 0.0f);
+	GL_CHECK(glClearColor(color.x, color.y, color.z, 0.0f));
 }
 
 void GraphicDriver::setClearDepth(float depth)
 {
 	#if defined(ANDROID) || defined(EMSCRIPTEN)
-		glClearDepthf(depth);
+		GL_CHECK(glClearDepthf(depth));
 	#else
-		glClearDepth(depth);
+		GL_CHECK(glClearDepth(depth));
 	#endif
 }
 
@@ -106,33 +105,33 @@ void GraphicDriver::clear(bool colorBuffer, bool depthBuffer)
 	clearFlags |= colorBuffer ? GL_COLOR_BUFFER_BIT : 0;
 	clearFlags |= depthBuffer ? GL_DEPTH_BUFFER_BIT : 0;
 	
-	glClear(clearFlags);
+	GL_CHECK(glClear(clearFlags));
 }
 
 VertexBuffer *GraphicDriver::createVertexBuffer(void *data, unsigned int size, VertexFormat format, unsigned int elementCount)
 {
-	OAK_ASSERT((size % elementCount) == 0, "Vertex buffer size is not align on a vertex boundary");
+	OAK_ASSERT((size % elementCount) == 0, "Vertex buffer size is not aligned on a vertex boundary");
 	
 	VertexBuffer *buffer = new VertexBuffer;
 	buffer->format = format;
 	buffer->elementCount = elementCount;
 	
-	glGenBuffers(1, &buffer->name);
-	glBindBuffer(GL_ARRAY_BUFFER, buffer->name);
-	glBufferData(GL_ARRAY_BUFFER, size, data, GL_STATIC_DRAW);
+	GL_CHECK(glGenBuffers(1, &buffer->name));
+	GL_CHECK(glBindBuffer(GL_ARRAY_BUFFER, buffer->name));
+	GL_CHECK(glBufferData(GL_ARRAY_BUFFER, size, data, GL_STATIC_DRAW));
 	
 	return buffer;
 }
 
 void GraphicDriver::destroyVertexBuffer(VertexBuffer *buffer)
 {
-	glDeleteBuffers(1, &buffer->name);
+	GL_CHECK(glDeleteBuffers(1, &buffer->name));
 	delete buffer;
 }
 
 void GraphicDriver::bindVertexBuffer(VertexBuffer *buffer)
 {
-	glBindBuffer(GL_ARRAY_BUFFER, buffer->name);
+	GL_CHECK(glBindBuffer(GL_ARRAY_BUFFER, buffer->name));
 	
 	// TODO: bind to vertex attibutes
 	ShaderProgram *currentShader = this->state->currentShader;
@@ -142,9 +141,9 @@ void GraphicDriver::bindVertexBuffer(VertexBuffer *buffer)
 		{
 			case Simple2DVertexFormat:
 			{
-				GLint positionAttribute = glGetAttribLocation(currentShader->programName, "position");
-				glEnableVertexAttribArray(positionAttribute);
-				glVertexAttribPointer(positionAttribute, 2, GL_FLOAT, GL_FALSE, 0, 0);
+				GLint positionAttribute = GL_CHECK(glGetAttribLocation(currentShader->programName, "position"));
+				GL_CHECK(glEnableVertexAttribArray(positionAttribute));
+				GL_CHECK(glVertexAttribPointer(positionAttribute, 2, GL_FLOAT, GL_FALSE, 0, 0));
 				break;
 			}
 		}
@@ -155,26 +154,25 @@ ShaderProgram *GraphicDriver::createShaderProgram(const std::string &vertexCode,
 {
 	ShaderProgram *program = new ShaderProgram;
 	
-	program->programName = glCreateProgram();
+	program->programName = GL_CHECK(glCreateProgram());
 	program->vertexShaderName = compileShader(GL_VERTEX_SHADER, vertexCode);
 	program->fragmentShaderName = compileShader(GL_FRAGMENT_SHADER, fragmentCode);
 	
-	glAttachShader(program->programName, program->vertexShaderName);
-	glAttachShader(program->programName, program->fragmentShaderName);
-	glLinkProgram(program->programName);
+	GL_CHECK(glAttachShader(program->programName, program->vertexShaderName));
+	GL_CHECK(glAttachShader(program->programName, program->fragmentShaderName));
+	GL_CHECK(glLinkProgram(program->programName));
 	
 	// check link status
 	GLint linkStatus;
-	glGetProgramiv(program->programName, GL_LINK_STATUS, &linkStatus);
+	GL_CHECK(glGetProgramiv(program->programName, GL_LINK_STATUS, &linkStatus));
 	if (linkStatus != GL_TRUE)
 	{
 		char errorLog[maxInfoLogLength];
 		GLsizei length;
-		glGetProgramInfoLog(program->programName, maxInfoLogLength, &length, errorLog);
+		GL_CHECK(glGetProgramInfoLog(program->programName, maxInfoLogLength, &length, errorLog));
 		
-		Log::error("Failed to link shader program:\n");
-		Log::error(std::string(errorLog));
-		Log::error("\n");
+		Log::error("Failed to link shader program:");
+		Log::error("%s", errorLog);
 	}
 	
 	return program;
@@ -185,21 +183,21 @@ void GraphicDriver::destroyShaderProgram(ShaderProgram *program)
 	if (this->state->currentShader == program)
 		this->state->currentShader = NULL;
 	
-	glDeleteShader(program->vertexShaderName);
-	glDeleteShader(program->fragmentShaderName);
-	glDeleteProgram(program->programName);
+	GL_CHECK(glDeleteShader(program->vertexShaderName));
+	GL_CHECK(glDeleteShader(program->fragmentShaderName));
+	GL_CHECK(glDeleteProgram(program->programName));
 	delete program;
 }
 
 void GraphicDriver::bindShaderProgram(ShaderProgram *program)
 {
 	this->state->currentShader = program;
-	glUseProgram(program->programName);
+	GL_CHECK(glUseProgram(program->programName));
 }
 
 void GraphicDriver::drawTriangleStrip(unsigned int startElement, unsigned int elementCount)
 {
-	glDrawArrays(GL_TRIANGLE_STRIP, startElement, elementCount);
+	GL_CHECK(glDrawArrays(GL_TRIANGLE_STRIP, startElement, elementCount));
 }
 
 } // oak namespace

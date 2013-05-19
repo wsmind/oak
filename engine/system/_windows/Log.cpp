@@ -30,52 +30,53 @@
 #include <windows.h>
 #include <cassert>
 #include <cstdio>
+#include <string>
 
 namespace oak {
 
-void Log::info(const std::string &format, ...)
+void Log::info(const char *format, ...)
 {
-	std::string infoFormat = std::string("[INFO] ") + format;
-	
 	// format error message
-	char errorString[2048];
+	char message[2048] = {0};
 	va_list args;
 	va_start(args, format);
-	vsnprintf(errorString, 2048, infoFormat.c_str(), args);
+	vsnprintf(message, 2047, format, args);
 	va_end(args);
 	
-	OutputDebugString(errorString);
+	// append tags
+	std::string output = std::string("[INFO] ") + std::string(message) + "\n";
+	OutputDebugString(output.c_str());
 }
 
-void Log::warning(const std::string &format, ...)
+void Log::warning(const char *format, ...)
 {
-	std::string warningFormat = std::string("[WARN] ") + format;
-	
 	// format error message
-	char errorString[2048];
+	char message[2048] = {0};
 	va_list args;
 	va_start(args, format);
-	vsnprintf(errorString, 2048, warningFormat.c_str(), args);
+	vsnprintf(message, 2047, format, args);
 	va_end(args);
 	
-	OutputDebugString(errorString);
+	// append tags
+	std::string output = std::string("[WARN] ") + std::string(message) + "\n";
+	OutputDebugString(output.c_str());
 }
 
-void Log::error(const std::string &format, ...)
+void Log::error(const char *format, ...)
 {
-	std::string errorFormat = std::string("[ERR ] ") + format;
-	
 	// format error message
-	char errorString[2048];
+	char message[2048] = {0};
 	va_list args;
 	va_start(args, format);
-	vsnprintf(errorString, 2048, errorFormat.c_str(), args);
+	vsnprintf(message, 2047, format, args);
 	va_end(args);
 	
-	OutputDebugString(errorString);
+	// append tags
+	std::string output = std::string("[ERR ] ") + std::string(message) + "\n";
+	OutputDebugString(output.c_str());
 }
 
-void Log::checkAssert(bool condition, const char *conditionString, const std::string &format, ...)
+void Log::checkAssert(bool condition, const char *conditionString, const char *format, ...)
 {
 	if (!condition)
 	{
@@ -83,13 +84,15 @@ void Log::checkAssert(bool condition, const char *conditionString, const std::st
 		Log::error("Assertion failed: %s", conditionString);
 		
 		// format error message
-		std::string errorFormat = std::string("[ERR ] ") + format;
-		char errorString[2048];
+		char message[2048] = {0};
 		va_list args;
 		va_start(args, format);
-		vsnprintf(errorString, 2048, errorFormat.c_str(), args);
+		vsnprintf(message, 2047, format, args);
 		va_end(args);
-		OutputDebugString(errorString);
+		
+		// append tags
+		std::string output = std::string("[ERR ] ") + std::string(message) + "\n";
+		OutputDebugString(output.c_str());
 		
 		// break in debugger here, if attached
 		DebugBreak();

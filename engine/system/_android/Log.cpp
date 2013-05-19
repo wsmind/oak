@@ -27,45 +27,46 @@
 
 #include <engine/system/Log.hpp>
 
+#include <stdio.h>
 #include <android/log.h>
 
 namespace oak {
 
-void Log::info(const std::string &format, ...)
+void Log::info(const char *format, ...)
 {
 	va_list args;
 	va_start(args, format);
-	__android_log_vprint(ANDROID_LOG_INFO, "oak", format.c_str(), args);
+	__android_log_vprint(ANDROID_LOG_INFO, "oak", format, args);
 	va_end(args);
 }
 
-void Log::warning(const std::string &format, ...)
+void Log::warning(const char *format, ...)
 {
 	va_list args;
 	va_start(args, format);
-	__android_log_vprint(ANDROID_LOG_WARN, "oak", format.c_str(), args);
+	__android_log_vprint(ANDROID_LOG_WARN, "oak", format, args);
 	va_end(args);
 }
 
-void Log::error(const std::string &format, ...)
+void Log::error(const char *format, ...)
 {
 	va_list args;
 	va_start(args, format);
-	__android_log_vprint(ANDROID_LOG_ERROR, "oak", format.c_str(), args);
+	__android_log_vprint(ANDROID_LOG_ERROR, "oak", format, args);
 	va_end(args);
 }
 
-void Log::checkAssert(bool condition, const char *conditionString, const std::string &format, ...)
+void Log::checkAssert(bool condition, const char *conditionString, const char *format, ...)
 {
 	if (!condition)
 	{
 		Log::error("Assertion failed: %s", conditionString);
 		
 		// format error message
-		char errorString[2048];
+		char errorString[2048] = {0};
 		va_list args;
 		va_start(args, format);
-		vsnprintf(errorString, 2048, format.c_str(), args);
+		vsnprintf(errorString, 2047, format, args);
 		va_end(args);
 		
 		// raise system assert
