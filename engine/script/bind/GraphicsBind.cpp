@@ -27,7 +27,6 @@
 
 #include <engine/graphics/GraphicsEngine.hpp>
 #include <engine/script/bind/Bind.hpp>
-#include <engine/system/Log.hpp>
 
 namespace oak {
 

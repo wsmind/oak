@@ -25,46 +25,22 @@
 
 #pragma once
 
-// platform-specific GL implementation
-#if defined(ANDROID) || defined(EMSCRIPTEN)
-#	include <GLES2/gl2.h>
-#	include <GLES2/gl2ext.h>
-#else
-#	include <GL/glew.h>
-#	include <GL/glfw.h>
-#endif
+#include <string>
 
-// gl error debugging
-#ifdef OAK_DEBUG
+struct lua_State;
 
-#	include <engine/system/Log.hpp>
+namespace oak {
 
-	namespace oak {
-	inline void checkGLError(const char *callString, const char *filename, int line)
-	{
-		GLenum error = glGetError();
-		if (error != GL_NO_ERROR)
-		{
-			std::string errorConstant = "UNKNOWN ERROR";
-			switch (error)
-			{
-				case GL_INVALID_ENUM: errorConstant = "GL_INVALID_ENUM"; break;
-				case GL_INVALID_VALUE: errorConstant = "GL_INVALID_VALUE"; break;
-				case GL_INVALID_OPERATION: errorConstant = "GL_INVALID_OPERATION"; break;
-				case GL_INVALID_FRAMEBUFFER_OPERATION: errorConstant = "GL_INVALID_FRAMEBUFFER_OPERATION"; break;
-				case GL_OUT_OF_MEMORY: errorConstant = "GL_OUT_OF_MEMORY"; break;
-			}
-			
-			Log::warning("GL call failed: %s -> %s", callString, errorConstant.c_str());
-			Log::warning("From %s:%d", filename, line);
-		}
-	}
-	} // oak namespace
-	
-#	define GL_CHECK(glCall) glCall; oak::checkGLError(#glCall, __FILE__, __LINE__);
+/**
+ * There is no centralized class for the system module, so we need
+ * a basic wrapper to define the script API.
+ */
+class SystemWrapper
+{
+	public:
+		void logInfo(const std::string &message);
+		void logWarning(const std::string &message);
+		void logError(const std::string &message);
+};
 
-#else
-	
-#	define GL_CHECK(glCall) glCall
-	
-#endif // OAK_DEBUG
+} // oak namespace

@@ -23,48 +23,24 @@
  * 
  *****************************************************************************/
 
-#pragma once
+#include <engine/script/bind/SystemBind.hpp>
 
-// platform-specific GL implementation
-#if defined(ANDROID) || defined(EMSCRIPTEN)
-#	include <GLES2/gl2.h>
-#	include <GLES2/gl2ext.h>
-#else
-#	include <GL/glew.h>
-#	include <GL/glfw.h>
-#endif
+#include <engine/script/bind/Bind.hpp>
+#include <engine/script/bind/SystemWrapper.hpp>
 
-// gl error debugging
-#ifdef OAK_DEBUG
+namespace oak {
 
-#	include <engine/system/Log.hpp>
+OAK_BIND_MODULE(SystemWrapper)
+OAK_BIND_VOID_FUNCTION1(SystemWrapper, logInfo, std::string)
+OAK_BIND_VOID_FUNCTION1(SystemWrapper, logWarning, std::string)
+OAK_BIND_VOID_FUNCTION1(SystemWrapper, logError, std::string)
 
-	namespace oak {
-	inline void checkGLError(const char *callString, const char *filename, int line)
-	{
-		GLenum error = glGetError();
-		if (error != GL_NO_ERROR)
-		{
-			std::string errorConstant = "UNKNOWN ERROR";
-			switch (error)
-			{
-				case GL_INVALID_ENUM: errorConstant = "GL_INVALID_ENUM"; break;
-				case GL_INVALID_VALUE: errorConstant = "GL_INVALID_VALUE"; break;
-				case GL_INVALID_OPERATION: errorConstant = "GL_INVALID_OPERATION"; break;
-				case GL_INVALID_FRAMEBUFFER_OPERATION: errorConstant = "GL_INVALID_FRAMEBUFFER_OPERATION"; break;
-				case GL_OUT_OF_MEMORY: errorConstant = "GL_OUT_OF_MEMORY"; break;
-			}
-			
-			Log::warning("GL call failed: %s -> %s", callString, errorConstant.c_str());
-			Log::warning("From %s:%d", filename, line);
-		}
-	}
-	} // oak namespace
-	
-#	define GL_CHECK(glCall) glCall; oak::checkGLError(#glCall, __FILE__, __LINE__);
+void SystemBind::registerFunctions(lua_State *L, SystemWrapper *system)
+{
+	OAK_REGISTER_MODULE(L, SystemWrapper, system, system)
+	OAK_REGISTER_FUNCTION(L, SystemWrapper, system, logInfo)
+	OAK_REGISTER_FUNCTION(L, SystemWrapper, system, logWarning)
+	OAK_REGISTER_FUNCTION(L, SystemWrapper, system, logError)
+}
 
-#else
-	
-#	define GL_CHECK(glCall) glCall
-	
-#endif // OAK_DEBUG
+} // oak namespace

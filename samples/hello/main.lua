@@ -16,6 +16,9 @@ end)]]--
 
 function initialize()
 	oak.graphics.setBackgroundColor(0.0, 0.0, 0.0)
+	oak.system.logInfo("yeeeahhaaa")
+	oak.system.logWarning("oh la la")
+	oak.system.logError("ouch")
 end
 
 local t = 0
@@ -29,5 +32,5 @@ function update(dt)
 end
 
 function shutdown()
-	oak.script.plop("shutting down")
+	oak.system.logInfo("shutting down")
 end

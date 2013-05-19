@@ -32,6 +32,7 @@ struct lua_State;
 namespace oak {
 
 class GraphicsEngine;
+class SystemWrapper;
 
 class ScriptEngine
 {
@@ -53,9 +54,6 @@ class ScriptEngine
 		// modules to bind
 		void registerGraphics(GraphicsEngine *graphics);
 		
-		// temp
-		void plop(const std::string &message);
-		
 	private:
 		static int luaErrorHandler(lua_State *L);
 		
@@ -65,6 +63,9 @@ class ScriptEngine
 		// function call state
 		bool callingFunction;
 		int callParameterCount;
+		
+		// built-in system functions
+		SystemWrapper *systemWrapper;
 };
 
 } // oak namespace
