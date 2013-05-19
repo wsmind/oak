@@ -74,7 +74,7 @@ GLuint compileShader(GLenum type, const std::string &code)
 
 GraphicDriver::GraphicDriver()
 {
-	#ifndef ANDROID
+	#if !defined(ANDROID) && !defined(EMSCRIPTEN)
 		glewInit();
 	#endif
 	
@@ -93,7 +93,7 @@ void GraphicDriver::setClearColor(const glm::vec3 &color)
 
 void GraphicDriver::setClearDepth(float depth)
 {
-	#ifdef ANDROID
+	#if defined(ANDROID) || defined(EMSCRIPTEN)
 		glClearDepthf(depth);
 	#else
 		glClearDepth(depth);

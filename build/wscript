@@ -191,11 +191,11 @@ def build(ctx):
 		deps = ["glfw", "glm", "glew", "lua"]
 		libs = ["opengl32", "winmm", "gdi32", "user32"]
 	else:
-		deps = ["glm", "glew", "lua"]
+		deps = ["glm", "lua"]
 		libs = ["m"]
 	
 	if ctx.env.TARGET_OS == "browser":
-		ctx.env.append_unique("LINKFLAGS", "--preload-file ../samples/hello")
+		pass #ctx.env.append_unique("LINKFLAGS", "--preload-file ../samples/hello")
 	
 	# build shared lib on android
 	exePath = os.path.join("..", "oak")

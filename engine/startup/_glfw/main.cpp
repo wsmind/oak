@@ -62,7 +62,7 @@ int main()
 	Application *application = new Application;
 	
 	#ifdef EMSCRIPTEN
-		application->initialize("hello");
+		application->initialize("../samples/hello");
 	#else
 		application->initialize("D:/proj/oak/samples/hello");
 	#endif
