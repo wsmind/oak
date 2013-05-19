@@ -25,6 +25,8 @@
 
 #pragma once
 
+#include <engine/app/Application.hpp>
+
 #include <android_native_app_glue.h>
 #include <EGL/egl.h>
 
@@ -45,6 +47,8 @@ class AndroidActivity
 		static void onAppCmd(android_app *app, int32_t command);
 		static int32_t onInputEvent(android_app *app, AInputEvent* event);
 		
+		Application gameApplication;
+		bool initialized; // app can render frames
 		bool animating; // app is in focus, the game is running at 60fps
 		
 		// EGL parameters

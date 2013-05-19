@@ -23,6 +23,8 @@
  * 
  *****************************************************************************/
 
+precision mediump float;
+
 attribute vec2 position;
 
 varying vec2 vertexPosition;

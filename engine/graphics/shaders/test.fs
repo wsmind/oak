@@ -23,6 +23,8 @@
  * 
  *****************************************************************************/
 
+precision mediump float;
+
 varying vec2 vertexPosition;
 
 void main()

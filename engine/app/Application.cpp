@@ -29,11 +29,14 @@
 
 #include <engine/graphics/GraphicsEngine.hpp>
 #include <engine/script/ScriptEngine.hpp>
+#include <engine/system/Log.hpp>
 
 namespace oak {
 
 void Application::initialize(const std::string &baseFolder)
 {
+	Log::info("Application::initialize");
+	
 	this->graphics = new GraphicsEngine;
 	
 	this->script = new ScriptEngine;
@@ -49,6 +52,8 @@ void Application::initialize(const std::string &baseFolder)
 
 void Application::shutdown()
 {
+	Log::info("Application::shutdown");
+	
 	this->script->startCall("shutdown");
 	this->script->endCall();
 	

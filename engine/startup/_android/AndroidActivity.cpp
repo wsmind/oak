@@ -25,7 +25,6 @@
 
 #include <engine/startup/_android/AndroidActivity.hpp>
 
-#include <engine/app/Application.hpp>
 #include <engine/system/Log.hpp>
 
 // ugly hack;
@@ -37,6 +36,7 @@ void AndroidActivity::run(android_app *androidApp)
 {
 	Log::info("Oak application startup\n");
 	
+	this->initialized = false;
 	this->animating = false;
 	
 	androidApp->userData = this; // save this for later, when receiving the android_app in callbacks
@@ -47,9 +47,6 @@ void AndroidActivity::run(android_app *androidApp)
 	
 	// ugly hack
 	assetManager = androidApp->activity->assetManager;
-	
-	Application gameApplication;
-	gameApplication.initialize("hello");
 	
 	// main loop
 	bool running = true;
@@ -73,22 +70,23 @@ void AndroidActivity::run(android_app *androidApp)
 		}
 		
 		// run a frame
-		gameApplication.update(0.0f);
+		if (this->initialized)
+			this->gameApplication.update(0.0f);
 		
 		// swap front and back buffers
 		eglSwapBuffers(this->eglDisplay, this->eglSurface);
 	}
-	
-	gameApplication.shutdown();
 }
 
 void AndroidActivity::createWindow(ANativeWindow *window)
 {
 	const EGLint attribs[] = {
 		EGL_SURFACE_TYPE, EGL_WINDOW_BIT,
-		EGL_BLUE_SIZE, 8,
-		EGL_GREEN_SIZE, 8,
-		EGL_RED_SIZE, 8,
+		EGL_RENDERABLE_TYPE, EGL_OPENGL_ES2_BIT,
+		EGL_BLUE_SIZE, 4,
+		EGL_GREEN_SIZE, 4,
+		EGL_RED_SIZE, 4,
+		EGL_DEPTH_SIZE, 16,
 		EGL_NONE
 	};
 	
@@ -104,15 +102,28 @@ void AndroidActivity::createWindow(ANativeWindow *window)
 	ANativeWindow_setBuffersGeometry(window, 0, 0, format);
 	
 	this->eglSurface = eglCreateWindowSurface(this->eglDisplay, config, window, NULL);
-	this->eglContext = eglCreateContext(this->eglDisplay, config, NULL, NULL);
+	
+	const EGLint contextAttribs[] = {
+		EGL_CONTEXT_CLIENT_VERSION, 2,
+		EGL_NONE
+	};
+	this->eglContext = eglCreateContext(this->eglDisplay, config, NULL, contextAttribs);
 	
 	if (eglMakeCurrent(this->eglDisplay, this->eglSurface, this->eglSurface, this->eglContext) == EGL_FALSE) {
 		Log::error("Failed to set the current EGL context");
 	}
+	
+	// the context is ready, start application
+	this->gameApplication.initialize("hello");
+	this->initialized = true;
 }
 
 void AndroidActivity::destroyWindow()
 {
+	// uninitialize application before killing the context
+	this->gameApplication.shutdown();
+	this->initialized = false;
+	
 	eglMakeCurrent(this->eglDisplay, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT);
 	eglDestroyContext(this->eglDisplay, this->eglContext);
 	eglDestroySurface(this->eglDisplay, this->eglSurface);

@@ -194,7 +194,7 @@ def build(ctx):
 		deps = ["glm", "glew", "lua"]
 		libs = ["m"]
 	
-	if ctx.env.TARGET_OS == "browser":	
+	if ctx.env.TARGET_OS == "browser":
 		ctx.env.append_unique("LINKFLAGS", "--preload-file ../samples/hello")
 	
 	# build shared lib on android
