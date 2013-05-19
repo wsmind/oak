@@ -65,9 +65,9 @@ void GraphicsEngine::renderFrame()
 	this->driver->setClearDepth(1.0f);
 	this->driver->clear(true, true);
 	
-	this->driver->bindShaderProgram(this->shader);
+	/*this->driver->bindShaderProgram(this->shader);
 	this->driver->bindVertexBuffer(this->vertexBuffer);
-	this->driver->drawTriangleStrip(0, 4);
+	this->driver->drawTriangleStrip(0, 4);*/
 }
 
 } // oak namespace

@@ -61,11 +61,7 @@ int main()
 	
 	Application *application = new Application;
 	
-	#ifdef EMSCRIPTEN
-		application->initialize("../samples/hello");
-	#else
-		application->initialize("D:/proj/oak/samples/hello");
-	#endif
+	application->initialize("D:/proj/oak/samples/hello");
 	
 	glfwSetTime(0.0);
 	

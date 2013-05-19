@@ -225,7 +225,10 @@ def build(ctx):
 		libs = ["m"]
 	
 	if ctx.env.TARGET_OS == "browser":
-		pass #ctx.env.append_unique("LINKFLAGS", "--preload-file ../samples/hello")
+		dataNode = ctx.path.parent.find_node("samples/hello")
+		shellNode = ctx.path.parent.find_node("engine/startup/_browser/shell.html")
+		ctx.env.append_unique("LINKFLAGS", ["--preload-file", dataNode.abspath()])
+		ctx.env.append_unique("LINKFLAGS", ["--shell-file", shellNode.abspath()])
 	
 	# build shared lib on android
 	exePath = os.path.join("..", "oak")
