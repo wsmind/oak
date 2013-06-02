@@ -59,6 +59,9 @@ int main()
 		return 1;
 	}
 	
+	// clear possible GL errors internal to glfw
+	glGetError();
+	
 	Application *application = new Application;
 	
 	application->initialize("D:/proj/oak/samples/hello");
