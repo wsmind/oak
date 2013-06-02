@@ -41,6 +41,7 @@ void Application::initialize(const std::string &baseFolder)
 	this->sceneManager = new SceneManager;
 	
 	this->graphics = new GraphicsEngine;
+	this->graphics->registerComponents(this->sceneManager);
 	
 	this->script = new ScriptEngine;
 	this->script->initialize();
@@ -65,6 +66,7 @@ void Application::shutdown()
 	this->script->shutdown();
 	delete this->script;
 	
+	this->graphics->unregisterComponents(this->sceneManager);
 	delete this->graphics;
 	
 	delete this->sceneManager;

@@ -25,16 +25,20 @@
 
 #pragma once
 
+#include <engine/scene/ComponentFactory.hpp>
+
 #include <glm/glm.hpp>
 
 namespace oak {
 
 class GraphicDriver;
+class GraphicsScene;
+class SceneManager;
 class ScriptEngine;
 struct ShaderProgram;
 struct VertexBuffer;
 
-class GraphicsEngine
+class GraphicsEngine: public ComponentFactory
 {
 	public:
 		GraphicsEngine();
@@ -45,6 +49,12 @@ class GraphicsEngine
 		glm::vec3 getBackgroundColor() const { return this->backgroundColor; }
 		void setBackgroundColor(const glm::vec3 &color) { this->backgroundColor = color; }
 		
+		void registerComponents(SceneManager *sceneManager);
+		void unregisterComponents(SceneManager *sceneManager);
+		
+		// ComponentFactory
+		virtual Component *createComponent(const std::string &className);
+		
 	private:
 		GraphicDriver *driver;
 		
@@ -52,6 +62,9 @@ class GraphicsEngine
 		
 		VertexBuffer *vertexBuffer;
 		ShaderProgram *shader;
+		
+		// TODO: mirror scenes here (one graphics scene per entity scene)
+		GraphicsScene *scene;
 };
 
 } // oak namespace

@@ -30,17 +30,27 @@
 
 namespace oak {
 
+OAK_BIND_POINTER_TYPE(Component)
+OAK_BIND_POINTER_TYPE(Entity)
 OAK_BIND_POINTER_TYPE(Scene)
 
 OAK_BIND_MODULE(SceneManager)
 OAK_BIND_WRET_FUNCTION0(SceneManager, createScene)
 OAK_BIND_VOID_FUNCTION1(SceneManager, destroyScene, Scene *)
+OAK_BIND_WRET_FUNCTION1(SceneManager, createEntity, Scene *)
+OAK_BIND_VOID_FUNCTION2(SceneManager, destroyEntity, Scene *, Entity *)
+OAK_BIND_WRET_FUNCTION2(SceneManager, createComponent, Entity *, std::string)
+OAK_BIND_VOID_FUNCTION2(SceneManager, destroyComponent, Entity *, Component *)
 
 void SceneBind::registerFunctions(lua_State *L, SceneManager *scene)
 {
 	OAK_REGISTER_MODULE(L, SceneManager, scene, scene)
 	OAK_REGISTER_FUNCTION(L, SceneManager, scene, createScene)
 	OAK_REGISTER_FUNCTION(L, SceneManager, scene, destroyScene)
+	OAK_REGISTER_FUNCTION(L, SceneManager, scene, createEntity)
+	OAK_REGISTER_FUNCTION(L, SceneManager, scene, destroyEntity)
+	OAK_REGISTER_FUNCTION(L, SceneManager, scene, createComponent)
+	OAK_REGISTER_FUNCTION(L, SceneManager, scene, destroyComponent)
 }
 
 } // oak namespace

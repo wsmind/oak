@@ -22,6 +22,10 @@ function initialize()
 	
 	scene1 = oak.scene.createScene()
 	scene2 = oak.scene.createScene()
+	
+	entity = oak.scene.createEntity(scene1)
+	quad = oak.scene.createComponent(entity, "DemoQuad")
+	--oak.graphics.setDemoQuadColor(quad, 1.0, 0.0, 0.0)
 end
 
 local t = 0

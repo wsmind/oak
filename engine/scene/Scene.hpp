@@ -29,15 +29,20 @@
 
 namespace oak {
 
+class Entity;
+
 class Scene
 {
 	public:
 		Scene();
 		~Scene();
 		
+		Entity *createEntity();
+		void destroyEntity(Entity *entity);
+		
 	private:
-		//typedef std::vector<Entity *> EntityVector;
-		//EntityVector entities;;
+		typedef std::vector<Entity *> EntityVector;
+		EntityVector entities;
 };
 
 } // oak namespace

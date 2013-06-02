@@ -23,57 +23,55 @@
  * 
  *****************************************************************************/
 
-#include <engine/graphics/GraphicsEngine.hpp>
-#include <engine/graphics/GraphicsScene.hpp>
-#include <engine/graphics/GraphicDriver.hpp>
 #include <engine/graphics/components/DemoQuad.hpp>
-#include <engine/scene/SceneManager.hpp>
 
-// #include <engine/graphics/shaders/test.vs.h>
-// #include <engine/graphics/shaders/test.fs.h>
+#include <engine/graphics/GraphicDriver.hpp>
+#include <engine/graphics/GraphicsScene.hpp>
+
+#include <engine/graphics/shaders/test.vs.h>
+#include <engine/graphics/shaders/test.fs.h>
 
 namespace oak {
 
-GraphicsEngine::GraphicsEngine()
+DemoQuad::DemoQuad(GraphicsScene *scene, GraphicDriver *driver)
 {
-	this->driver = new GraphicDriver;
+	this->driver = driver;
+	this->scene = scene;
 	
-	// default color
-	this->backgroundColor = glm::vec3(0.4f, 0.6f, 0.7f);
+	// test buffer
+	GraphicDriver::Simple2DVertex vertices[] = {
+		{ glm::vec2(-1.0f, -1.0f) },
+		{ glm::vec2(-1.0f, 1.0f) },
+		{ glm::vec2(1.0f, -1.0f) },
+		{ glm::vec2(1.0f, 1.0f) }
+	};
+	this->vertexBuffer = this->driver->createVertexBuffer(vertices, 4);
 	
-	this->scene = new GraphicsScene;
+	// test shader
+	this->shader = this->driver->createShaderProgram(testVSString, testFSString);
 }
 
-GraphicsEngine::~GraphicsEngine()
+DemoQuad::~DemoQuad()
 {
-	delete this->scene;
-	delete this->driver;
+	this->driver->destroyVertexBuffer(this->vertexBuffer);
+	this->driver->destroyShaderProgram(this->shader);
 }
 
-void GraphicsEngine::renderFrame()
+void DemoQuad::activateComponent()
 {
-	this->driver->setClearColor(this->backgroundColor);
-	this->driver->setClearDepth(1.0f);
-	this->driver->clear(true, true);
+	GraphicsScene::Renderable renderable;
+	renderable.buffer = this->vertexBuffer;
+	renderable.shader = this->shader;
+	renderable.primitiveType = GraphicsScene::TRIANGLE_STRIP;
+	renderable.startElement = 0;
+	renderable.elementCount = 4;
 	
-	this->scene->render(this->driver);
+	this->scene->registerRenderable(renderable);
 }
 
-void GraphicsEngine::registerComponents(SceneManager *sceneManager)
+void DemoQuad::deactivateComponent()
 {
-	sceneManager->registerComponentFactory("DemoQuad", this);
-}
-
-void GraphicsEngine::unregisterComponents(SceneManager *sceneManager)
-{
-	sceneManager->unregisterComponentFactory("DemoQuad");
-}
-
-Component *GraphicsEngine::createComponent(const std::string &className)
-{
-	if (className == "DemoQuad") return new DemoQuad(this->scene, this->driver);
-	
-	return NULL;
+	//this->scene->unregisterXXX();
 }
 
 } // oak namespace

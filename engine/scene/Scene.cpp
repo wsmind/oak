@@ -25,7 +25,10 @@
 
 #include <engine/scene/Scene.hpp>
 
+#include <engine/scene/Entity.hpp>
 #include <engine/system/Log.hpp>
+
+#include <algorithm>
 
 namespace oak {
 
@@ -36,7 +39,32 @@ Scene::Scene()
 
 Scene::~Scene()
 {
+	for (unsigned int i = 0; i < this->entities.size(); i++)
+	{
+		delete this->entities[i];
+	}
+	
 	Log::info("Scene destroyed!");
+}
+
+Entity *Scene::createEntity()
+{
+	Entity *entity = new Entity;
+	this->entities.push_back(entity);
+	
+	return entity;
+}
+
+void Scene::destroyEntity(Entity *entity)
+{
+	EntityVector::iterator it = std::find(this->entities.begin(), this->entities.end(), entity);
+	OAK_ASSERT(it != this->entities.end(), "Trying to destroy an unexisting scene");
+	
+	// remove the entity in-place
+	*it = this->entities[this->entities.size() - 1];
+	this->entities.pop_back();
+	
+	delete entity;
 }
 
 } // oak namespace

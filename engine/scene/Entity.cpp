@@ -23,57 +23,41 @@
  * 
  *****************************************************************************/
 
-#include <engine/graphics/GraphicsEngine.hpp>
-#include <engine/graphics/GraphicsScene.hpp>
-#include <engine/graphics/GraphicDriver.hpp>
-#include <engine/graphics/components/DemoQuad.hpp>
-#include <engine/scene/SceneManager.hpp>
+#include <engine/scene/Entity.hpp>
 
-// #include <engine/graphics/shaders/test.vs.h>
-// #include <engine/graphics/shaders/test.fs.h>
+#include <engine/scene/Component.hpp>
+#include <engine/system/Log.hpp>
+
+#include <algorithm>
 
 namespace oak {
 
-GraphicsEngine::GraphicsEngine()
+Entity::Entity()
 {
-	this->driver = new GraphicDriver;
+	Log::info("Entity created!");
+}
+
+Entity::~Entity()
+{
+	Log::info("Entity destroyed!");
+}
+
+void Entity::attachComponent(Component *component)
+{
+	this->components.push_back(component);
+	component->activateComponent();
+}
+
+void Entity::detachComponent(Component *component)
+{
+	ComponentVector::iterator it = std::find(this->components.begin(), this->components.end(), component);
+	OAK_ASSERT(it != this->components.end(), "Trying to detach an unexisting component");
 	
-	// default color
-	this->backgroundColor = glm::vec3(0.4f, 0.6f, 0.7f);
+	(*it)->deactivateComponent();
 	
-	this->scene = new GraphicsScene;
-}
-
-GraphicsEngine::~GraphicsEngine()
-{
-	delete this->scene;
-	delete this->driver;
-}
-
-void GraphicsEngine::renderFrame()
-{
-	this->driver->setClearColor(this->backgroundColor);
-	this->driver->setClearDepth(1.0f);
-	this->driver->clear(true, true);
-	
-	this->scene->render(this->driver);
-}
-
-void GraphicsEngine::registerComponents(SceneManager *sceneManager)
-{
-	sceneManager->registerComponentFactory("DemoQuad", this);
-}
-
-void GraphicsEngine::unregisterComponents(SceneManager *sceneManager)
-{
-	sceneManager->unregisterComponentFactory("DemoQuad");
-}
-
-Component *GraphicsEngine::createComponent(const std::string &className)
-{
-	if (className == "DemoQuad") return new DemoQuad(this->scene, this->driver);
-	
-	return NULL;
+	// remove the scene in-place
+	*it = this->components[this->components.size() - 1];
+	this->components.pop_back();
 }
 
 } // oak namespace

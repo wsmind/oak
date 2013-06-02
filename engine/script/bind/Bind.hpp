@@ -140,6 +140,18 @@ inline int pushReturnValue(lua_State *L, void *value)
 		return 0; \
 	}
 
+#define OAK_BIND_VOID_FUNCTION2(ModuleType, functionName, ArgType1, ArgType2) \
+	int oak_function_##ModuleType##_##functionName(lua_State *L) \
+	{ \
+		ModuleType *module = oak_module_ptr_##ModuleType; \
+		 \
+		ArgType2 arg2 = oak::bind::popArgument<ArgType2>(L); \
+		ArgType1 arg1 = oak::bind::popArgument<ArgType1>(L); \
+		module->functionName(arg1, arg2); \
+		 \
+		return 0; \
+	}
+
 #define OAK_BIND_WRET_FUNCTION0(ModuleType, functionName) \
 	int oak_function_##ModuleType##_##functionName(lua_State *L) \
 	{ \
@@ -155,6 +167,16 @@ inline int pushReturnValue(lua_State *L, void *value)
 		 \
 		ArgType1 arg1 = oak::bind::popArgument<ArgType1>(L); \
 		return oak::bind::pushReturnValue(L, module->functionName(arg1)); \
+	}
+
+#define OAK_BIND_WRET_FUNCTION2(ModuleType, functionName, ArgType1, ArgType2) \
+	int oak_function_##ModuleType##_##functionName(lua_State *L) \
+	{ \
+		ModuleType *module = oak_module_ptr_##ModuleType; \
+		 \
+		ArgType2 arg2 = oak::bind::popArgument<ArgType2>(L); \
+		ArgType1 arg1 = oak::bind::popArgument<ArgType1>(L); \
+		return oak::bind::pushReturnValue(L, module->functionName(arg1, arg2)); \
 	}
 
 #define OAK_REGISTER_MODULE(L, ModuleType, name, instance) \

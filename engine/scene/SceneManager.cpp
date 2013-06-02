@@ -25,12 +25,33 @@
 
 #include <engine/scene/SceneManager.hpp>
 
+#include <engine/scene/Component.hpp>
+#include <engine/scene/ComponentFactory.hpp>
+#include <engine/scene/Entity.hpp>
 #include <engine/scene/Scene.hpp>
 #include <engine/system/Log.hpp>
 
 #include <algorithm>
 
 namespace oak {
+
+void SceneManager::registerComponentFactory(const std::string &className, ComponentFactory *factory)
+{
+	OAK_ASSERT(this->factories.find(className) == this->factories.end(), "Component factory already registered for class '%s'", className.c_str());
+	this->factories[className] = factory;
+	
+	Log::info("Registered component '%s'", className.c_str());
+}
+
+void SceneManager::unregisterComponentFactory(const std::string &className)
+{
+	OAK_ASSERT(this->factories.find(className) != this->factories.end(), "Component factory never registered for class '%s'", className.c_str());
+	
+	FactoryMap::iterator it = this->factories.find(className);
+	this->factories.erase(it);
+	
+	Log::info("Unregistered component '%s'", className.c_str());
+}
 
 Scene *SceneManager::createScene()
 {
@@ -50,6 +71,42 @@ void SceneManager::destroyScene(Scene *scene)
 	this->scenes.pop_back();
 	
 	delete scene;
+}
+
+Entity *SceneManager::createEntity(Scene *scene)
+{
+	return scene->createEntity();
+}
+
+void SceneManager::destroyEntity(Scene *scene, Entity *entity)
+{
+	scene->destroyEntity(entity);
+}
+
+Component *SceneManager::createComponent(Entity *entity, const std::string &className)
+{
+	FactoryMap::iterator it = this->factories.find(className);
+	
+	if (it == this->factories.end())
+	{
+		Log::error("No component factory registered for component type '%s'", className.c_str());
+		return NULL;
+	}
+	
+	ComponentFactory *factory = it->second;
+	Component *component = factory->createComponent(className);
+	OAK_ASSERT(component != NULL, "Component factory could not create a type it was registered for");
+	
+	entity->attachComponent(component);
+	
+	return component;
+}
+
+void SceneManager::destroyComponent(Entity *entity, Component *component)
+{
+	entity->detachComponent(component);
+	
+	delete component;
 }
 
 } // oak namespace

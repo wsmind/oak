@@ -23,57 +23,52 @@
  * 
  *****************************************************************************/
 
-#include <engine/graphics/GraphicsEngine.hpp>
-#include <engine/graphics/GraphicsScene.hpp>
-#include <engine/graphics/GraphicDriver.hpp>
-#include <engine/graphics/components/DemoQuad.hpp>
-#include <engine/scene/SceneManager.hpp>
+#pragma once
 
-// #include <engine/graphics/shaders/test.vs.h>
-// #include <engine/graphics/shaders/test.fs.h>
+#include <engine/graphics/GraphicDriver.hpp>
+
+#include <vector>
 
 namespace oak {
 
-GraphicsEngine::GraphicsEngine()
-{
-	this->driver = new GraphicDriver;
-	
-	// default color
-	this->backgroundColor = glm::vec3(0.4f, 0.6f, 0.7f);
-	
-	this->scene = new GraphicsScene;
-}
+class GraphicDriver;
 
-GraphicsEngine::~GraphicsEngine()
+class GraphicsScene
 {
-	delete this->scene;
-	delete this->driver;
-}
-
-void GraphicsEngine::renderFrame()
-{
-	this->driver->setClearColor(this->backgroundColor);
-	this->driver->setClearDepth(1.0f);
-	this->driver->clear(true, true);
-	
-	this->scene->render(this->driver);
-}
-
-void GraphicsEngine::registerComponents(SceneManager *sceneManager)
-{
-	sceneManager->registerComponentFactory("DemoQuad", this);
-}
-
-void GraphicsEngine::unregisterComponents(SceneManager *sceneManager)
-{
-	sceneManager->unregisterComponentFactory("DemoQuad");
-}
-
-Component *GraphicsEngine::createComponent(const std::string &className)
-{
-	if (className == "DemoQuad") return new DemoQuad(this->scene, this->driver);
-	
-	return NULL;
-}
+	public:
+		GraphicsScene();
+		~GraphicsScene();
+		
+		void render(GraphicDriver *driver);
+		
+		enum PrimitiveType
+		{
+			TRIANGLE_STRIP
+		};
+		
+		struct Renderable
+		{
+			VertexBuffer *buffer;
+			ShaderProgram *shader;
+			PrimitiveType primitiveType;
+			unsigned int startElement;
+			unsigned int elementCount;
+			
+			Renderable()
+				: buffer(NULL)
+				, shader(NULL)
+				, primitiveType(TRIANGLE_STRIP)
+				, startElement(0)
+				, elementCount(0)
+			{}
+		};
+		
+		void registerRenderable(const Renderable &renderable);
+		//void unregisterRenderable(const Component *owner);
+		
+	private:
+		typedef std::vector<Renderable> RenderableVector;
+		RenderableVector renderables;
+};
 
 } // oak namespace
