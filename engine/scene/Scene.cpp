@@ -58,7 +58,7 @@ Entity *Scene::createEntity()
 void Scene::destroyEntity(Entity *entity)
 {
 	EntityVector::iterator it = std::find(this->entities.begin(), this->entities.end(), entity);
-	OAK_ASSERT(it != this->entities.end(), "Trying to destroy an unexisting scene");
+	OAK_ASSERT(it != this->entities.end(), "Trying to destroy an unexisting entity");
 	
 	// remove the entity in-place
 	*it = this->entities[this->entities.size() - 1];

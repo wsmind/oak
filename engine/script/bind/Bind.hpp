@@ -179,6 +179,44 @@ inline int pushReturnValue(lua_State *L, void *value)
 		return oak::bind::pushReturnValue(L, module->functionName(arg1, arg2)); \
 	}
 
+#define OAK_BIND_VOID_METHOD0(ClassName, methodName) \
+	int oak_method_##ClassName##_##methodName(lua_State *L) \
+	{ \
+		ClassName *self = oak::bind::popArgument<ClassName *>(L); \
+		self->methodName(); \
+		 \
+		return 0; \
+	}
+
+#define OAK_BIND_VOID_METHOD1(ClassName, methodName, ArgType1) \
+	int oak_method_##ClassName##_##methodName(lua_State *L) \
+	{ \
+		ArgType1 arg1 = oak::bind::popArgument<ArgType1>(L); \
+		ClassName *self = oak::bind::popArgument<ClassName *>(L); \
+		self->methodName(arg1); \
+		 \
+		return 0; \
+	}
+
+#define OAK_BIND_WRET_METHOD0(ClassName, methodName) \
+	int oak_method_##ClassName##_##methodName(lua_State *L) \
+	{ \
+		ClassName *self = oak::bind::popArgument<ClassName *>(L); \
+		return oak::bind::pushReturnValue(L, self->methodName()); \
+		 \
+		return 0; \
+	}
+
+#define OAK_BIND_WRET_METHOD1(ClassName, methodName, ArgType1) \
+	int oak_method_##ClassName##_##methodName(lua_State *L) \
+	{ \
+		ArgType1 arg1 = oak::bind::popArgument<ArgType1>(L); \
+		ClassName *self = oak::bind::popArgument<ClassName *>(L); \
+		return oak::bind::pushReturnValue(L, self->methodName(arg1)); \
+		 \
+		return 0; \
+	}
+
 #define OAK_REGISTER_MODULE(L, ModuleType, name, instance) \
 	{ \
 		OAK_ASSERT(oak_module_ptr_##ModuleType == NULL, "Script module "#ModuleType" is already registered!"); \
@@ -198,4 +236,18 @@ inline int pushReturnValue(lua_State *L, void *value)
 		lua_pushcfunction(L, oak_function_##ModuleType##_##functionName); \
 		lua_setfield(L, -2, #functionName); \
 		lua_pop(L, 2); \
+	}
+
+#define OAK_REGISTER_CLASS(L, ClassName) \
+	{ \
+		lua_createtable(L, 0, 0); \
+		lua_setglobal(L, #ClassName); \
+	}
+
+#define OAK_REGISTER_METHOD(L, ClassName, methodName) \
+	{ \
+		lua_getglobal(L, #ClassName); \
+		lua_pushcfunction(L, oak_method_##ClassName##_##methodName); \
+		lua_setfield(L, -2, #methodName); \
+		lua_pop(L, 1); \
 	}

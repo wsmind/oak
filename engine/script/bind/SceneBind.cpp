@@ -25,6 +25,7 @@
 
 #include <engine/script/bind/SceneBind.hpp>
 
+#include <engine/scene/Scene.hpp>
 #include <engine/scene/SceneManager.hpp>
 #include <engine/script/bind/Bind.hpp>
 
@@ -42,6 +43,9 @@ OAK_BIND_VOID_FUNCTION2(SceneManager, destroyEntity, Scene *, Entity *)
 OAK_BIND_WRET_FUNCTION2(SceneManager, createComponent, Entity *, std::string)
 OAK_BIND_VOID_FUNCTION2(SceneManager, destroyComponent, Entity *, Component *)
 
+OAK_BIND_WRET_METHOD0(Scene, createEntity)
+OAK_BIND_VOID_METHOD1(Scene, destroyEntity, Entity *)
+
 void SceneBind::registerFunctions(lua_State *L, SceneManager *scene)
 {
 	OAK_REGISTER_MODULE(L, SceneManager, scene, scene)
@@ -51,6 +55,10 @@ void SceneBind::registerFunctions(lua_State *L, SceneManager *scene)
 	OAK_REGISTER_FUNCTION(L, SceneManager, scene, destroyEntity)
 	OAK_REGISTER_FUNCTION(L, SceneManager, scene, createComponent)
 	OAK_REGISTER_FUNCTION(L, SceneManager, scene, destroyComponent)
+	
+	OAK_REGISTER_CLASS(L, Scene)
+	OAK_REGISTER_METHOD(L, Scene, createEntity)
+	OAK_REGISTER_METHOD(L, Scene, destroyEntity)
 }
 
 } // oak namespace
