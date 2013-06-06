@@ -60,9 +60,6 @@ class GraphicsEngine: public ComponentFactory
 		
 		glm::vec3 backgroundColor;
 		
-		VertexBuffer *vertexBuffer;
-		ShaderProgram *shader;
-		
 		// TODO: mirror scenes here (one graphics scene per entity scene)
 		GraphicsScene *scene;
 };
