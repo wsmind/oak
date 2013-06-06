@@ -26,7 +26,6 @@ function initialize()
 	--entity = oak.scene.createEntity(scene1)
 	entity = Scene.createEntity(scene1)
 	quad = oak.scene.createComponent(entity, "DemoQuad")
-	--oak.graphics.setDemoQuadColor(quad, 1.0, 0.0, 0.0)
 end
 
 local t = 0
@@ -34,6 +33,7 @@ function update(dt)
 	local r, g, b = oak.graphics.getBackgroundColor()
 	r = r + 0.001
 	oak.graphics.setBackgroundColor(r, g, b)
+	DemoQuad.setColor(quad, oak.graphics.getBackgroundColor())
 	
 	--t = t + dt
 	--oak.graphics.setBackgroundColor(math.sin(t) * 0.5 + 0.5, 0.8, 1.0)

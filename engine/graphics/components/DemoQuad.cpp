@@ -28,8 +28,10 @@
 #include <engine/graphics/GraphicDriver.hpp>
 #include <engine/graphics/GraphicsScene.hpp>
 
-#include <engine/graphics/shaders/test.vs.h>
-#include <engine/graphics/shaders/test.fs.h>
+#include <engine/graphics/shaders/demo.vs.h>
+#include <engine/graphics/shaders/demo.fs.h>
+
+#include <engine/system/Time.hpp>
 
 namespace oak {
 
@@ -48,13 +50,30 @@ DemoQuad::DemoQuad(GraphicsScene *scene, GraphicDriver *driver)
 	this->vertexBuffer = this->driver->createVertexBuffer(vertices, 4);
 	
 	// test shader
-	this->shader = this->driver->createShaderProgram(testVSString, testFSString);
+	this->shader = this->driver->createShaderProgram(demoVSString, demoFSString);
+	
+	this->setColor(glm::vec3(0.0f, 0.0f, 0.0f));
 }
 
 DemoQuad::~DemoQuad()
 {
 	this->driver->destroyVertexBuffer(this->vertexBuffer);
 	this->driver->destroyShaderProgram(this->shader);
+}
+
+glm::vec3 DemoQuad::getColor() const
+{
+	return this->color;
+}
+
+void DemoQuad::setColor(const glm::vec3 &color)
+{
+	this->color = color;
+	this->driver->bindShaderProgram(this->shader);
+	
+	float time = (float)(Time::readNanoseconds() % 100000000000LL) / 1000000000.0f;
+	this->driver->setShaderConstant("time", time);
+	this->driver->setShaderConstant("color", color);
 }
 
 void DemoQuad::activateComponent()

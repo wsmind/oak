@@ -27,6 +27,8 @@
 
 #include <engine/scene/Component.hpp>
 
+#include <glm/glm.hpp>
+
 namespace oak {
 
 class GraphicDriver;
@@ -40,6 +42,9 @@ class DemoQuad: public Component
 		DemoQuad(GraphicsScene *scene, GraphicDriver *driver);
 		virtual ~DemoQuad();
 		
+		glm::vec3 getColor() const;
+		void setColor(const glm::vec3 &color);
+		
 		// Component
 		virtual void activateComponent();
 		virtual void deactivateComponent();
@@ -49,6 +54,8 @@ class DemoQuad: public Component
 		GraphicsScene *scene;
 		VertexBuffer *vertexBuffer;
 		ShaderProgram *shader;
+		
+		glm::vec3 color;
 };
 
 } // oak namespace

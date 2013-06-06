@@ -26,19 +26,29 @@
 #include <engine/script/bind/GraphicsBind.hpp>
 
 #include <engine/graphics/GraphicsEngine.hpp>
+#include <engine/graphics/components/DemoQuad.hpp>
 #include <engine/script/bind/Bind.hpp>
 
 namespace oak {
 
+OAK_BIND_POINTER_TYPE(DemoQuad)
+
 OAK_BIND_MODULE(GraphicsEngine)
 OAK_BIND_WRET_FUNCTION0(GraphicsEngine, getBackgroundColor)
 OAK_BIND_VOID_FUNCTION1(GraphicsEngine, setBackgroundColor, glm::vec3)
+
+OAK_BIND_WRET_METHOD0(DemoQuad, getColor)
+OAK_BIND_VOID_METHOD1(DemoQuad, setColor, glm::vec3)
 
 void GraphicsBind::registerFunctions(lua_State *L, GraphicsEngine *graphics)
 {
 	OAK_REGISTER_MODULE(L, GraphicsEngine, graphics, graphics)
 	OAK_REGISTER_FUNCTION(L, GraphicsEngine, graphics, getBackgroundColor)
 	OAK_REGISTER_FUNCTION(L, GraphicsEngine, graphics, setBackgroundColor)
+	
+	OAK_REGISTER_CLASS(L, DemoQuad)
+	OAK_REGISTER_METHOD(L, DemoQuad, getColor)
+	OAK_REGISTER_METHOD(L, DemoQuad, setColor)
 }
 
 } // oak namespace
