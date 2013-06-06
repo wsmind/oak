@@ -25,11 +25,12 @@
 
 precision mediump float;
 
-uniform vec3 color;
+attribute vec2 position;
 
 varying vec2 vertexPosition;
 
 void main()
 {
-	gl_FragColor = vec4(vertexPosition * 0.5 + 0.5, 0.0, 1.0) + vec4(color, 1.0);
+	vertexPosition = position;
+	gl_Position = vec4(position, 0.0, 1.0);
 }
