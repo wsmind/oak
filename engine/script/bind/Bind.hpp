@@ -240,14 +240,17 @@ inline int pushReturnValue(lua_State *L, void *value)
 
 #define OAK_REGISTER_CLASS(L, ClassName) \
 	{ \
+		lua_getglobal(L, "oak"); \
 		lua_createtable(L, 0, 0); \
-		lua_setglobal(L, #ClassName); \
+		lua_setfield(L, -2, #ClassName); \
+		lua_pop(L, 1); \
 	}
 
 #define OAK_REGISTER_METHOD(L, ClassName, methodName) \
 	{ \
-		lua_getglobal(L, #ClassName); \
+		lua_getglobal(L, "oak"); \
+		lua_getfield(L, -1, #ClassName); \
 		lua_pushcfunction(L, oak_method_##ClassName##_##methodName); \
 		lua_setfield(L, -2, #methodName); \
-		lua_pop(L, 1); \
+		lua_pop(L, 2); \
 	}
