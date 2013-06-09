@@ -36,7 +36,6 @@ namespace oak {
 
 class GraphicDriver;
 class GraphicWorld;
-class GraphicsScene;
 class ScriptEngine;
 struct ShaderProgram;
 struct VertexBuffer;
@@ -66,9 +65,6 @@ class GraphicsEngine: public ComponentFactory, public WorldListener
 		GraphicDriver *driver;
 		
 		glm::vec3 backgroundColor;
-		
-		// TODO: mirror scenes here (one graphics scene per entity scene)
-		GraphicsScene *scene;
 		
 		WorldManager *worldManager;
 		
