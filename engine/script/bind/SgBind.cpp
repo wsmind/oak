@@ -46,9 +46,11 @@ OAK_BIND_VOID_FUNCTION1(WorldManager, destroyWorld, World *)
 OAK_BIND_WRET_METHOD0(World, createScene)
 OAK_BIND_VOID_METHOD1(World, destroyScene, Scene *)
 
+OAK_BIND_WRET_METHOD0(Scene, getWorld)
 OAK_BIND_WRET_METHOD0(Scene, createEntity)
 OAK_BIND_VOID_METHOD1(Scene, destroyEntity, Entity *)
 
+OAK_BIND_WRET_METHOD0(Entity, getScene)
 OAK_BIND_WRET_METHOD1(Entity, createComponent, std::string)
 OAK_BIND_VOID_METHOD1(Entity, destroyComponent, Component *)
 
@@ -63,10 +65,12 @@ void SgBind::registerFunctions(lua_State *L, WorldManager *sg)
 	OAK_REGISTER_METHOD(L, World, destroyScene)
 	
 	OAK_REGISTER_CLASS(L, Scene)
+	OAK_REGISTER_METHOD(L, Scene, getWorld)
 	OAK_REGISTER_METHOD(L, Scene, createEntity)
 	OAK_REGISTER_METHOD(L, Scene, destroyEntity)
 	
 	OAK_REGISTER_CLASS(L, Entity)
+	OAK_REGISTER_METHOD(L, Entity, getScene)
 	OAK_REGISTER_METHOD(L, Entity, createComponent)
 	OAK_REGISTER_METHOD(L, Entity, destroyComponent)
 }
