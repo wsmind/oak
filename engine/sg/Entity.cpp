@@ -23,67 +23,55 @@
  * 
  *****************************************************************************/
 
-#include <engine/scene/SceneManager.hpp>
+#include <engine/sg/Entity.hpp>
 
-#include <engine/scene/Component.hpp>
-#include <engine/scene/ComponentFactory.hpp>
-#include <engine/scene/Entity.hpp>
-#include <engine/scene/Scene.hpp>
+#include <engine/sg/Component.hpp>
+#include <engine/sg/ComponentFactory.hpp>
 #include <engine/system/Log.hpp>
 
 #include <algorithm>
 
 namespace oak {
 
-void SceneManager::registerComponentFactory(const std::string &className, ComponentFactory *factory)
+Entity::FactoryMap Entity::factories;
+
+void Entity::registerComponentFactory(const std::string &className, ComponentFactory *factory)
 {
-	OAK_ASSERT(this->factories.find(className) == this->factories.end(), "Component factory already registered for class '%s'", className.c_str());
-	this->factories[className] = factory;
+	OAK_ASSERT(Entity::factories.find(className) == Entity::factories.end(), "Component factory already registered for class '%s'", className.c_str());
+	Entity::factories[className] = factory;
 	
 	Log::info("Registered component '%s'", className.c_str());
 }
 
-void SceneManager::unregisterComponentFactory(const std::string &className)
+void Entity::unregisterComponentFactory(const std::string &className)
 {
-	OAK_ASSERT(this->factories.find(className) != this->factories.end(), "Component factory never registered for class '%s'", className.c_str());
+	OAK_ASSERT(Entity::factories.find(className) != Entity::factories.end(), "Component factory never registered for class '%s'", className.c_str());
 	
-	FactoryMap::iterator it = this->factories.find(className);
-	this->factories.erase(it);
+	FactoryMap::iterator it = Entity::factories.find(className);
+	Entity::factories.erase(it);
 	
 	Log::info("Unregistered component '%s'", className.c_str());
 }
 
-Scene *SceneManager::createScene()
+Entity::Entity(Scene *scene)
+	: scene(scene)
 {
-	Scene *scene = new Scene;
-	this->scenes.push_back(scene);
+	Log::info("Entity created!");
+}
+
+Entity::~Entity()
+{
+	// destroy all attached components
+	for (unsigned int i = 0; i < this->components.size(); i++)
+	{
+		this->components[i]->detachComponent(this);
+		delete this->components[i];
+	}
 	
-	return scene;
+	Log::info("Entity destroyed!");
 }
 
-void SceneManager::destroyScene(Scene *scene)
-{
-	SceneVector::iterator it = std::find(this->scenes.begin(), this->scenes.end(), scene);
-	OAK_ASSERT(it != this->scenes.end(), "Trying to destroy an unexisting scene");
-	
-	// remove the scene in-place
-	*it = this->scenes[this->scenes.size() - 1];
-	this->scenes.pop_back();
-	
-	delete scene;
-}
-
-Entity *SceneManager::createEntity(Scene *scene)
-{
-	return scene->createEntity();
-}
-
-void SceneManager::destroyEntity(Scene *scene, Entity *entity)
-{
-	scene->destroyEntity(entity);
-}
-
-Component *SceneManager::createComponent(Entity *entity, const std::string &className)
+Component *Entity::createComponent(const std::string &className)
 {
 	FactoryMap::iterator it = this->factories.find(className);
 	
@@ -94,19 +82,27 @@ Component *SceneManager::createComponent(Entity *entity, const std::string &clas
 	}
 	
 	ComponentFactory *factory = it->second;
-	Component *component = factory->createComponent(className);
+	Component *component = factory->createComponent(this, className);
 	OAK_ASSERT(component != NULL, "Component factory could not create a type it was registered for");
 	
-	entity->attachComponent(component);
+	this->components.push_back(component);
+	component->attachComponent(this);
+	component->activateComponent();
 	
 	return component;
 }
 
-void SceneManager::destroyComponent(Entity *entity, Component *component)
+void Entity::destroyComponent(Component *component)
 {
-	entity->detachComponent(component);
+	ComponentVector::iterator it = std::find(this->components.begin(), this->components.end(), component);
+	OAK_ASSERT(it != this->components.end(), "Trying to detach an unexisting component");
 	
-	delete component;
+	(*it)->deactivateComponent();
+	(*it)->detachComponent(this);
+	
+	// remove the component in-place
+	*it = this->components[this->components.size() - 1];
+	this->components.pop_back();
 }
 
 } // oak namespace

@@ -23,42 +23,52 @@
  * 
  *****************************************************************************/
 
-#include <engine/script/bind/SceneBind.hpp>
+#include <engine/script/bind/SgBind.hpp>
 
-#include <engine/scene/Scene.hpp>
-#include <engine/scene/SceneManager.hpp>
 #include <engine/script/bind/Bind.hpp>
+
+#include <engine/sg/Entity.hpp>
+#include <engine/sg/Scene.hpp>
+#include <engine/sg/World.hpp>
+#include <engine/sg/WorldManager.hpp>
 
 namespace oak {
 
 OAK_BIND_POINTER_TYPE(Component)
 OAK_BIND_POINTER_TYPE(Entity)
 OAK_BIND_POINTER_TYPE(Scene)
+OAK_BIND_POINTER_TYPE(World)
 
-OAK_BIND_MODULE(SceneManager)
-OAK_BIND_WRET_FUNCTION0(SceneManager, createScene)
-OAK_BIND_VOID_FUNCTION1(SceneManager, destroyScene, Scene *)
-OAK_BIND_WRET_FUNCTION1(SceneManager, createEntity, Scene *)
-OAK_BIND_VOID_FUNCTION2(SceneManager, destroyEntity, Scene *, Entity *)
-OAK_BIND_WRET_FUNCTION2(SceneManager, createComponent, Entity *, std::string)
-OAK_BIND_VOID_FUNCTION2(SceneManager, destroyComponent, Entity *, Component *)
+OAK_BIND_MODULE(WorldManager)
+OAK_BIND_WRET_FUNCTION0(WorldManager, createWorld)
+OAK_BIND_VOID_FUNCTION1(WorldManager, destroyWorld, World *)
+
+OAK_BIND_WRET_METHOD0(World, createScene)
+OAK_BIND_VOID_METHOD1(World, destroyScene, Scene *)
 
 OAK_BIND_WRET_METHOD0(Scene, createEntity)
 OAK_BIND_VOID_METHOD1(Scene, destroyEntity, Entity *)
 
-void SceneBind::registerFunctions(lua_State *L, SceneManager *scene)
+OAK_BIND_WRET_METHOD1(Entity, createComponent, std::string)
+OAK_BIND_VOID_METHOD1(Entity, destroyComponent, Component *)
+
+void SgBind::registerFunctions(lua_State *L, WorldManager *sg)
 {
-	OAK_REGISTER_MODULE(L, SceneManager, scene, scene)
-	OAK_REGISTER_FUNCTION(L, SceneManager, scene, createScene)
-	OAK_REGISTER_FUNCTION(L, SceneManager, scene, destroyScene)
-	OAK_REGISTER_FUNCTION(L, SceneManager, scene, createEntity)
-	OAK_REGISTER_FUNCTION(L, SceneManager, scene, destroyEntity)
-	OAK_REGISTER_FUNCTION(L, SceneManager, scene, createComponent)
-	OAK_REGISTER_FUNCTION(L, SceneManager, scene, destroyComponent)
+	OAK_REGISTER_MODULE(L, WorldManager, sg, sg)
+	OAK_REGISTER_FUNCTION(L, WorldManager, sg, createWorld)
+	OAK_REGISTER_FUNCTION(L, WorldManager, sg, destroyWorld)
+	
+	OAK_REGISTER_CLASS(L, World)
+	OAK_REGISTER_METHOD(L, World, createScene)
+	OAK_REGISTER_METHOD(L, World, destroyScene)
 	
 	OAK_REGISTER_CLASS(L, Scene)
 	OAK_REGISTER_METHOD(L, Scene, createEntity)
 	OAK_REGISTER_METHOD(L, Scene, destroyEntity)
+	
+	OAK_REGISTER_CLASS(L, Entity)
+	OAK_REGISTER_METHOD(L, Entity, createComponent)
+	OAK_REGISTER_METHOD(L, Entity, destroyComponent)
 }
 
 } // oak namespace

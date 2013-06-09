@@ -25,23 +25,27 @@
 
 #pragma once
 
-#include <engine/scene/ComponentFactory.hpp>
+#include <engine/sg/ComponentFactory.hpp>
+#include <engine/sg/WorldListener.hpp>
 
 #include <glm/glm.hpp>
+
+#include <vector>
 
 namespace oak {
 
 class GraphicDriver;
+class GraphicWorld;
 class GraphicsScene;
-class SceneManager;
 class ScriptEngine;
 struct ShaderProgram;
 struct VertexBuffer;
+class WorldManager;
 
-class GraphicsEngine: public ComponentFactory
+class GraphicsEngine: public ComponentFactory, public WorldListener
 {
 	public:
-		GraphicsEngine();
+		GraphicsEngine(WorldManager *worldManager);
 		~GraphicsEngine();
 		
 		void renderFrame();
@@ -49,19 +53,31 @@ class GraphicsEngine: public ComponentFactory
 		glm::vec3 getBackgroundColor() const { return this->backgroundColor; }
 		void setBackgroundColor(const glm::vec3 &color) { this->backgroundColor = color; }
 		
-		void registerComponents(SceneManager *sceneManager);
-		void unregisterComponents(SceneManager *sceneManager);
-		
 		// ComponentFactory
-		virtual Component *createComponent(const std::string &className);
+		virtual Component *createComponent(Entity *entity, const std::string &className);
+		
+		// WorldListener
+		virtual void worldCreated(World *world);
+		virtual void worldDestroyed(World *world);
 		
 	private:
+		GraphicWorld *findGraphicWorld(World *world);
+		
 		GraphicDriver *driver;
 		
 		glm::vec3 backgroundColor;
 		
 		// TODO: mirror scenes here (one graphics scene per entity scene)
 		GraphicsScene *scene;
+		
+		WorldManager *worldManager;
+		
+		// Generic scene graph worlds are mirrored here for performance reasons.
+		// This allows for instance to build specialized spatial indexes (e.g octree)
+		// for graphics elements, and to avoid the traversal of the whole scene
+		// when rendering.
+		typedef std::vector<GraphicWorld *> GraphicWorldVector;
+		GraphicWorldVector graphicWorlds;
 };
 
 } // oak namespace

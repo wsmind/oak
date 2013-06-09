@@ -26,7 +26,7 @@
 #include <engine/graphics/components/DemoQuad.hpp>
 
 #include <engine/graphics/GraphicDriver.hpp>
-#include <engine/graphics/GraphicsScene.hpp>
+#include <engine/graphics/GraphicWorld.hpp>
 
 #include <engine/graphics/shaders/demo.vs.h>
 #include <engine/graphics/shaders/demo.fs.h>
@@ -35,10 +35,10 @@
 
 namespace oak {
 
-DemoQuad::DemoQuad(GraphicsScene *scene, GraphicDriver *driver)
+DemoQuad::DemoQuad(GraphicWorld *graphicWorld, GraphicDriver *driver)
 {
 	this->driver = driver;
-	this->scene = scene;
+	this->graphicWorld = graphicWorld;
 	
 	// test buffer
 	GraphicDriver::Simple2DVertex vertices[] = {
@@ -78,19 +78,19 @@ void DemoQuad::setColor(const glm::vec3 &color)
 
 void DemoQuad::activateComponent()
 {
-	GraphicsScene::Renderable renderable;
+	GraphicWorld::Renderable renderable;
 	renderable.buffer = this->vertexBuffer;
 	renderable.shader = this->shader;
-	renderable.primitiveType = GraphicsScene::TRIANGLE_STRIP;
+	renderable.primitiveType = GraphicWorld::TRIANGLE_STRIP;
 	renderable.startElement = 0;
 	renderable.elementCount = 4;
 	
-	this->scene->registerRenderable(renderable);
+	this->graphicWorld->registerRenderable(renderable);
 }
 
 void DemoQuad::deactivateComponent()
 {
-	//this->scene->unregisterXXX();
+	//this->graphicWorld->unregisterXXX();
 }
 
 } // oak namespace

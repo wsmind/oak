@@ -26,23 +26,37 @@
 #pragma once
 
 #include <vector>
+#include <map>
+#include <string>
 
 namespace oak {
 
-class Entity;
+class Component;
+class ComponentFactory;
+class Scene;
 
-class Scene
+class Entity
 {
 	public:
-		Scene();
-		~Scene();
+		static void registerComponentFactory(const std::string &className, ComponentFactory *factory);
+		static void unregisterComponentFactory(const std::string &className);
 		
-		Entity *createEntity();
-		void destroyEntity(Entity *entity);
+		Entity(Scene *scene);
+		~Entity();
+		
+		Scene *getScene() const { return this->scene; }
+		
+		Component *createComponent(const std::string &className);
+		void destroyComponent(Component *component);
 		
 	private:
-		typedef std::vector<Entity *> EntityVector;
-		EntityVector entities;
+		typedef std::map<std::string, ComponentFactory *> FactoryMap;
+		static FactoryMap factories;
+		
+		Scene *scene;
+		
+		typedef std::vector<Component *> ComponentVector;
+		ComponentVector components;
 };
 
 } // oak namespace

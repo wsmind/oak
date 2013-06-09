@@ -23,52 +23,45 @@
  * 
  *****************************************************************************/
 
-#pragma once
+#include <engine/graphics/GraphicWorld.hpp>
 
 #include <engine/graphics/GraphicDriver.hpp>
-
-#include <vector>
+#include <engine/system/Log.hpp>
 
 namespace oak {
 
-class GraphicDriver;
-
-class GraphicsScene
+GraphicWorld::GraphicWorld(World *world)
+	: world(world)
 {
-	public:
-		GraphicsScene();
-		~GraphicsScene();
+	Log::info("New graphic world !!");
+}
+
+GraphicWorld::~GraphicWorld()
+{
+	Log::info("Destroyed graphic world !!");
+}
+
+void GraphicWorld::render(GraphicDriver *driver)
+{
+	for (unsigned int i = 0; i < this->renderables.size(); i++)
+	{
+		const Renderable &renderable = this->renderables[i];
 		
-		void render(GraphicDriver *driver);
+		driver->bindShaderProgram(renderable.shader);
+		driver->bindVertexBuffer(renderable.buffer);
 		
-		enum PrimitiveType
-		{
-			TRIANGLE_STRIP
-		};
-		
-		struct Renderable
-		{
-			VertexBuffer *buffer;
-			ShaderProgram *shader;
-			PrimitiveType primitiveType;
-			unsigned int startElement;
-			unsigned int elementCount;
-			
-			Renderable()
-				: buffer(NULL)
-				, shader(NULL)
-				, primitiveType(TRIANGLE_STRIP)
-				, startElement(0)
-				, elementCount(0)
-			{}
-		};
-		
-		void registerRenderable(const Renderable &renderable);
-		//void unregisterRenderable(const Component *owner);
-		
-	private:
-		typedef std::vector<Renderable> RenderableVector;
-		RenderableVector renderables;
-};
+		if (renderable.primitiveType == TRIANGLE_STRIP)
+			driver->drawTriangleStrip(renderable.startElement, renderable.elementCount);
+	}
+}
+
+void GraphicWorld::registerRenderable(const Renderable &renderable)
+{
+	this->renderables.push_back(renderable);
+}
+
+/*void GraphicWorld::unregisterRenderable(Renderable *renderable)
+{
+}*/
 
 } // oak namespace

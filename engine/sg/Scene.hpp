@@ -25,16 +25,29 @@
 
 #pragma once
 
-struct lua_State;
+#include <vector>
 
 namespace oak {
 
-class SceneManager;
+class Entity;
+class World;
 
-class SceneBind
+class Scene
 {
 	public:
-		static void registerFunctions(lua_State *L, SceneManager *graphics);
+		Scene(World *world);
+		~Scene();
+		
+		World *getWorld() const { return this->world; }
+		
+		Entity *createEntity();
+		void destroyEntity(Entity *entity);
+		
+	private:
+		World *world;
+		
+		typedef std::vector<Entity *> EntityVector;
+		EntityVector entities;
 };
 
 } // oak namespace

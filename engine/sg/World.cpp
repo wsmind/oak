@@ -23,23 +23,48 @@
  * 
  *****************************************************************************/
 
-#pragma once
+#include <engine/sg/World.hpp>
 
-#include <string>
+#include <engine/sg/Scene.hpp>
+#include <engine/system/Log.hpp>
+
+#include <algorithm>
 
 namespace oak {
 
-class Component;
-
-/**
- * \interface ComponentFactory
- */
-class ComponentFactory
+World::World()
 {
-	public:
-		virtual ~ComponentFactory() {}
-		
-		virtual Component *createComponent(const std::string &className) = 0;
-};
+	Log::info("World created!");
+}
+
+World::~World()
+{
+	for (unsigned int i = 0; i < this->scenes.size(); i++)
+	{
+		delete this->scenes[i];
+	}
+	
+	Log::info("World destroyed!");
+}
+
+Scene *World::createScene()
+{
+	Scene *scene = new Scene(this);
+	this->scenes.push_back(scene);
+	
+	return scene;
+}
+
+void World::destroyScene(Scene *scene)
+{
+	SceneVector::iterator it = std::find(this->scenes.begin(), this->scenes.end(), scene);
+	OAK_ASSERT(it != this->scenes.end(), "Trying to destroy an unexisting scene");
+	
+	// remove the scene in-place
+	*it = this->scenes[this->scenes.size() - 1];
+	this->scenes.pop_back();
+	
+	delete scene;
+}
 
 } // oak namespace

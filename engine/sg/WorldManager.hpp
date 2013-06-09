@@ -29,20 +29,24 @@
 
 namespace oak {
 
-class Component;
+class World;
+class WorldListener;
 
-class Entity
+class WorldManager
 {
 	public:
-		Entity();
-		~Entity();
+		World *createWorld();
+		void destroyWorld(World *world);
 		
-		void attachComponent(Component *component);
-		void detachComponent(Component *component);
+		void addWorldListener(WorldListener *listener);
+		void removeWorldListener(WorldListener *listener);
 		
 	private:
-		typedef std::vector<Component *> ComponentVector;
-		ComponentVector components;
+		typedef std::vector<World *> WorldVector;
+		WorldVector worlds;
+		
+		typedef std::vector<WorldListener *> WorldListenerVector;
+		WorldListenerVector listeners;
 };
 
 } // oak namespace

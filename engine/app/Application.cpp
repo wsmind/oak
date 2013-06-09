@@ -28,8 +28,8 @@
 #include <glm/glm.hpp>
 
 #include <engine/graphics/GraphicsEngine.hpp>
-#include <engine/scene/SceneManager.hpp>
 #include <engine/script/ScriptEngine.hpp>
+#include <engine/sg/WorldManager.hpp>
 #include <engine/system/Log.hpp>
 
 namespace oak {
@@ -38,17 +38,16 @@ void Application::initialize(const std::string &baseFolder)
 {
 	Log::info("Application::initialize");
 	
-	this->sceneManager = new SceneManager;
+	this->worldManager = new WorldManager;
 	
-	this->graphics = new GraphicsEngine;
-	this->graphics->registerComponents(this->sceneManager);
+	this->graphics = new GraphicsEngine(this->worldManager);
 	
 	this->script = new ScriptEngine;
 	this->script->initialize();
 	
 	// script bindings
-	this->script->registerScene(this->sceneManager);
 	this->script->registerGraphics(this->graphics);
+	this->script->registerSg(this->worldManager);
 	
 	this->script->loadFile(baseFolder + "/main.lua");
 	
@@ -66,10 +65,9 @@ void Application::shutdown()
 	this->script->shutdown();
 	delete this->script;
 	
-	this->graphics->unregisterComponents(this->sceneManager);
 	delete this->graphics;
 	
-	delete this->sceneManager;
+	delete this->worldManager;
 }
 
 void Application::update(float dt)

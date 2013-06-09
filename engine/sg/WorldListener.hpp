@@ -27,16 +27,15 @@
 
 namespace oak {
 
-/**
- * \interface Component
- */
-class Component
+class World;
+
+class WorldListener
 {
 	public:
-		virtual ~Component() {}
+		virtual ~WorldListener() {}
 		
-		virtual void activateComponent() {};
-		virtual void deactivateComponent() {};
+		virtual void worldCreated(World *world) {}
+		virtual void worldDestroyed(World *world) {}
 };
 
 } // oak namespace

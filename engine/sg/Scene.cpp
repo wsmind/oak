@@ -23,16 +23,17 @@
  * 
  *****************************************************************************/
 
-#include <engine/scene/Scene.hpp>
+#include <engine/sg/Scene.hpp>
 
-#include <engine/scene/Entity.hpp>
+#include <engine/sg/Entity.hpp>
 #include <engine/system/Log.hpp>
 
 #include <algorithm>
 
 namespace oak {
 
-Scene::Scene()
+Scene::Scene(World *world)
+	: world(world)
 {
 	Log::info("Scene created!");
 }
@@ -49,7 +50,7 @@ Scene::~Scene()
 
 Entity *Scene::createEntity()
 {
-	Entity *entity = new Entity;
+	Entity *entity = new Entity(this);
 	this->entities.push_back(entity);
 	
 	return entity;

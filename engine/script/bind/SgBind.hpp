@@ -23,41 +23,18 @@
  * 
  *****************************************************************************/
 
-#include <engine/graphics/GraphicsScene.hpp>
+#pragma once
 
-#include <engine/graphics/GraphicDriver.hpp>
+struct lua_State;
 
 namespace oak {
 
-GraphicsScene::GraphicsScene()
-{
-}
+class WorldManager;
 
-GraphicsScene::~GraphicsScene()
+class SgBind
 {
-}
-
-void GraphicsScene::render(GraphicDriver *driver)
-{
-	for (unsigned int i = 0; i < this->renderables.size(); i++)
-	{
-		const Renderable &renderable = this->renderables[i];
-		
-		driver->bindShaderProgram(renderable.shader);
-		driver->bindVertexBuffer(renderable.buffer);
-		
-		if (renderable.primitiveType == TRIANGLE_STRIP)
-			driver->drawTriangleStrip(renderable.startElement, renderable.elementCount);
-	}
-}
-
-void GraphicsScene::registerRenderable(const Renderable &renderable)
-{
-	this->renderables.push_back(renderable);
-}
-
-/*void GraphicsScene::unregisterRenderable(Renderable *renderable)
-{
-}*/
+	public:
+		static void registerFunctions(lua_State *L, WorldManager *sg);
+};
 
 } // oak namespace

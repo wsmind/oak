@@ -23,41 +23,58 @@
  * 
  *****************************************************************************/
 
-#include <engine/scene/Entity.hpp>
+#pragma once
 
-#include <engine/scene/Component.hpp>
-#include <engine/system/Log.hpp>
+#include <engine/graphics/GraphicDriver.hpp>
 
-#include <algorithm>
+#include <vector>
 
 namespace oak {
 
-Entity::Entity()
-{
-	Log::info("Entity created!");
-}
+class GraphicDriver;
+class World;
 
-Entity::~Entity()
+class GraphicWorld
 {
-	Log::info("Entity destroyed!");
-}
-
-void Entity::attachComponent(Component *component)
-{
-	this->components.push_back(component);
-	component->activateComponent();
-}
-
-void Entity::detachComponent(Component *component)
-{
-	ComponentVector::iterator it = std::find(this->components.begin(), this->components.end(), component);
-	OAK_ASSERT(it != this->components.end(), "Trying to detach an unexisting component");
-	
-	(*it)->deactivateComponent();
-	
-	// remove the scene in-place
-	*it = this->components[this->components.size() - 1];
-	this->components.pop_back();
-}
+	public:
+		GraphicWorld(World *world);
+		~GraphicWorld();
+		
+		World *getWorld() const { return this->world; }
+		
+		void render(GraphicDriver *driver);
+		
+		enum PrimitiveType
+		{
+			TRIANGLE_STRIP
+		};
+		
+		struct Renderable
+		{
+			VertexBuffer *buffer;
+			ShaderProgram *shader;
+			PrimitiveType primitiveType;
+			unsigned int startElement;
+			unsigned int elementCount;
+			
+			Renderable()
+				: buffer(NULL)
+				, shader(NULL)
+				, primitiveType(TRIANGLE_STRIP)
+				, startElement(0)
+				, elementCount(0)
+			{}
+		};
+		
+		void registerRenderable(const Renderable &renderable);
+		//void unregisterRenderable(const Component *owner);
+		
+	private:
+		// the generic world this graphic world is bound to
+		World *world;
+		
+		typedef std::vector<Renderable> RenderableVector;
+		RenderableVector renderables;
+};
 
 } // oak namespace

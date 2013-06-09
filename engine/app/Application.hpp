@@ -30,8 +30,8 @@
 namespace oak {
 
 class GraphicsEngine;
-class SceneManager;
 class ScriptEngine;
+class WorldManager;
 
 class Application
 {
@@ -42,7 +42,7 @@ class Application
 		void update(float dt);
 		
 	private:
-		SceneManager *sceneManager;
+		WorldManager *worldManager;
 		GraphicsEngine *graphics;
 		ScriptEngine *script;
 };

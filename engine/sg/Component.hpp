@@ -25,37 +25,23 @@
 
 #pragma once
 
-#include <engine/sg/Component.hpp>
-
-#include <glm/glm.hpp>
-
 namespace oak {
 
-class GraphicDriver;
-class GraphicWorld;
-struct ShaderProgram;
-struct VertexBuffer;
+class Entity;
 
-class DemoQuad: public Component
+/**
+ * \interface Component
+ */
+class Component
 {
 	public:
-		DemoQuad(GraphicWorld *graphicWorld, GraphicDriver *driver);
-		virtual ~DemoQuad();
+		virtual ~Component() {}
 		
-		glm::vec3 getColor() const;
-		void setColor(const glm::vec3 &color);
+		virtual void attachComponent(Entity *entity) {};
+		virtual void detachComponent(Entity *entity) {};
 		
-		// Component
-		virtual void activateComponent();
-		virtual void deactivateComponent();
-		
-	private:
-		GraphicDriver *driver;
-		GraphicWorld *graphicWorld;
-		VertexBuffer *vertexBuffer;
-		ShaderProgram *shader;
-		
-		glm::vec3 color;
+		virtual void activateComponent() {};
+		virtual void deactivateComponent() {};
 };
 
 } // oak namespace

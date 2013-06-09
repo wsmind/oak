@@ -32,8 +32,8 @@ struct lua_State;
 namespace oak {
 
 class GraphicsEngine;
-class SceneManager;
 class SystemWrapper;
+class WorldManager;
 
 class ScriptEngine
 {
@@ -53,8 +53,8 @@ class ScriptEngine
 		void endCall();
 		
 		// modules to bind
-		void registerScene(SceneManager *scene);
 		void registerGraphics(GraphicsEngine *graphics);
+		void registerSg(WorldManager *sg);
 		
 	private:
 		static int luaErrorHandler(lua_State *L);

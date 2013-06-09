@@ -24,29 +24,40 @@
  *****************************************************************************/
 
 #include <engine/graphics/GraphicsEngine.hpp>
-#include <engine/graphics/GraphicsScene.hpp>
 #include <engine/graphics/GraphicDriver.hpp>
+#include <engine/graphics/GraphicWorld.hpp>
 #include <engine/graphics/components/DemoQuad.hpp>
-#include <engine/scene/SceneManager.hpp>
 
-// #include <engine/graphics/shaders/test.vs.h>
-// #include <engine/graphics/shaders/test.fs.h>
+#include <engine/sg/Entity.hpp>
+#include <engine/sg/Scene.hpp>
+#include <engine/sg/World.hpp>
+#include <engine/sg/WorldManager.hpp>
+
+#include <engine/system/Log.hpp>
 
 namespace oak {
 
-GraphicsEngine::GraphicsEngine()
+GraphicsEngine::GraphicsEngine(WorldManager *worldManager)
 {
 	this->driver = new GraphicDriver;
 	
 	// default color
 	this->backgroundColor = glm::vec3(0.4f, 0.6f, 0.7f);
 	
-	this->scene = new GraphicsScene;
+	this->worldManager = worldManager;
+	this->worldManager->addWorldListener(this);
+	
+	Entity::registerComponentFactory("DemoQuad", this);
 }
 
 GraphicsEngine::~GraphicsEngine()
 {
-	delete this->scene;
+	OAK_ASSERT(this->graphicWorlds.size() == 0, "Some graphic worlds were not destroyed properly");
+	
+	Entity::unregisterComponentFactory("DemoQuad");
+	
+	this->worldManager->removeWorldListener(this);
+	
 	delete this->driver;
 }
 
@@ -56,22 +67,64 @@ void GraphicsEngine::renderFrame()
 	this->driver->setClearDepth(1.0f);
 	this->driver->clear(true, true);
 	
-	this->scene->render(this->driver);
+	// TODO: add viewports to choose how to render each world
+	// currently: render everything
+	for (unsigned int i = 0; i < this->graphicWorlds.size(); i++)
+	{
+		this->graphicWorlds[i]->render(this->driver);
+	}
 }
 
-void GraphicsEngine::registerComponents(SceneManager *sceneManager)
+Component *GraphicsEngine::createComponent(Entity *entity, const std::string &className)
 {
-	sceneManager->registerComponentFactory("DemoQuad", this);
+	// find the world in which the entity lives
+	World *world = entity->getScene()->getWorld();
+	
+	// find the associated graphic world
+	GraphicWorld *graphicWorld = this->findGraphicWorld(world);
+	OAK_ASSERT(graphicWorld != NULL, "Creating a graphic component from an unregistered world");
+	
+	if (className == "DemoQuad") return new DemoQuad(graphicWorld, this->driver);
+	
+	return NULL;
 }
 
-void GraphicsEngine::unregisterComponents(SceneManager *sceneManager)
+void GraphicsEngine::worldCreated(World *world)
 {
-	sceneManager->unregisterComponentFactory("DemoQuad");
+	GraphicWorld *graphicWorld = new GraphicWorld(world);
+	this->graphicWorlds.push_back(graphicWorld);
 }
 
-Component *GraphicsEngine::createComponent(const std::string &className)
+void GraphicsEngine::worldDestroyed(World *world)
 {
-	if (className == "DemoQuad") return new DemoQuad(this->scene, this->driver);
+	// find the graphics world bound to the given sg world
+	for (unsigned int i = 0; i < this->graphicWorlds.size(); i++)
+	{
+		if (this->graphicWorlds[i]->getWorld() == world)
+		{
+			// destroy the graphic world
+			delete this->graphicWorlds[i];
+			
+			// then remove it in-place
+			this->graphicWorlds[i] = this->graphicWorlds[this->graphicWorlds.size() - 1];
+			this->graphicWorlds.pop_back();
+			
+			return;
+		}
+	}
+	
+	OAK_ASSERT(false, "Unregistering a world that was never registered");
+}
+
+GraphicWorld *GraphicsEngine::findGraphicWorld(World *world)
+{
+	for (unsigned int i = 0; i < this->graphicWorlds.size(); i++)
+	{
+		if (this->graphicWorlds[i]->getWorld() == world)
+		{
+			return this->graphicWorlds[i];
+		}
+	}
 	
 	return NULL;
 }

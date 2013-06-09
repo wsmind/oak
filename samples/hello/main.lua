@@ -15,17 +15,16 @@ end)]]--
 --require("yop require test")
 
 function initialize()
+	oak.system.logInfo("=== SCRIPT START ===")
+	
 	oak.graphics.setBackgroundColor(0.0, 0.0, 0.0)
-	oak.system.logInfo("yeeeahhaaa")
-	oak.system.logWarning("oh la la")
-	oak.system.logError("ouch")
 	
-	scene1 = oak.scene.createScene()
-	scene2 = oak.scene.createScene()
+	world = oak.sg.createWorld()
+	scene1 = World.createScene(world)
+	scene2 = World.createScene(world)
 	
-	--entity = oak.scene.createEntity(scene1)
 	entity = Scene.createEntity(scene1)
-	quad = oak.scene.createComponent(entity, "DemoQuad")
+	quad = Entity.createComponent(entity, "DemoQuad")
 end
 
 local t = 0
@@ -40,7 +39,8 @@ function update(dt)
 end
 
 function shutdown()
-	oak.scene.destroyScene(scene1)
-	oak.scene.destroyScene(scene2)
-	oak.system.logInfo("shutting down")
+	-- will destroy every referenced scene and entity recursively
+	oak.sg.destroyWorld(world)
+	
+	oak.system.logInfo("=== SCRIPT END ===")
 end
