@@ -47,8 +47,6 @@ void main_loop()
 
 int main()
 {
-	Log::info("plop from glfw platforms!");
-	
 	glfwInit();
 	
 	if (glfwOpenWindow(1280, 800, 8, 8, 8, 8, 24, 8, GLFW_WINDOW) == GL_FALSE)
