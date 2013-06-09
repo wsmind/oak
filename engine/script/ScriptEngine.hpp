@@ -38,7 +38,7 @@ class WorldManager;
 class ScriptEngine
 {
 	public:
-		ScriptEngine();
+		ScriptEngine(const std::string &baseFolder);
 		~ScriptEngine();
 		
 		void initialize();
@@ -58,9 +58,14 @@ class ScriptEngine
 		
 	private:
 		static int luaErrorHandler(lua_State *L);
+		static int luaLoadFile(lua_State *L);
+		static int luaDoFile(lua_State *L);
+		static int luaPackageSearcher(lua_State *L);
 		
 		lua_State *L;
 		int errorHandlerStackIndex;
+		
+		std::string baseFolder;
 		
 		// function call state
 		bool callingFunction;

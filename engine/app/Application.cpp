@@ -42,14 +42,14 @@ void Application::initialize(const std::string &baseFolder)
 	
 	this->graphics = new GraphicsEngine(this->worldManager);
 	
-	this->script = new ScriptEngine;
+	this->script = new ScriptEngine(baseFolder);
 	this->script->initialize();
 	
 	// script bindings
 	this->script->registerGraphics(this->graphics);
 	this->script->registerSg(this->worldManager);
 	
-	this->script->loadFile(baseFolder + "/main.lua");
+	this->script->loadFile("main.lua");
 	
 	this->script->startCall("initialize");
 	this->script->endCall();
