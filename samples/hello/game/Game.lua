@@ -17,6 +17,8 @@ function Game:start()
 	
 	local entity = oak.Scene.createEntity(scene1)
 	self.quad = oak.Entity.createComponent(entity, "DemoQuad")
+	
+	self.view = oak.graphics.createView(self.world)
 end
 
 function Game:update(dt)
@@ -27,6 +29,8 @@ function Game:update(dt)
 end
 
 function Game:stop()
+	oak.graphics.destroyView(self.view)
+	
 	-- will destroy every referenced scene and entity recursively
 	oak.sg.destroyWorld(self.world)
 end

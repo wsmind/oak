@@ -26,6 +26,7 @@
 #include <engine/graphics/GraphicsEngine.hpp>
 #include <engine/graphics/GraphicDriver.hpp>
 #include <engine/graphics/GraphicWorld.hpp>
+#include <engine/graphics/View.hpp>
 #include <engine/graphics/components/DemoQuad.hpp>
 
 #include <engine/sg/Entity.hpp>
@@ -34,6 +35,8 @@
 #include <engine/sg/WorldManager.hpp>
 
 #include <engine/system/Log.hpp>
+
+#include <algorithm>
 
 namespace oak {
 
@@ -67,12 +70,32 @@ void GraphicsEngine::renderFrame()
 	this->driver->setClearDepth(1.0f);
 	this->driver->clear(true, true);
 	
-	// TODO: add viewports to choose how to render each world
-	// currently: render everything
-	for (unsigned int i = 0; i < this->graphicWorlds.size(); i++)
+	// TODO: sort views
+	
+	// render each view sequentially
+	for (unsigned int i = 0; i < this->views.size(); i++)
 	{
-		this->graphicWorlds[i]->render(this->driver);
+		this->views[i]->render(this->driver);
 	}
+}
+
+View *GraphicsEngine::createView(World *world)
+{
+	GraphicWorld *graphicWorld = findGraphicWorld(world);
+	View *view = new View(graphicWorld);
+	
+	this->views.push_back(view);
+	
+	return view;
+}
+
+void GraphicsEngine::destroyView(View *view)
+{
+	ViewVector::iterator it = std::find(this->views.begin(), this->views.end(), view);
+	OAK_ASSERT(it != this->views.end(), "Trying to destroy an unexisting view");
+	
+	delete view;
+	this->views.erase(it);
 }
 
 Component *GraphicsEngine::createComponent(Entity *entity, const std::string &className)

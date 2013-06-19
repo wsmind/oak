@@ -23,38 +23,20 @@
  * 
  *****************************************************************************/
 
-#include <engine/script/bind/GraphicsBind.hpp>
+#include <engine/graphics/View.hpp>
 
-#include <engine/graphics/GraphicsEngine.hpp>
-#include <engine/graphics/components/DemoQuad.hpp>
-#include <engine/script/bind/Bind.hpp>
+#include <engine/graphics/GraphicWorld.hpp>
 
 namespace oak {
 
-OAK_BIND_POINTER_TYPE(DemoQuad)
-OAK_BIND_POINTER_TYPE(View)
-OAK_BIND_POINTER_TYPE(World)
-
-OAK_BIND_MODULE(GraphicsEngine)
-OAK_BIND_WRET_FUNCTION0(GraphicsEngine, getBackgroundColor)
-OAK_BIND_VOID_FUNCTION1(GraphicsEngine, setBackgroundColor, glm::vec3)
-OAK_BIND_WRET_FUNCTION1(GraphicsEngine, createView, World *)
-OAK_BIND_VOID_FUNCTION1(GraphicsEngine, destroyView, View *)
-
-OAK_BIND_WRET_METHOD0(DemoQuad, getColor)
-OAK_BIND_VOID_METHOD1(DemoQuad, setColor, glm::vec3)
-
-void GraphicsBind::registerFunctions(lua_State *L, GraphicsEngine *graphics)
+View::View(GraphicWorld *graphicWorld)
+	: graphicWorld(graphicWorld)
 {
-	OAK_REGISTER_MODULE(L, GraphicsEngine, graphics, graphics)
-	OAK_REGISTER_FUNCTION(L, GraphicsEngine, graphics, getBackgroundColor)
-	OAK_REGISTER_FUNCTION(L, GraphicsEngine, graphics, setBackgroundColor)
-	OAK_REGISTER_FUNCTION(L, GraphicsEngine, graphics, createView)
-	OAK_REGISTER_FUNCTION(L, GraphicsEngine, graphics, destroyView)
-	
-	OAK_REGISTER_CLASS(L, DemoQuad)
-	OAK_REGISTER_METHOD(L, DemoQuad, getColor)
-	OAK_REGISTER_METHOD(L, DemoQuad, setColor)
+}
+
+void View::render(GraphicDriver *driver)
+{
+	this->graphicWorld->render(driver);
 }
 
 } // oak namespace

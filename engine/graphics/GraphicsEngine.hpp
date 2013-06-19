@@ -39,6 +39,7 @@ class GraphicWorld;
 class ScriptEngine;
 struct ShaderProgram;
 struct VertexBuffer;
+class View;
 class WorldManager;
 
 class GraphicsEngine: public ComponentFactory, public WorldListener
@@ -51,6 +52,9 @@ class GraphicsEngine: public ComponentFactory, public WorldListener
 		
 		glm::vec3 getBackgroundColor() const { return this->backgroundColor; }
 		void setBackgroundColor(const glm::vec3 &color) { this->backgroundColor = color; }
+		
+		View *createView(World *world);
+		void destroyView(View *view);
 		
 		// ComponentFactory
 		virtual Component *createComponent(Entity *entity, const std::string &className);
@@ -69,11 +73,14 @@ class GraphicsEngine: public ComponentFactory, public WorldListener
 		WorldManager *worldManager;
 		
 		// Generic scene graph worlds are mirrored here for performance reasons.
-		// This allows for instance to build specialized spatial indexes (e.g octree)
+		// This allows for instance to build specialized spatial indexes (e.g octrees)
 		// for graphics elements, and to avoid the traversal of the whole scene
 		// when rendering.
 		typedef std::vector<GraphicWorld *> GraphicWorldVector;
 		GraphicWorldVector graphicWorlds;
+		
+		typedef std::vector<View *> ViewVector;
+		ViewVector views;
 };
 
 } // oak namespace
