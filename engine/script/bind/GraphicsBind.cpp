@@ -26,6 +26,7 @@
 #include <engine/script/bind/GraphicsBind.hpp>
 
 #include <engine/graphics/GraphicsEngine.hpp>
+#include <engine/graphics/View.hpp>
 #include <engine/graphics/components/DemoQuad.hpp>
 #include <engine/script/bind/Bind.hpp>
 
@@ -44,6 +45,11 @@ OAK_BIND_VOID_FUNCTION1(GraphicsEngine, destroyView, View *)
 OAK_BIND_WRET_METHOD0(DemoQuad, getColor)
 OAK_BIND_VOID_METHOD1(DemoQuad, setColor, glm::vec3)
 
+OAK_BIND_WRET_METHOD0(View, getPriority)
+OAK_BIND_VOID_METHOD1(View, setPriority, int)
+OAK_BIND_WRET_METHOD0(View, isEnabled)
+OAK_BIND_VOID_METHOD1(View, setEnabled, bool)
+
 void GraphicsBind::registerFunctions(lua_State *L, GraphicsEngine *graphics)
 {
 	OAK_REGISTER_MODULE(L, GraphicsEngine, graphics, graphics)
@@ -55,6 +61,12 @@ void GraphicsBind::registerFunctions(lua_State *L, GraphicsEngine *graphics)
 	OAK_REGISTER_CLASS(L, DemoQuad)
 	OAK_REGISTER_METHOD(L, DemoQuad, getColor)
 	OAK_REGISTER_METHOD(L, DemoQuad, setColor)
+	
+	OAK_REGISTER_CLASS(L, View)
+	OAK_REGISTER_METHOD(L, View, getPriority)
+	OAK_REGISTER_METHOD(L, View, setPriority)
+	OAK_REGISTER_METHOD(L, View, isEnabled)
+	OAK_REGISTER_METHOD(L, View, setEnabled)
 }
 
 } // oak namespace

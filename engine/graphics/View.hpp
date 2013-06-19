@@ -37,8 +37,17 @@ class View
 		
 		void render(GraphicDriver *driver);
 		
+		// views with lower priority gets rendered first
+		int getPriority() const { return this->priority; }
+		void setPriority(int priority) { this->priority = priority; }
+		
+		bool isEnabled() const { return this->enabled; }
+		void setEnabled(bool enabled) { this->enabled = enabled; }
+		
 	private:
 		GraphicWorld *graphicWorld;
+		int priority;
+		bool enabled;
 };
 
 } // oak namespace

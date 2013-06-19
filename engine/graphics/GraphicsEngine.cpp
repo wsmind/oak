@@ -40,6 +40,19 @@
 
 namespace oak {
 
+namespace {
+
+// sorting functor
+struct ViewPriorityComparator
+{
+	bool operator() (View *view1, View *view2)
+	{
+		return view1->getPriority() < view2->getPriority();
+	}
+};
+
+} // anonymous namespace
+
 GraphicsEngine::GraphicsEngine(WorldManager *worldManager)
 {
 	this->driver = new GraphicDriver;
@@ -70,7 +83,9 @@ void GraphicsEngine::renderFrame()
 	this->driver->setClearDepth(1.0f);
 	this->driver->clear(true, true);
 	
-	// TODO: sort views
+	// order views by priority
+	// lower priority gets rendered first (thus "under" the next ones)
+	std::sort(this->views.begin(), this->views.end(), ViewPriorityComparator());
 	
 	// render each view sequentially
 	for (unsigned int i = 0; i < this->views.size(); i++)

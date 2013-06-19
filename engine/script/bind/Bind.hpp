@@ -43,6 +43,24 @@ inline ArgType popArgument(lua_State *L)
 }
 
 template <>
+inline int popArgument(lua_State *L)
+{
+	int value = lua_tointeger(L, -1);
+	lua_pop(L, 1);
+	
+	return value;
+}
+
+template <>
+inline bool popArgument(lua_State *L)
+{
+	bool value = (lua_tointeger(L, -1) != 0);
+	lua_pop(L, 1);
+	
+	return value;
+}
+
+template <>
 inline float popArgument(lua_State *L)
 {
 	double value = lua_tonumber(L, -1);
@@ -69,6 +87,20 @@ inline std::string popArgument(lua_State *L)
 	lua_pop(L, 1);
 	
 	return std::string(str);
+}
+
+inline int pushReturnValue(lua_State *L, int value)
+{
+	lua_pushinteger(L, value);
+	
+	return 1;
+}
+
+inline int pushReturnValue(lua_State *L, bool value)
+{
+	lua_pushboolean(L, (int)value);
+	
+	return 1;
 }
 
 inline int pushReturnValue(lua_State *L, float value)

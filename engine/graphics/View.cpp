@@ -31,12 +31,15 @@ namespace oak {
 
 View::View(GraphicWorld *graphicWorld)
 	: graphicWorld(graphicWorld)
+	, priority(0)
+	, enabled(true)
 {
 }
 
 void View::render(GraphicDriver *driver)
 {
-	this->graphicWorld->render(driver);
+	if (this->enabled)
+		this->graphicWorld->render(driver);
 }
 
 } // oak namespace
