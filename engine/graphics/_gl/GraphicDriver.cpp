@@ -203,7 +203,7 @@ void GraphicDriver::setShaderConstant(const std::string &name, float value)
 	GL_CHECK(glUniform1f(location, value));
 }
 
-void GraphicDriver::setShaderConstant(const std::string &name, glm::vec2 value)
+void GraphicDriver::setShaderConstant(const std::string &name, const glm::vec2 &value)
 {
 	OAK_ASSERT(this->state->currentShader != NULL, "No shader is bound, cannot set shader constant");
 	
@@ -211,12 +211,20 @@ void GraphicDriver::setShaderConstant(const std::string &name, glm::vec2 value)
 	GL_CHECK(glUniform2f(location, value.x, value.y));
 }
 
-void GraphicDriver::setShaderConstant(const std::string &name, glm::vec3 value)
+void GraphicDriver::setShaderConstant(const std::string &name, const glm::vec3 &value)
 {
 	OAK_ASSERT(this->state->currentShader != NULL, "No shader is bound, cannot set shader constant");
 	
 	GLint location = GL_CHECK(glGetUniformLocation(this->state->currentShader->programName, name.c_str()));
 	GL_CHECK(glUniform3f(location, value.x, value.y, value.z));
+}
+
+void GraphicDriver::setShaderConstant(const std::string &name, const glm::mat4 &value)
+{
+	OAK_ASSERT(this->state->currentShader != NULL, "No shader is bound, cannot set shader constant");
+	
+	GLint location = GL_CHECK(glGetUniformLocation(this->state->currentShader->programName, name.c_str()));
+	GL_CHECK(glUniformMatrix4fv(location, 1, GL_FALSE, &value[0].x));
 }
 
 void GraphicDriver::drawTriangleStrip(unsigned int startElement, unsigned int elementCount)

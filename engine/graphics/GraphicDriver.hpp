@@ -73,8 +73,9 @@ class GraphicDriver
 		void bindShaderProgram(ShaderProgram *program);
 		
 		void setShaderConstant(const std::string &name, float value);
-		void setShaderConstant(const std::string &name, glm::vec2 value);
-		void setShaderConstant(const std::string &name, glm::vec3 value);
+		void setShaderConstant(const std::string &name, const glm::vec2 &value);
+		void setShaderConstant(const std::string &name, const glm::vec3 &value);
+		void setShaderConstant(const std::string &name, const glm::mat4 &value);
 		
 		void drawTriangleStrip(unsigned int startElement, unsigned int elementCount);
 		
