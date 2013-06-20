@@ -25,6 +25,9 @@
 
 #pragma once
 
+#include <glm/glm.hpp>
+#include <glm/ext.hpp>
+
 #include <vector>
 #include <map>
 #include <string>
@@ -49,7 +52,21 @@ class Entity
 		Component *createComponent(const std::string &className);
 		void destroyComponent(Component *component);
 		
+		const glm::vec3 &getLocalPosition() const { return this->localPosition; }
+		const glm::quat &getLocalOrientation() const { return this->localOrientation; }
+		const glm::vec3 &getLocalScale() const { return this->localScale; }
+		
+		void setLocalPosition(const glm::vec3 &localPosition) { this->localPosition = localPosition; this->updateLocalTransform(); }
+		void setLocalOrientation(const glm::quat &localOrientation) { this->localOrientation = localOrientation; this->updateLocalTransform(); }
+		void setLocalScale(const glm::vec3 &localScale) { this->localScale = localScale; this->updateLocalTransform(); }
+		
+		const glm::mat4 &getLocalTransform() const { return this->localTransform; }
+		//const glm::mat4 &getWorldTransform() const { return this->worldTransform; }
+		
 	private:
+		// compute local transform from separate position, orientation and scale
+		void updateLocalTransform();
+		
 		typedef std::map<std::string, ComponentFactory *> FactoryMap;
 		static FactoryMap factories;
 		
@@ -57,6 +74,15 @@ class Entity
 		
 		typedef std::vector<Component *> ComponentVector;
 		ComponentVector components;
+		
+		// local transform
+		glm::vec3 localPosition;
+		glm::quat localOrientation;
+		glm::vec3 localScale;
+		glm::mat4 localTransform;
+		
+		// world transform (hierarchy applied)
+		//glm::mat4 worldTransform;
 };
 
 } // oak namespace

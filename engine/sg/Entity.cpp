@@ -55,8 +55,13 @@ void Entity::unregisterComponentFactory(const std::string &className)
 
 Entity::Entity(Scene *scene)
 	: scene(scene)
+	, localPosition(0.0f, 0.0f, 0.0f)
+	, localOrientation(1.0f, 0.0f, 0.0f, 0.0f)
+	, localScale(1.0f, 1.0f, 1.0f)
 {
 	Log::info("Entity created!");
+	
+	this->updateLocalTransform();
 }
 
 Entity::~Entity()
@@ -103,6 +108,15 @@ void Entity::destroyComponent(Component *component)
 	// remove the component in-place
 	*it = this->components[this->components.size() - 1];
 	this->components.pop_back();
+}
+
+void Entity::updateLocalTransform()
+{
+	glm::mat4 translation = glm::translate(this->localPosition.x, this->localPosition.y, this->localPosition.z);
+	glm::mat4 rotation = glm::toMat4(this->localOrientation);
+	glm::mat4 scale = glm::scale(this->localScale.x, this->localScale.y, this->localScale.z);
+	
+	this->localTransform = translation * rotation * scale;
 }
 
 } // oak namespace
