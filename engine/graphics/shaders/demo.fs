@@ -91,7 +91,7 @@ void main(void)
 {
 	vec3 pos = vec3(0.0, 12.0, 0.0);
 	vec2 uv = vertexPosition;
-	vec3 dir = normalize(vec3(uv.x * 16.0 / 9.0, uv.y, 1.0));
+	vec3 dir = normalize(vec3(uv.x, uv.y, 1.0));
 	
 	vec3 skyColor = mix(vec3(0.4, 0.5, 0.6), vec3(0.7, 0.9, 1.0), uv.y * 0.5 + 0.5);
 	spherePos = vec3(sin(time) * 10.0, 0.0, 25.0);

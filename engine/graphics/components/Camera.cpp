@@ -23,37 +23,24 @@
  * 
  *****************************************************************************/
 
-#pragma once
+#include <engine/graphics/components/Camera.hpp>
+
+#include <glm/ext.hpp>
 
 namespace oak {
 
-class Camera;
-class GraphicDriver;
-class GraphicWorld;
-
-class View
+Camera::Camera()
+	: fov(3.0f)
+	, aspect(16.0f / 9.0f)
+	, nearPlane(0.1f)
+	, farPlane(1000.0f)
 {
-	public:
-		View(GraphicWorld *graphicWorld);
-		
-		void render(GraphicDriver *driver);
-		
-		// views with lower priority gets rendered first
-		int getPriority() const { return this->priority; }
-		void setPriority(int priority) { this->priority = priority; }
-		
-		bool isEnabled() const { return this->enabled; }
-		void setEnabled(bool enabled) { this->enabled = enabled; }
-		
-		Camera *getCamera() const { return this->camera; }
-		void setCamera(Camera *camera) { this->camera = camera; }
-		
-	private:
-		GraphicWorld *graphicWorld;
-		int priority;
-		bool enabled;
-		
-		Camera *camera;
-};
+	this->updateProjection();
+}
+
+void Camera::updateProjection()
+{
+	this->projectionMatrix = glm::perspective(this->fov, this->aspect, this->nearPlane, this->farPlane);
+}
 
 } // oak namespace

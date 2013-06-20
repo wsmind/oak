@@ -33,13 +33,14 @@ View::View(GraphicWorld *graphicWorld)
 	: graphicWorld(graphicWorld)
 	, priority(0)
 	, enabled(true)
+	, camera(NULL)
 {
 }
 
 void View::render(GraphicDriver *driver)
 {
-	if (this->enabled)
-		this->graphicWorld->render(driver);
+	if (this->enabled && this->camera)
+		this->graphicWorld->render(driver, this->camera);
 }
 
 } // oak namespace

@@ -31,6 +31,7 @@
 
 namespace oak {
 
+class Camera;
 class GraphicDriver;
 class World;
 
@@ -42,7 +43,7 @@ class GraphicWorld
 		
 		World *getWorld() const { return this->world; }
 		
-		void render(GraphicDriver *driver);
+		void render(GraphicDriver *driver, Camera *camera);
 		
 		enum PrimitiveType
 		{

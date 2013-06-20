@@ -26,7 +26,13 @@
 #include <engine/graphics/GraphicWorld.hpp>
 
 #include <engine/graphics/GraphicDriver.hpp>
+#include <engine/graphics/components/Camera.hpp>
+
+#include <engine/sg/Entity.hpp>
+
 #include <engine/system/Log.hpp>
+
+#include <glm/ext.hpp>
 
 namespace oak {
 
@@ -41,14 +47,20 @@ GraphicWorld::~GraphicWorld()
 	Log::info("Destroyed graphic world !!");
 }
 
-void GraphicWorld::render(GraphicDriver *driver)
+void GraphicWorld::render(GraphicDriver *driver, Camera *camera)
 {
+	const glm::mat4 &cameraTransform = camera->getEntity()->getLocalTransform();
+	glm::mat4 viewMatrix = glm::affineInverse(cameraTransform);
+	
 	for (unsigned int i = 0; i < this->renderables.size(); i++)
 	{
 		const Renderable &renderable = this->renderables[i];
 		
 		driver->bindShaderProgram(renderable.shader);
 		driver->bindVertexBuffer(renderable.buffer);
+		
+		driver->setShaderConstant("viewMatrix", viewMatrix);
+		driver->setShaderConstant("projectionMatrix", camera->getProjectionMatrix());
 		
 		if (renderable.primitiveType == TRIANGLE_STRIP)
 			driver->drawTriangleStrip(renderable.startElement, renderable.elementCount);

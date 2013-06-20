@@ -25,35 +25,49 @@
 
 #pragma once
 
+#include <engine/sg/Component.hpp>
+
+#include <glm/glm.hpp>
+
 namespace oak {
 
-class Camera;
-class GraphicDriver;
-class GraphicWorld;
+class Entity;
 
-class View
+class Camera: public Component
 {
 	public:
-		View(GraphicWorld *graphicWorld);
+		Camera();
+		virtual ~Camera() {}
 		
-		void render(GraphicDriver *driver);
+		// Component
+		virtual void attachComponent(Entity *entity) { this->entity = entity; }
+		virtual void detachComponent(Entity *entity) { this->entity = NULL; }
 		
-		// views with lower priority gets rendered first
-		int getPriority() const { return this->priority; }
-		void setPriority(int priority) { this->priority = priority; }
+		Entity *getEntity() const { return this->entity; }
 		
-		bool isEnabled() const { return this->enabled; }
-		void setEnabled(bool enabled) { this->enabled = enabled; }
+		float getFov() const { return this->fov; }
+		float getAspect() const { return this->aspect; }
+		float getNearPlane() const { return this->nearPlane; }
+		float getFarPlane() const { return this->farPlane; }
 		
-		Camera *getCamera() const { return this->camera; }
-		void setCamera(Camera *camera) { this->camera = camera; }
+		void setFov(float fov) { this->fov = fov; this->updateProjection(); }
+		void setAspect(float aspect) { this->aspect = aspect; this->updateProjection(); }
+		void setNearPlane(float nearPlane) { this->nearPlane = nearPlane; this->updateProjection(); }
+		void setFarPlane(float farPlane) { this->farPlane = farPlane; this->updateProjection(); }
+		
+		const glm::mat4 &getProjectionMatrix() const { return this->projectionMatrix; }
 		
 	private:
-		GraphicWorld *graphicWorld;
-		int priority;
-		bool enabled;
+		void updateProjection();
 		
-		Camera *camera;
+		Entity *entity;
+		
+		float fov;
+		float aspect;
+		float nearPlane;
+		float farPlane;
+		
+		glm::mat4 projectionMatrix;
 };
 
 } // oak namespace

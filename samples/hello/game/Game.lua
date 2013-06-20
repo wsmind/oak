@@ -12,13 +12,14 @@ function Game:start()
 	oak.graphics.setBackgroundColor(0.0, 0.0, 0.0)
 	
 	self.world = oak.sg.createWorld()
-	local scene1 = oak.World.createScene(self.world)
-	local scene2 = oak.World.createScene(self.world)
+	local scene = oak.World.createScene(self.world)
 	
-	local entity = oak.Scene.createEntity(scene1)
+	local entity = oak.Scene.createEntity(scene)
 	self.quad = oak.Entity.createComponent(entity, "DemoQuad")
+	self.camera = oak.Entity.createComponent(entity, "Camera")
 	
 	self.view = oak.graphics.createView(self.world)
+	oak.View.setCamera(self.view, self.camera)
 end
 
 function Game:update(dt)

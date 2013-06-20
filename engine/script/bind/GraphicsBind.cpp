@@ -32,6 +32,7 @@
 
 namespace oak {
 
+OAK_BIND_POINTER_TYPE(Camera)
 OAK_BIND_POINTER_TYPE(DemoQuad)
 OAK_BIND_POINTER_TYPE(View)
 OAK_BIND_POINTER_TYPE(World)
@@ -49,6 +50,8 @@ OAK_BIND_WRET_METHOD0(View, getPriority)
 OAK_BIND_VOID_METHOD1(View, setPriority, int)
 OAK_BIND_WRET_METHOD0(View, isEnabled)
 OAK_BIND_VOID_METHOD1(View, setEnabled, bool)
+OAK_BIND_WRET_METHOD0(View, getCamera)
+OAK_BIND_VOID_METHOD1(View, setCamera, Camera *)
 
 void GraphicsBind::registerFunctions(lua_State *L, GraphicsEngine *graphics)
 {
@@ -67,6 +70,8 @@ void GraphicsBind::registerFunctions(lua_State *L, GraphicsEngine *graphics)
 	OAK_REGISTER_METHOD(L, View, setPriority)
 	OAK_REGISTER_METHOD(L, View, isEnabled)
 	OAK_REGISTER_METHOD(L, View, setEnabled)
+	OAK_REGISTER_METHOD(L, View, getCamera)
+	OAK_REGISTER_METHOD(L, View, setCamera)
 }
 
 } // oak namespace
