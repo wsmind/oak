@@ -31,6 +31,8 @@
 #include <engine/graphics/shaders/demo.vs.h>
 #include <engine/graphics/shaders/demo.fs.h>
 
+#include <engine/sg/Entity.hpp>
+
 #include <engine/system/Time.hpp>
 
 namespace oak {
@@ -76,9 +78,10 @@ void DemoQuad::setColor(const glm::vec3 &color)
 	this->driver->setShaderConstant("color", color);
 }
 
-void DemoQuad::activateComponent()
+void DemoQuad::activateComponent(Entity *entity)
 {
 	GraphicWorld::Renderable renderable;
+	renderable.transform = &entity->getLocalTransform();
 	renderable.buffer = this->vertexBuffer;
 	renderable.shader = this->shader;
 	renderable.primitiveType = GraphicWorld::TRIANGLE_STRIP;
@@ -88,7 +91,7 @@ void DemoQuad::activateComponent()
 	this->graphicWorld->registerRenderable(renderable);
 }
 
-void DemoQuad::deactivateComponent()
+void DemoQuad::deactivateComponent(Entity *entity)
 {
 	//this->graphicWorld->unregisterXXX();
 }

@@ -69,6 +69,7 @@ Entity::~Entity()
 	// destroy all attached components
 	for (unsigned int i = 0; i < this->components.size(); i++)
 	{
+		this->components[i]->deactivateComponent(this);
 		this->components[i]->detachComponent(this);
 		delete this->components[i];
 	}
@@ -92,7 +93,7 @@ Component *Entity::createComponent(const std::string &className)
 	
 	this->components.push_back(component);
 	component->attachComponent(this);
-	component->activateComponent();
+	component->activateComponent(this);
 	
 	return component;
 }
@@ -102,7 +103,7 @@ void Entity::destroyComponent(Component *component)
 	ComponentVector::iterator it = std::find(this->components.begin(), this->components.end(), component);
 	OAK_ASSERT(it != this->components.end(), "Trying to detach an unexisting component");
 	
-	(*it)->deactivateComponent();
+	(*it)->deactivateComponent(this);
 	(*it)->detachComponent(this);
 	
 	// remove the component in-place

@@ -25,6 +25,7 @@
 
 precision mediump float;
 
+uniform mat4 modelMatrix;
 uniform mat4 viewMatrix;
 uniform mat4 projectionMatrix;
 
@@ -35,5 +36,5 @@ varying vec2 vertexPosition;
 void main()
 {
 	vertexPosition = position;
-	gl_Position = projectionMatrix * viewMatrix * vec4(position, -50.0, 1.0);
+	gl_Position = projectionMatrix * viewMatrix * modelMatrix * vec4(position, 0.0, 1.0);
 }

@@ -27,6 +27,8 @@
 
 #include <engine/graphics/GraphicDriver.hpp>
 
+#include <glm/glm.hpp>
+
 #include <vector>
 
 namespace oak {
@@ -52,6 +54,7 @@ class GraphicWorld
 		
 		struct Renderable
 		{
+			const glm::mat4 *transform;
 			VertexBuffer *buffer;
 			ShaderProgram *shader;
 			PrimitiveType primitiveType;
@@ -59,7 +62,8 @@ class GraphicWorld
 			unsigned int elementCount;
 			
 			Renderable()
-				: buffer(NULL)
+				: transform(NULL)
+				, buffer(NULL)
 				, shader(NULL)
 				, primitiveType(TRIANGLE_STRIP)
 				, startElement(0)

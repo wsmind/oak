@@ -53,6 +53,8 @@ OAK_BIND_VOID_METHOD1(Scene, destroyEntity, Entity *)
 OAK_BIND_WRET_METHOD0(Entity, getScene)
 OAK_BIND_WRET_METHOD1(Entity, createComponent, std::string)
 OAK_BIND_VOID_METHOD1(Entity, destroyComponent, Component *)
+OAK_BIND_WRET_METHOD0(Entity, getLocalPosition)
+OAK_BIND_VOID_METHOD1(Entity, setLocalPosition, glm::vec3)
 
 void SgBind::registerFunctions(lua_State *L, WorldManager *sg)
 {
@@ -73,6 +75,8 @@ void SgBind::registerFunctions(lua_State *L, WorldManager *sg)
 	OAK_REGISTER_METHOD(L, Entity, getScene)
 	OAK_REGISTER_METHOD(L, Entity, createComponent)
 	OAK_REGISTER_METHOD(L, Entity, destroyComponent)
+	OAK_REGISTER_METHOD(L, Entity, getLocalPosition)
+	OAK_REGISTER_METHOD(L, Entity, setLocalPosition)
 }
 
 } // oak namespace

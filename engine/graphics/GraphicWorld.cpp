@@ -59,6 +59,7 @@ void GraphicWorld::render(GraphicDriver *driver, Camera *camera)
 		driver->bindShaderProgram(renderable.shader);
 		driver->bindVertexBuffer(renderable.buffer);
 		
+		driver->setShaderConstant("modelMatrix", *renderable.transform);
 		driver->setShaderConstant("viewMatrix", viewMatrix);
 		driver->setShaderConstant("projectionMatrix", camera->getProjectionMatrix());
 		

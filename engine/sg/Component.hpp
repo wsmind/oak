@@ -40,8 +40,8 @@ class Component
 		virtual void attachComponent(Entity *entity) {};
 		virtual void detachComponent(Entity *entity) {};
 		
-		virtual void activateComponent() {};
-		virtual void deactivateComponent() {};
+		virtual void activateComponent(Entity *entity) {};
+		virtual void deactivateComponent(Entity *entity) {};
 };
 
 } // oak namespace

@@ -46,8 +46,8 @@ class DemoQuad: public Component
 		void setColor(const glm::vec3 &color);
 		
 		// Component
-		virtual void activateComponent();
-		virtual void deactivateComponent();
+		virtual void activateComponent(Entity *entity);
+		virtual void deactivateComponent(Entity *entity);
 		
 	private:
 		GraphicDriver *driver;
