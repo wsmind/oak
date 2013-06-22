@@ -54,12 +54,20 @@ class GraphicDriver
 			glm::vec2 position;
 		};
 		
+		struct Standard3DVertex
+		{
+			glm::vec3 position;
+			glm::vec3 normal;
+			glm::vec2 uv;
+		};
+		
 		// end of vertex structures
 		#pragma pack(pop)
 		
 		enum VertexFormat
 		{
-			Simple2DVertexFormat
+			Simple2DVertexFormat,
+			Standard3DVertexFormat
 		};
 		VertexBuffer *createVertexBuffer(void *data, unsigned int size, VertexFormat format, unsigned int elementCount);
 		void destroyVertexBuffer(VertexBuffer *buffer);
@@ -67,6 +75,7 @@ class GraphicDriver
 		
 		// vertex buffer creation helpers
 		inline VertexBuffer *createVertexBuffer(Simple2DVertex *vertices, unsigned int elementCount);
+		inline VertexBuffer *createVertexBuffer(Standard3DVertex *vertices, unsigned int elementCount);
 		
 		ShaderProgram *createShaderProgram(const std::string &vertexCode, const std::string &fragmentCode);
 		void destroyShaderProgram(ShaderProgram *program);
@@ -78,6 +87,7 @@ class GraphicDriver
 		void setShaderConstant(const std::string &name, const glm::mat4 &value);
 		
 		void drawTriangleStrip(unsigned int startElement, unsigned int elementCount);
+		void drawTriangles(unsigned int startElement, unsigned int elementCount);
 		
 	private:
 		GraphicDriverState *state;

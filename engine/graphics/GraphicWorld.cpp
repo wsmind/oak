@@ -65,6 +65,8 @@ void GraphicWorld::render(GraphicDriver *driver, Camera *camera)
 		
 		if (renderable.primitiveType == TRIANGLE_STRIP)
 			driver->drawTriangleStrip(renderable.startElement, renderable.elementCount);
+		else if (renderable.primitiveType == TRIANGLES)
+			driver->drawTriangles(renderable.startElement, renderable.elementCount);
 	}
 }
 

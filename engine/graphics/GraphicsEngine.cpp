@@ -28,6 +28,7 @@
 #include <engine/graphics/GraphicWorld.hpp>
 #include <engine/graphics/View.hpp>
 #include <engine/graphics/components/Camera.hpp>
+#include <engine/graphics/components/Cube.hpp>
 #include <engine/graphics/components/DemoQuad.hpp>
 
 #include <engine/sg/Entity.hpp>
@@ -65,6 +66,7 @@ GraphicsEngine::GraphicsEngine(WorldManager *worldManager)
 	this->worldManager->addWorldListener(this);
 	
 	Entity::registerComponentFactory("Camera", this);
+	Entity::registerComponentFactory("Cube", this);
 	Entity::registerComponentFactory("DemoQuad", this);
 }
 
@@ -73,6 +75,7 @@ GraphicsEngine::~GraphicsEngine()
 	OAK_ASSERT(this->graphicWorlds.size() == 0, "Some graphic worlds were not destroyed properly");
 	
 	Entity::unregisterComponentFactory("Camera");
+	Entity::unregisterComponentFactory("Cube");
 	Entity::unregisterComponentFactory("DemoQuad");
 	
 	this->worldManager->removeWorldListener(this);
@@ -126,6 +129,7 @@ Component *GraphicsEngine::createComponent(Entity *entity, const std::string &cl
 	OAK_ASSERT(graphicWorld != NULL, "Creating a graphic component from an unregistered world");
 	
 	if (className == "Camera") return new Camera;
+	if (className == "Cube") return new Cube(graphicWorld, this->driver);
 	if (className == "DemoQuad") return new DemoQuad(graphicWorld, this->driver);
 	
 	return NULL;

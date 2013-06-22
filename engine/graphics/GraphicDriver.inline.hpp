@@ -32,4 +32,9 @@ VertexBuffer *GraphicDriver::createVertexBuffer(Simple2DVertex *vertices, unsign
 	return this->createVertexBuffer(vertices, sizeof(Simple2DVertex) * elementCount, Simple2DVertexFormat, elementCount);
 }
 
+VertexBuffer *GraphicDriver::createVertexBuffer(Standard3DVertex *vertices, unsigned int elementCount)
+{
+	return this->createVertexBuffer(vertices, sizeof(Standard3DVertex) * elementCount, Standard3DVertexFormat, elementCount);
+}
+
 } // oak namespace

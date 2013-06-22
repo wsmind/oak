@@ -77,6 +77,8 @@ GraphicDriver::GraphicDriver()
 		glewInit();
 	#endif
 	
+	GL_CHECK(glDisable(GL_CULL_FACE));
+	
 	this->state = new GraphicDriverState;
 }
 
@@ -144,6 +146,32 @@ void GraphicDriver::bindVertexBuffer(VertexBuffer *buffer)
 				GLint positionAttribute = GL_CHECK(glGetAttribLocation(currentShader->programName, "position"));
 				GL_CHECK(glEnableVertexAttribArray(positionAttribute));
 				GL_CHECK(glVertexAttribPointer(positionAttribute, 2, GL_FLOAT, GL_FALSE, 0, 0));
+				break;
+			}
+			
+			case Standard3DVertexFormat:
+			{
+				GLint positionAttribute = GL_CHECK(glGetAttribLocation(currentShader->programName, "position"));
+				if (positionAttribute != -1)
+				{
+					GL_CHECK(glEnableVertexAttribArray(positionAttribute));
+					GL_CHECK(glVertexAttribPointer(positionAttribute, 3, GL_FLOAT, GL_FALSE, sizeof(Standard3DVertex), (const GLvoid *)offsetof(Standard3DVertex, position)));
+				}
+				
+				GLint normalAttribute = GL_CHECK(glGetAttribLocation(currentShader->programName, "normal"));
+				if (normalAttribute != -1)
+				{
+					GL_CHECK(glEnableVertexAttribArray(normalAttribute));
+					GL_CHECK(glVertexAttribPointer(normalAttribute, 3, GL_FLOAT, GL_FALSE, sizeof(Standard3DVertex), (const GLvoid *)offsetof(Standard3DVertex, normal)));
+				}
+				
+				GLint uvAttribute = GL_CHECK(glGetAttribLocation(currentShader->programName, "uv"));
+				if (uvAttribute != -1)
+				{
+					GL_CHECK(glEnableVertexAttribArray(uvAttribute));
+					GL_CHECK(glVertexAttribPointer(uvAttribute, 2, GL_FLOAT, GL_FALSE, sizeof(Standard3DVertex), (const GLvoid *)offsetof(Standard3DVertex, uv)));
+				}
+				
 				break;
 			}
 		}
@@ -230,6 +258,11 @@ void GraphicDriver::setShaderConstant(const std::string &name, const glm::mat4 &
 void GraphicDriver::drawTriangleStrip(unsigned int startElement, unsigned int elementCount)
 {
 	GL_CHECK(glDrawArrays(GL_TRIANGLE_STRIP, startElement, elementCount));
+}
+
+void GraphicDriver::drawTriangles(unsigned int startElement, unsigned int elementCount)
+{
+	GL_CHECK(glDrawArrays(GL_TRIANGLES, startElement, elementCount));
 }
 
 } // oak namespace

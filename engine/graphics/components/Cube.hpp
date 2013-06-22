@@ -25,62 +25,37 @@
 
 #pragma once
 
-#include <engine/graphics/GraphicDriver.hpp>
+#include <engine/sg/Component.hpp>
 
 #include <glm/glm.hpp>
 
-#include <vector>
-
 namespace oak {
 
-class Camera;
 class GraphicDriver;
-class World;
+class GraphicWorld;
+struct ShaderProgram;
+struct VertexBuffer;
 
-class GraphicWorld
+class Cube: public Component
 {
 	public:
-		GraphicWorld(World *world);
-		~GraphicWorld();
+		Cube(GraphicWorld *graphicWorld, GraphicDriver *driver);
+		virtual ~Cube();
 		
-		World *getWorld() const { return this->world; }
+		glm::vec3 getColor() const;
+		void setColor(const glm::vec3 &color);
 		
-		void render(GraphicDriver *driver, Camera *camera);
-		
-		enum PrimitiveType
-		{
-			TRIANGLE_STRIP,
-			TRIANGLES
-		};
-		
-		struct Renderable
-		{
-			const glm::mat4 *transform;
-			VertexBuffer *buffer;
-			ShaderProgram *shader;
-			PrimitiveType primitiveType;
-			unsigned int startElement;
-			unsigned int elementCount;
-			
-			Renderable()
-				: transform(NULL)
-				, buffer(NULL)
-				, shader(NULL)
-				, primitiveType(TRIANGLE_STRIP)
-				, startElement(0)
-				, elementCount(0)
-			{}
-		};
-		
-		void registerRenderable(const Renderable &renderable);
-		//void unregisterRenderable(const Component *owner);
+		// Component
+		virtual void activateComponent(Entity *entity);
+		virtual void deactivateComponent(Entity *entity);
 		
 	private:
-		// the generic world this graphic world is bound to
-		World *world;
+		GraphicDriver *driver;
+		GraphicWorld *graphicWorld;
+		VertexBuffer *vertexBuffer;
+		ShaderProgram *shader;
 		
-		typedef std::vector<Renderable> RenderableVector;
-		RenderableVector renderables;
+		glm::vec3 color;
 };
 
 } // oak namespace

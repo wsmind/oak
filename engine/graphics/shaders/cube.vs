@@ -23,64 +23,20 @@
  * 
  *****************************************************************************/
 
-#pragma once
+precision mediump float;
 
-#include <engine/graphics/GraphicDriver.hpp>
+uniform mat4 modelMatrix;
+uniform mat4 viewMatrix;
+uniform mat4 projectionMatrix;
 
-#include <glm/glm.hpp>
+attribute vec3 position;
+attribute vec3 normal;
+attribute vec2 uv;
 
-#include <vector>
+varying vec2 vertexPosition;
 
-namespace oak {
-
-class Camera;
-class GraphicDriver;
-class World;
-
-class GraphicWorld
+void main()
 {
-	public:
-		GraphicWorld(World *world);
-		~GraphicWorld();
-		
-		World *getWorld() const { return this->world; }
-		
-		void render(GraphicDriver *driver, Camera *camera);
-		
-		enum PrimitiveType
-		{
-			TRIANGLE_STRIP,
-			TRIANGLES
-		};
-		
-		struct Renderable
-		{
-			const glm::mat4 *transform;
-			VertexBuffer *buffer;
-			ShaderProgram *shader;
-			PrimitiveType primitiveType;
-			unsigned int startElement;
-			unsigned int elementCount;
-			
-			Renderable()
-				: transform(NULL)
-				, buffer(NULL)
-				, shader(NULL)
-				, primitiveType(TRIANGLE_STRIP)
-				, startElement(0)
-				, elementCount(0)
-			{}
-		};
-		
-		void registerRenderable(const Renderable &renderable);
-		//void unregisterRenderable(const Component *owner);
-		
-	private:
-		// the generic world this graphic world is bound to
-		World *world;
-		
-		typedef std::vector<Renderable> RenderableVector;
-		RenderableVector renderables;
-};
-
-} // oak namespace
+	vertexPosition = uv * 2.0 - 1.0;
+	gl_Position = projectionMatrix * viewMatrix * modelMatrix * vec4(position, 1.0);
+}

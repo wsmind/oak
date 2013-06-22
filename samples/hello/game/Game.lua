@@ -15,7 +15,7 @@ function Game:start()
 	local scene = oak.World.createScene(self.world)
 	
 	self.entity1 = oak.Scene.createEntity(scene)
-	self.quad = oak.Entity.createComponent(self.entity1, "DemoQuad")
+	self.quad = oak.Entity.createComponent(self.entity1, "Cube")
 	
 	local entity2 = oak.Scene.createEntity(scene)
 	self.camera = oak.Entity.createComponent(entity2, "Camera")
@@ -28,8 +28,8 @@ function Game:update(dt)
 	local r, g, b = oak.graphics.getBackgroundColor()
 	r = r + 0.001
 	oak.graphics.setBackgroundColor(r, g, b)
-	oak.DemoQuad.setColor(self.quad, oak.graphics.getBackgroundColor())
-	oak.Entity.setLocalPosition(self.entity1, 0, math.sin(r), -60)
+	oak.Cube.setColor(self.quad, oak.graphics.getBackgroundColor())
+	oak.Entity.setLocalPosition(self.entity1, math.sin(r * 0.5) * 3.0, math.sin(r), -60)
 end
 
 function Game:stop()
