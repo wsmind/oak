@@ -34,6 +34,8 @@
 
 #include <glm/glm.hpp>
 
+#include <cstddef>
+
 namespace oak {
 
 namespace { // private section
