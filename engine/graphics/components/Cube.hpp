@@ -52,8 +52,11 @@ class Cube: public Component
 	private:
 		GraphicDriver *driver;
 		GraphicWorld *graphicWorld;
-		VertexBuffer *vertexBuffer;
-		ShaderProgram *shader;
+		
+		// these are shared for all cubes
+		static VertexBuffer *vertexBuffer;
+		static ShaderProgram *shader;
+		static unsigned int instanceCount;
 		
 		glm::vec3 color;
 };

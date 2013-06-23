@@ -59,8 +59,6 @@ Entity::Entity(Scene *scene)
 	, localOrientation(1.0f, 0.0f, 0.0f, 0.0f)
 	, localScale(1.0f, 1.0f, 1.0f)
 {
-	Log::info("Entity created!");
-	
 	this->updateLocalTransform();
 }
 
@@ -73,8 +71,6 @@ Entity::~Entity()
 		this->components[i]->detachComponent(this);
 		delete this->components[i];
 	}
-	
-	Log::info("Entity destroyed!");
 }
 
 Component *Entity::createComponent(const std::string &className)

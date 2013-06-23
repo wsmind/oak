@@ -19,8 +19,8 @@ function Game:start()
 	self.cube = oak.Entity.createComponent(self.entity1, "Cube")
 	
 	-- ground
-	for x = -5, 5 do
-		for z = -5, 5 do
+	for x = -10, 10 do
+		for z = -10, 10 do
 			local entity = oak.Scene.createEntity(scene)
 			oak.Entity.createComponent(entity, "Cube")
 			oak.Entity.setLocalPosition(entity, x * 2, -1.2, z * 2)

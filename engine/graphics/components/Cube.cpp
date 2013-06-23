@@ -37,73 +37,89 @@
 
 namespace oak {
 
+VertexBuffer *Cube::vertexBuffer = NULL;
+ShaderProgram *Cube::shader = NULL;
+unsigned int Cube::instanceCount = 0;
+
 Cube::Cube(GraphicWorld *graphicWorld, GraphicDriver *driver)
 {
 	this->driver = driver;
 	this->graphicWorld = graphicWorld;
 	
-	// test buffer
-	GraphicDriver::Standard3DVertex vertices[] = {
-		// -X
-		{ glm::vec3(-1.0f, -1.0f, -1.0f), glm::vec3(-1.0, 0.0f, 0.0f), glm::vec2(0.0f, 0.0f) },
-		{ glm::vec3(-1.0f, 1.0f, -1.0f), glm::vec3(-1.0, 0.0f, 0.0f), glm::vec2(0.0f, 1.0f) },
-		{ glm::vec3(-1.0f, 1.0f, 1.0f), glm::vec3(-1.0, 0.0f, 0.0f), glm::vec2(1.0f, 1.0f) },
-		{ glm::vec3(-1.0f, 1.0f, 1.0f), glm::vec3(-1.0, 0.0f, 0.0f), glm::vec2(1.0f, 1.0f) },
-		{ glm::vec3(-1.0f, -1.0f, 1.0f), glm::vec3(-1.0, 0.0f, 0.0f), glm::vec2(1.0f, 0.0f) },
-		{ glm::vec3(-1.0f, -1.0f, -1.0f), glm::vec3(-1.0, 0.0f, 0.0f), glm::vec2(0.0f, 0.0f) },
+	// if this is the first cube created, initialize common buffers & shaders
+	if (Cube::instanceCount == 0)
+	{
+		// test buffer
+		GraphicDriver::Standard3DVertex vertices[] = {
+			// -X
+			{ glm::vec3(-1.0f, -1.0f, -1.0f), glm::vec3(-1.0, 0.0f, 0.0f), glm::vec2(0.0f, 0.0f) },
+			{ glm::vec3(-1.0f, 1.0f, -1.0f), glm::vec3(-1.0, 0.0f, 0.0f), glm::vec2(0.0f, 1.0f) },
+			{ glm::vec3(-1.0f, 1.0f, 1.0f), glm::vec3(-1.0, 0.0f, 0.0f), glm::vec2(1.0f, 1.0f) },
+			{ glm::vec3(-1.0f, 1.0f, 1.0f), glm::vec3(-1.0, 0.0f, 0.0f), glm::vec2(1.0f, 1.0f) },
+			{ glm::vec3(-1.0f, -1.0f, 1.0f), glm::vec3(-1.0, 0.0f, 0.0f), glm::vec2(1.0f, 0.0f) },
+			{ glm::vec3(-1.0f, -1.0f, -1.0f), glm::vec3(-1.0, 0.0f, 0.0f), glm::vec2(0.0f, 0.0f) },
+			
+			// +X
+			{ glm::vec3(1.0f, -1.0f, 1.0f), glm::vec3(1.0, 0.0f, 0.0f), glm::vec2(0.0f, 0.0f) },
+			{ glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(1.0, 0.0f, 0.0f), glm::vec2(0.0f, 1.0f) },
+			{ glm::vec3(1.0f, 1.0f, -1.0f), glm::vec3(1.0, 0.0f, 0.0f), glm::vec2(1.0f, 1.0f) },
+			{ glm::vec3(1.0f, 1.0f, -1.0f), glm::vec3(1.0, 0.0f, 0.0f), glm::vec2(1.0f, 1.0f) },
+			{ glm::vec3(1.0f, -1.0f, -1.0f), glm::vec3(1.0, 0.0f, 0.0f), glm::vec2(1.0f, 0.0f) },
+			{ glm::vec3(1.0f, -1.0f, 1.0f), glm::vec3(1.0, 0.0f, 0.0f), glm::vec2(0.0f, 0.0f) },
+			
+			// -Y
+			{ glm::vec3(-1.0f, -1.0f, -1.0f), glm::vec3(0.0, -1.0f, 0.0f), glm::vec2(0.0f, 0.0f) },
+			{ glm::vec3(-1.0f, -1.0f, 1.0f), glm::vec3(0.0, -1.0f, 0.0f), glm::vec2(0.0f, 1.0f) },
+			{ glm::vec3(1.0f, -1.0f, 1.0f), glm::vec3(0.0, -1.0f, 0.0f), glm::vec2(1.0f, 1.0f) },
+			{ glm::vec3(1.0f, -1.0f, 1.0f), glm::vec3(0.0, -1.0f, 0.0f), glm::vec2(1.0f, 1.0f) },
+			{ glm::vec3(1.0f, -1.0f, -1.0f), glm::vec3(0.0, -1.0f, 0.0f), glm::vec2(1.0f, 0.0f) },
+			{ glm::vec3(-1.0f, -1.0f, -1.0f), glm::vec3(0.0, -1.0f, 0.0f), glm::vec2(0.0f, 0.0f) },
+			
+			// +Y
+			{ glm::vec3(-1.0f, 1.0f, 1.0f), glm::vec3(0.0, 1.0f, 0.0f), glm::vec2(0.0f, 0.0f) },
+			{ glm::vec3(-1.0f, 1.0f, -1.0f), glm::vec3(0.0, 1.0f, 0.0f), glm::vec2(0.0f, 1.0f) },
+			{ glm::vec3(1.0f, 1.0f, -1.0f), glm::vec3(0.0, 1.0f, 0.0f), glm::vec2(1.0f, 1.0f) },
+			{ glm::vec3(1.0f, 1.0f, -1.0f), glm::vec3(0.0, 1.0f, 0.0f), glm::vec2(1.0f, 1.0f) },
+			{ glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(0.0, 1.0f, 0.0f), glm::vec2(1.0f, 0.0f) },
+			{ glm::vec3(-1.0f, 1.0f, 1.0f), glm::vec3(0.0, 1.0f, 0.0f), glm::vec2(0.0f, 0.0f) },
+			
+			// -Z
+			{ glm::vec3(1.0f, -1.0f, -1.0f), glm::vec3(0.0, 0.0f, -1.0f), glm::vec2(0.0f, 0.0f) },
+			{ glm::vec3(1.0f, 1.0f, -1.0f), glm::vec3(0.0, 0.0f, -1.0f), glm::vec2(0.0f, 1.0f) },
+			{ glm::vec3(-1.0f, 1.0f, -1.0f), glm::vec3(0.0, 0.0f, -1.0f), glm::vec2(1.0f, 1.0f) },
+			{ glm::vec3(-1.0f, 1.0f, -1.0f), glm::vec3(0.0, 0.0f, -1.0f), glm::vec2(1.0f, 1.0f) },
+			{ glm::vec3(-1.0f, -1.0f, -1.0f), glm::vec3(0.0, 0.0f, -1.0f), glm::vec2(1.0f, 0.0f) },
+			{ glm::vec3(1.0f, -1.0f, -1.0f), glm::vec3(0.0, 0.0f, -1.0f), glm::vec2(0.0f, 0.0f) },
+			
+			// +Z
+			{ glm::vec3(-1.0f, -1.0f, 1.0f), glm::vec3(0.0, 0.0f, 1.0f), glm::vec2(0.0f, 0.0f) },
+			{ glm::vec3(-1.0f, 1.0f, 1.0f), glm::vec3(0.0, 0.0f, 1.0f), glm::vec2(0.0f, 1.0f) },
+			{ glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(0.0, 0.0f, 1.0f), glm::vec2(1.0f, 1.0f) },
+			{ glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(0.0, 0.0f, 1.0f), glm::vec2(1.0f, 1.0f) },
+			{ glm::vec3(1.0f, -1.0f, 1.0f), glm::vec3(0.0, 0.0f, 1.0f), glm::vec2(1.0f, 0.0f) },
+			{ glm::vec3(-1.0f, -1.0f, 1.0f), glm::vec3(0.0, 0.0f, 1.0f), glm::vec2(0.0f, 0.0f) },
+		};
+		Cube::vertexBuffer = this->driver->createVertexBuffer(vertices, 36);
 		
-		// +X
-		{ glm::vec3(1.0f, -1.0f, 1.0f), glm::vec3(1.0, 0.0f, 0.0f), glm::vec2(0.0f, 0.0f) },
-		{ glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(1.0, 0.0f, 0.0f), glm::vec2(0.0f, 1.0f) },
-		{ glm::vec3(1.0f, 1.0f, -1.0f), glm::vec3(1.0, 0.0f, 0.0f), glm::vec2(1.0f, 1.0f) },
-		{ glm::vec3(1.0f, 1.0f, -1.0f), glm::vec3(1.0, 0.0f, 0.0f), glm::vec2(1.0f, 1.0f) },
-		{ glm::vec3(1.0f, -1.0f, -1.0f), glm::vec3(1.0, 0.0f, 0.0f), glm::vec2(1.0f, 0.0f) },
-		{ glm::vec3(1.0f, -1.0f, 1.0f), glm::vec3(1.0, 0.0f, 0.0f), glm::vec2(0.0f, 0.0f) },
-		
-		// -Y
-		{ glm::vec3(-1.0f, -1.0f, -1.0f), glm::vec3(0.0, -1.0f, 0.0f), glm::vec2(0.0f, 0.0f) },
-		{ glm::vec3(-1.0f, -1.0f, 1.0f), glm::vec3(0.0, -1.0f, 0.0f), glm::vec2(0.0f, 1.0f) },
-		{ glm::vec3(1.0f, -1.0f, 1.0f), glm::vec3(0.0, -1.0f, 0.0f), glm::vec2(1.0f, 1.0f) },
-		{ glm::vec3(1.0f, -1.0f, 1.0f), glm::vec3(0.0, -1.0f, 0.0f), glm::vec2(1.0f, 1.0f) },
-		{ glm::vec3(1.0f, -1.0f, -1.0f), glm::vec3(0.0, -1.0f, 0.0f), glm::vec2(1.0f, 0.0f) },
-		{ glm::vec3(-1.0f, -1.0f, -1.0f), glm::vec3(0.0, -1.0f, 0.0f), glm::vec2(0.0f, 0.0f) },
-		
-		// +Y
-		{ glm::vec3(-1.0f, 1.0f, 1.0f), glm::vec3(0.0, 1.0f, 0.0f), glm::vec2(0.0f, 0.0f) },
-		{ glm::vec3(-1.0f, 1.0f, -1.0f), glm::vec3(0.0, 1.0f, 0.0f), glm::vec2(0.0f, 1.0f) },
-		{ glm::vec3(1.0f, 1.0f, -1.0f), glm::vec3(0.0, 1.0f, 0.0f), glm::vec2(1.0f, 1.0f) },
-		{ glm::vec3(1.0f, 1.0f, -1.0f), glm::vec3(0.0, 1.0f, 0.0f), glm::vec2(1.0f, 1.0f) },
-		{ glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(0.0, 1.0f, 0.0f), glm::vec2(1.0f, 0.0f) },
-		{ glm::vec3(-1.0f, 1.0f, 1.0f), glm::vec3(0.0, 1.0f, 0.0f), glm::vec2(0.0f, 0.0f) },
-		
-		// -Z
-		{ glm::vec3(1.0f, -1.0f, -1.0f), glm::vec3(0.0, 0.0f, -1.0f), glm::vec2(0.0f, 0.0f) },
-		{ glm::vec3(1.0f, 1.0f, -1.0f), glm::vec3(0.0, 0.0f, -1.0f), glm::vec2(0.0f, 1.0f) },
-		{ glm::vec3(-1.0f, 1.0f, -1.0f), glm::vec3(0.0, 0.0f, -1.0f), glm::vec2(1.0f, 1.0f) },
-		{ glm::vec3(-1.0f, 1.0f, -1.0f), glm::vec3(0.0, 0.0f, -1.0f), glm::vec2(1.0f, 1.0f) },
-		{ glm::vec3(-1.0f, -1.0f, -1.0f), glm::vec3(0.0, 0.0f, -1.0f), glm::vec2(1.0f, 0.0f) },
-		{ glm::vec3(1.0f, -1.0f, -1.0f), glm::vec3(0.0, 0.0f, -1.0f), glm::vec2(0.0f, 0.0f) },
-		
-		// +Z
-		{ glm::vec3(-1.0f, -1.0f, 1.0f), glm::vec3(0.0, 0.0f, 1.0f), glm::vec2(0.0f, 0.0f) },
-		{ glm::vec3(-1.0f, 1.0f, 1.0f), glm::vec3(0.0, 0.0f, 1.0f), glm::vec2(0.0f, 1.0f) },
-		{ glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(0.0, 0.0f, 1.0f), glm::vec2(1.0f, 1.0f) },
-		{ glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(0.0, 0.0f, 1.0f), glm::vec2(1.0f, 1.0f) },
-		{ glm::vec3(1.0f, -1.0f, 1.0f), glm::vec3(0.0, 0.0f, 1.0f), glm::vec2(1.0f, 0.0f) },
-		{ glm::vec3(-1.0f, -1.0f, 1.0f), glm::vec3(0.0, 0.0f, 1.0f), glm::vec2(0.0f, 0.0f) },
-	};
-	this->vertexBuffer = this->driver->createVertexBuffer(vertices, 36);
+		// test shader
+		Cube::shader = this->driver->createShaderProgram(cubeVSString, cubeFSString);
+	}
 	
-	// test shader
-	this->shader = this->driver->createShaderProgram(cubeVSString, cubeFSString);
+	Cube::instanceCount++;
 	
 	this->setColor(glm::vec3(0.0f, 0.0f, 0.0f));
 }
 
 Cube::~Cube()
 {
-	this->driver->destroyVertexBuffer(this->vertexBuffer);
-	this->driver->destroyShaderProgram(this->shader);
+	Cube::instanceCount--;
+	
+	// if this is the last cube, destroyed shared data
+	if (Cube::instanceCount == 0)
+	{
+		this->driver->destroyVertexBuffer(Cube::vertexBuffer);
+		this->driver->destroyShaderProgram(Cube::shader);
+	}
 }
 
 glm::vec3 Cube::getColor() const
@@ -114,7 +130,7 @@ glm::vec3 Cube::getColor() const
 void Cube::setColor(const glm::vec3 &color)
 {
 	this->color = color;
-	this->driver->bindShaderProgram(this->shader);
+	this->driver->bindShaderProgram(Cube::shader);
 	
 	this->driver->setShaderConstant("time", (float)Time::getTime());
 	this->driver->setShaderConstant("color", color);
@@ -124,8 +140,8 @@ void Cube::activateComponent(Entity *entity)
 {
 	GraphicWorld::Renderable renderable;
 	renderable.transform = &entity->getLocalTransform();
-	renderable.buffer = this->vertexBuffer;
-	renderable.shader = this->shader;
+	renderable.buffer = Cube::vertexBuffer;
+	renderable.shader = Cube::shader;
 	renderable.primitiveType = GraphicWorld::TRIANGLES;
 	renderable.startElement = 0;
 	renderable.elementCount = 36;
