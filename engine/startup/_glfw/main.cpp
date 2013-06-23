@@ -36,10 +36,7 @@ using namespace oak;
 Application *app = NULL;
 void main_loop()
 {
-	float dt = (float)glfwGetTime();
-	glfwSetTime(0.0);
-	
-	app->update(dt);
+	app->update();
 	
 	glfwSwapBuffers();
 }
@@ -64,8 +61,6 @@ int main()
 	
 	application->initialize("D:/proj/oak/samples/hello");
 	
-	glfwSetTime(0.0);
-	
 	#ifdef EMSCRIPTEN
 		app = application;
 		emscripten_set_main_loop(main_loop, 0, 0);
@@ -73,10 +68,7 @@ int main()
 	#else
 		while (glfwGetWindowParam(GLFW_OPENED))
 		{
-			float dt = (float)glfwGetTime();
-			glfwSetTime(0.0);
-			
-			application->update(dt);
+			application->update();
 			
 			glfwSwapBuffers();
 		}

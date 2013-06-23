@@ -26,6 +26,7 @@
 #include <engine/script/bind/SystemWrapper.hpp>
 
 #include <engine/system/Log.hpp>
+#include <engine/system/Time.hpp>
 
 namespace oak {
 
@@ -42,6 +43,16 @@ void SystemWrapper::logWarning(const std::string &message)
 void SystemWrapper::logError(const std::string &message)
 {
 	Log::error("%s", message.c_str());
+}
+
+double SystemWrapper::getTime()
+{
+	return Time::getTime();
+}
+
+double SystemWrapper::getElapsedTime()
+{
+	return Time::getElapsedTime();
 }
 
 } // oak namespace

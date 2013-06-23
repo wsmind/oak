@@ -116,8 +116,7 @@ void Cube::setColor(const glm::vec3 &color)
 	this->color = color;
 	this->driver->bindShaderProgram(this->shader);
 	
-	float time = (float)(Time::readNanoseconds() % 100000000000LL) / 1000000000.0f;
-	this->driver->setShaderConstant("time", time);
+	this->driver->setShaderConstant("time", (float)Time::getTime());
 	this->driver->setShaderConstant("color", color);
 }
 

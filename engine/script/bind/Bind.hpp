@@ -70,6 +70,15 @@ inline float popArgument(lua_State *L)
 }
 
 template <>
+inline double popArgument(lua_State *L)
+{
+	double value = lua_tonumber(L, -1);
+	lua_pop(L, 1);
+	
+	return value;
+}
+
+template <>
 inline glm::vec3 popArgument(lua_State *L)
 {
 	lua_Number r = lua_tonumber(L, -3);
@@ -104,6 +113,13 @@ inline int pushReturnValue(lua_State *L, bool value)
 }
 
 inline int pushReturnValue(lua_State *L, float value)
+{
+	lua_pushnumber(L, (lua_Number)value);
+	
+	return 1;
+}
+
+inline int pushReturnValue(lua_State *L, double value)
 {
 	lua_pushnumber(L, (lua_Number)value);
 	

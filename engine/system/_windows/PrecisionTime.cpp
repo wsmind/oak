@@ -23,30 +23,24 @@
  * 
  *****************************************************************************/
 
-#include <engine/script/bind/SystemBind.hpp>
+#include <engine/system/PrecisionTime.hpp>
 
-#include <engine/script/bind/Bind.hpp>
-#include <engine/script/bind/SystemWrapper.hpp>
+#include <windows.h>
 
 namespace oak {
 
-OAK_BIND_MODULE(SystemWrapper)
-OAK_BIND_VOID_FUNCTION1(SystemWrapper, logInfo, std::string)
-OAK_BIND_VOID_FUNCTION1(SystemWrapper, logWarning, std::string)
-OAK_BIND_VOID_FUNCTION1(SystemWrapper, logError, std::string)
-
-OAK_BIND_WRET_FUNCTION0(SystemWrapper, getTime)
-OAK_BIND_WRET_FUNCTION0(SystemWrapper, getElapsedTime)
-
-void SystemBind::registerFunctions(lua_State *L, SystemWrapper *system)
+unsigned long long PrecisionTime::readNanoseconds()
 {
-	OAK_REGISTER_MODULE(L, SystemWrapper, system, system)
-	OAK_REGISTER_FUNCTION(L, SystemWrapper, system, logInfo)
-	OAK_REGISTER_FUNCTION(L, SystemWrapper, system, logWarning)
-	OAK_REGISTER_FUNCTION(L, SystemWrapper, system, logError)
+	// Side note: the frequency must be read every time because it may
+	// not be a fixed value. For instance, recent laptop processors change
+	// their frequency dynamically to accomodate for particular energy requirements.
+	LARGE_INTEGER frequency;
+	QueryPerformanceFrequency(&frequency);
 	
-	OAK_REGISTER_FUNCTION(L, SystemWrapper, system, getTime)
-	OAK_REGISTER_FUNCTION(L, SystemWrapper, system, getElapsedTime)
+	LARGE_INTEGER ticks;
+	QueryPerformanceCounter(&ticks);
+	
+	return (unsigned long long)(ticks.QuadPart * 1000000000 / frequency.QuadPart);
 }
 
 } // oak namespace

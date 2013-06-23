@@ -31,12 +31,15 @@
 #include <engine/script/ScriptEngine.hpp>
 #include <engine/sg/WorldManager.hpp>
 #include <engine/system/Log.hpp>
+#include <engine/system/Time.hpp>
 
 namespace oak {
 
 void Application::initialize(const std::string &baseFolder)
 {
 	Log::info("Application::initialize");
+	
+	Time::reset();
 	
 	this->worldManager = new WorldManager;
 	
@@ -70,10 +73,12 @@ void Application::shutdown()
 	delete this->worldManager;
 }
 
-void Application::update(float dt)
+void Application::update()
 {
+	Time::frameStart();
+	
 	this->script->startCall("update");
-	this->script->appendParameter((double)dt);
+	this->script->appendParameter(Time::getElapsedTime());
 	this->script->endCall();
 	
 	this->graphics->renderFrame();

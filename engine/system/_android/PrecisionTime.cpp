@@ -23,30 +23,18 @@
  * 
  *****************************************************************************/
 
-#include <engine/script/bind/SystemBind.hpp>
+#include <engine/system/PrecisionTime.hpp>
 
-#include <engine/script/bind/Bind.hpp>
-#include <engine/script/bind/SystemWrapper.hpp>
+#include <sys/time.h>
+#include <time.h>
 
 namespace oak {
 
-OAK_BIND_MODULE(SystemWrapper)
-OAK_BIND_VOID_FUNCTION1(SystemWrapper, logInfo, std::string)
-OAK_BIND_VOID_FUNCTION1(SystemWrapper, logWarning, std::string)
-OAK_BIND_VOID_FUNCTION1(SystemWrapper, logError, std::string)
-
-OAK_BIND_WRET_FUNCTION0(SystemWrapper, getTime)
-OAK_BIND_WRET_FUNCTION0(SystemWrapper, getElapsedTime)
-
-void SystemBind::registerFunctions(lua_State *L, SystemWrapper *system)
+unsigned long long PrecisionTime::readNanoseconds()
 {
-	OAK_REGISTER_MODULE(L, SystemWrapper, system, system)
-	OAK_REGISTER_FUNCTION(L, SystemWrapper, system, logInfo)
-	OAK_REGISTER_FUNCTION(L, SystemWrapper, system, logWarning)
-	OAK_REGISTER_FUNCTION(L, SystemWrapper, system, logError)
-	
-	OAK_REGISTER_FUNCTION(L, SystemWrapper, system, getTime)
-	OAK_REGISTER_FUNCTION(L, SystemWrapper, system, getElapsedTime)
+	struct timeval timeOfDay;
+	gettimeofday(&timeOfDay, NULL);
+	return (unsigned long long)timeOfDay.tv_sec * 1000000000LL + (unsigned long long)timeOfDay.tv_usec * 1000LL;
 }
 
 } // oak namespace

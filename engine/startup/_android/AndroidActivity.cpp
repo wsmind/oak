@@ -71,7 +71,7 @@ void AndroidActivity::run(android_app *androidApp)
 		
 		// run a frame
 		if (this->initialized)
-			this->gameApplication.update(0.0f);
+			this->gameApplication.update();
 		
 		// swap front and back buffers
 		eglSwapBuffers(this->eglDisplay, this->eglSurface);

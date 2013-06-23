@@ -23,30 +23,14 @@
  * 
  *****************************************************************************/
 
-#include <engine/script/bind/SystemBind.hpp>
-
-#include <engine/script/bind/Bind.hpp>
-#include <engine/script/bind/SystemWrapper.hpp>
+#pragma once
 
 namespace oak {
 
-OAK_BIND_MODULE(SystemWrapper)
-OAK_BIND_VOID_FUNCTION1(SystemWrapper, logInfo, std::string)
-OAK_BIND_VOID_FUNCTION1(SystemWrapper, logWarning, std::string)
-OAK_BIND_VOID_FUNCTION1(SystemWrapper, logError, std::string)
-
-OAK_BIND_WRET_FUNCTION0(SystemWrapper, getTime)
-OAK_BIND_WRET_FUNCTION0(SystemWrapper, getElapsedTime)
-
-void SystemBind::registerFunctions(lua_State *L, SystemWrapper *system)
+class PrecisionTime
 {
-	OAK_REGISTER_MODULE(L, SystemWrapper, system, system)
-	OAK_REGISTER_FUNCTION(L, SystemWrapper, system, logInfo)
-	OAK_REGISTER_FUNCTION(L, SystemWrapper, system, logWarning)
-	OAK_REGISTER_FUNCTION(L, SystemWrapper, system, logError)
-	
-	OAK_REGISTER_FUNCTION(L, SystemWrapper, system, getTime)
-	OAK_REGISTER_FUNCTION(L, SystemWrapper, system, getElapsedTime)
-}
+	public:
+		static unsigned long long readNanoseconds();
+};
 
 } // oak namespace

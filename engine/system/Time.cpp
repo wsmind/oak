@@ -23,30 +23,39 @@
  * 
  *****************************************************************************/
 
-#include <engine/script/bind/SystemBind.hpp>
+#include <engine/system/Time.hpp>
 
-#include <engine/script/bind/Bind.hpp>
-#include <engine/script/bind/SystemWrapper.hpp>
+#include <engine/system/PrecisionTime.hpp>
 
 namespace oak {
 
-OAK_BIND_MODULE(SystemWrapper)
-OAK_BIND_VOID_FUNCTION1(SystemWrapper, logInfo, std::string)
-OAK_BIND_VOID_FUNCTION1(SystemWrapper, logWarning, std::string)
-OAK_BIND_VOID_FUNCTION1(SystemWrapper, logError, std::string)
+unsigned long long Time::referenceTime = 0L;
+unsigned long long Time::lastFrameTime = 0L;
+double Time::elapsedTime = 0.0;
 
-OAK_BIND_WRET_FUNCTION0(SystemWrapper, getTime)
-OAK_BIND_WRET_FUNCTION0(SystemWrapper, getElapsedTime)
-
-void SystemBind::registerFunctions(lua_State *L, SystemWrapper *system)
+void Time::reset()
 {
-	OAK_REGISTER_MODULE(L, SystemWrapper, system, system)
-	OAK_REGISTER_FUNCTION(L, SystemWrapper, system, logInfo)
-	OAK_REGISTER_FUNCTION(L, SystemWrapper, system, logWarning)
-	OAK_REGISTER_FUNCTION(L, SystemWrapper, system, logError)
+	Time::referenceTime = PrecisionTime::readNanoseconds();
+}
+
+double Time::getTime()
+{
+	unsigned long long now = PrecisionTime::readNanoseconds();
+	unsigned long long applicationTime = now - Time::referenceTime;
 	
-	OAK_REGISTER_FUNCTION(L, SystemWrapper, system, getTime)
-	OAK_REGISTER_FUNCTION(L, SystemWrapper, system, getElapsedTime)
+	return (double)applicationTime / 1000000000.0;
+}
+
+double Time::getElapsedTime()
+{
+	return Time::elapsedTime;
+}
+
+void Time::frameStart()
+{
+	unsigned long long now = PrecisionTime::readNanoseconds();
+	Time::elapsedTime = (double)(now - Time::lastFrameTime) / 1000000000.0;
+	Time::lastFrameTime = now;
 }
 
 } // oak namespace

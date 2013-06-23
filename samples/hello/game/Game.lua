@@ -25,11 +25,12 @@ function Game:start()
 end
 
 function Game:update(dt)
+	local time = oak.system.getTime();
 	local r, g, b = oak.graphics.getBackgroundColor()
-	r = r + 0.001
+	r = math.sin(time) * 0.5 + 0.5
 	oak.graphics.setBackgroundColor(r, g, b)
 	oak.Cube.setColor(self.quad, oak.graphics.getBackgroundColor())
-	oak.Entity.setLocalPosition(self.entity1, math.sin(r * 0.5) * 3.0, math.sin(r), -60)
+	oak.Entity.setLocalPosition(self.entity1, math.sin(time * 0.5) * 3.0, math.sin(time), -60)
 end
 
 function Game:stop()

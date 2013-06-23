@@ -39,7 +39,7 @@ class Application
 		void initialize(const std::string &baseFolder);
 		void shutdown();
 		
-		void update(float dt);
+		void update();
 		
 	private:
 		WorldManager *worldManager;

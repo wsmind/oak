@@ -30,7 +30,27 @@ namespace oak {
 class Time
 {
 	public:
-		static unsigned long long readNanoseconds();
+		// set the time reference so that application time is reset to 0 now
+		static void reset();
+		
+		// get current application time (in seconds)
+		static double getTime();
+		
+		// get elapsed time since last frame (in seconds)
+		static double getElapsedTime();
+		
+		// signal a frame boundary (used to compute elapsed time)
+		static void frameStart();
+		
+	private:
+		// time at which reset() was last called (nanoseconds)
+		static unsigned long long referenceTime;
+		
+		// time at which the last frame started (nanoseconds)
+		static unsigned long long lastFrameTime;
+		
+		// time elapsed since the last frame (seconds)
+		static double elapsedTime;
 };
 
 } // oak namespace
