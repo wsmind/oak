@@ -23,9 +23,10 @@
  * 
  *****************************************************************************/
 
-precision mediump float;
+precision highp float;
 
 uniform mat4 modelMatrix;
+uniform mat3 normalMatrix;
 uniform mat4 viewMatrix;
 uniform mat4 projectionMatrix;
 
@@ -33,10 +34,14 @@ attribute vec3 position;
 attribute vec3 normal;
 attribute vec2 uv;
 
-varying vec2 vertexPosition;
+varying vec3 fragPosition;
+varying vec3 fragNormal;
+varying vec2 fragUV;
 
 void main()
 {
-	vertexPosition = uv * 2.0 - 1.0;
-	gl_Position = projectionMatrix * viewMatrix * modelMatrix * vec4(position, 1.0);
+	fragPosition = (modelMatrix * vec4(position, 1.0)).xyz;
+	fragNormal = normalMatrix * normal;
+	fragUV = uv;
+	gl_Position = projectionMatrix * viewMatrix * vec4(fragPosition, 1.0);
 }

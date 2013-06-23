@@ -250,6 +250,14 @@ void GraphicDriver::setShaderConstant(const std::string &name, const glm::vec3 &
 	GL_CHECK(glUniform3f(location, value.x, value.y, value.z));
 }
 
+void GraphicDriver::setShaderConstant(const std::string &name, const glm::mat3 &value)
+{
+	OAK_ASSERT(this->state->currentShader != NULL, "No shader is bound, cannot set shader constant");
+	
+	GLint location = GL_CHECK(glGetUniformLocation(this->state->currentShader->programName, name.c_str()));
+	GL_CHECK(glUniformMatrix3fv(location, 1, GL_FALSE, &value[0].x));
+}
+
 void GraphicDriver::setShaderConstant(const std::string &name, const glm::mat4 &value)
 {
 	OAK_ASSERT(this->state->currentShader != NULL, "No shader is bound, cannot set shader constant");

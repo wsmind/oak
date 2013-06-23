@@ -63,7 +63,7 @@ function Game:pointerMove(pointerId, x, y, dx, dy)
 	--oak.Entity.setLocalPosition(self.entity1, 4.0 * (x / 1280) - 2.0, 1.0 - (y / 800) * 2.0, -60)
 	
 	if self.dragging then
-		oak.Entity.rotate(self.entity1, 0, 1, 0, dx * 0.01)
-		oak.Entity.rotate(self.entity1, 1, 0, -1, dy * 0.01)
+		oak.Entity.rotate(self.entity1, 0, 1, 0, dx * 0.004)
+		oak.Entity.rotate(self.entity1, 1, 0, -1, dy * 0.004)
 	end
 end

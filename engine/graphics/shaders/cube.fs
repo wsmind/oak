@@ -28,102 +28,27 @@ precision highp float;
 uniform float time;
 uniform vec3 color;
 
-varying vec2 vertexPosition;
+varying vec3 fragPosition;
+varying vec3 fragNormal;
+varying vec2 fragUV;
 
-const float INFINITY = 10000.0;
 vec3 lightDir = normalize(vec3(1.0, 0.7, -0.6));
-
-vec3 spherePos;
-
-float plane(vec3 pos, vec3 dir)
-{
-	float s = sign(dir.y);
-	vec2 sel = clamp(vec2(s, -s), 0.0, 1.0);
-	return dot(sel, vec2(INFINITY, (-pos.y / dir.y)));
-}
-
-float sphere(vec3 pos, vec3 dir, float radius)
-{
-	float b = dot(2.0 * dir, pos);
-	float c = dot(pos, pos) - radius * radius;
-	float delta = b * b - 4.0 * c;
-	if (delta < 0.0)
-		return INFINITY;
-	
-	float t = (-b - sqrt(delta)) * 0.5;
-	
-	float s = sign(t);
-	vec2 sel = clamp(vec2(s, -s), 0.0, 1.0);
-	return dot(sel, vec2(t, INFINITY));
-}
-
-vec4 raytrace(vec3 pos, vec3 dir)
-{
-	vec3 localPos = pos - spherePos;
-	float obj1 = plane(pos, dir);
-	float obj2 = sphere(localPos, dir, 10.0);
-	
-	if (obj1 < obj2)
-	{
-		return vec4(0.0, 1.0, 0.0, obj1);
-	}
-	else
-	{
-		vec3 point = localPos + dir * obj2;
-		return vec4(normalize(point), obj2);
-	}
-}
-
-float raytraceDistanceOnly(vec3 pos, vec3 dir)
-{
-	vec3 localPos = pos - spherePos;
-	float obj1 = plane(pos, dir);
-	float obj2 = sphere(localPos, dir, 10.0);
-	return min(obj1, obj2);
-}
-
-vec3 calcDiffuse(vec3 pos)
-{
-	return vec3(fract(pos.z * 0.1) + fract(pos.x * 0.1 + time));
-}
+vec3 lightPos = vec3(5.0, 2.0, -3.0);
 
 void main(void)
 {
-	vec3 pos = vec3(0.0, 12.0, 0.0);
-	vec2 uv = vertexPosition;
-	vec3 dir = normalize(vec3(uv.x, uv.y, 1.0));
+	vec3 normal = normalize(fragNormal);
 	
-	vec3 skyColor = mix(vec3(0.4, 0.5, 0.6), vec3(0.7, 0.9, 1.0), uv.y * 0.5 + 0.5);
-	spherePos = vec3(sin(time) * 10.0, 0.0, 25.0);
+	// directional light
+	float light = clamp(dot(normal, lightDir), 0.0, 1.0) * 0.2;
 	
-	vec4 intersection = raytrace(pos, dir);
-	pos = pos + intersection.w * dir;
+	// point light
+	vec3 dir = lightPos - fragPosition;
+	float dirLength = length(dir);
+	light += clamp(dot(normal, dir) / dirLength, 0.0, 1.0) / (0.2 * dirLength * dirLength);
 	
-	vec3 outColor = calcDiffuse(pos);
-	float extinction = exp(-abs(pos.z) * 0.02);
-	
-	if (intersection.w < INFINITY)
-	{
-		// shadow ray
-		float shadow = float(raytraceDistanceOnly(pos + lightDir * 0.2, lightDir) == INFINITY) * 0.8 + 0.2;
-		
-		// direct light
-		float light = clamp(dot(intersection.xyz, lightDir), 0.0, 1.0) * shadow;
-		outColor *= light;
-		
-		// secondary ray
-		dir = reflect(intersection.xyz, dir);
-		float dist = raytraceDistanceOnly(pos + dir * 0.1, dir);
-		pos = pos + dist * dir;
-		vec3 diffuse = calcDiffuse(pos);
-		float fog = exp(-abs(pos.z) * 0.02);
-		outColor += (diffuse * fog + vec3(1.0 - fog)) * 0.3;
-	}
-	
-	outColor = outColor * extinction + skyColor * (1.0 - extinction);
+	vec3 outColor = vec3(light);
 	
 	outColor = sqrt(outColor); // gamma
-	outColor *= vec3(1.0 - pow(length(uv), 2.0) * 0.5); // vignette
-	
 	gl_FragColor = vec4(outColor, 1.0);
 }
