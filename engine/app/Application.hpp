@@ -25,15 +25,18 @@
 
 #pragma once
 
+#include <engine/input/InputListener.hpp>
+
 #include <string>
 
 namespace oak {
 
+class InputEngine;
 class GraphicsEngine;
 class ScriptEngine;
 class WorldManager;
 
-class Application
+class Application: public InputListener
 {
 	public:
 		void initialize(const std::string &baseFolder);
@@ -41,8 +44,14 @@ class Application
 		
 		void update();
 		
+		// InputListener
+		virtual void pointerDown(unsigned int pointerId, unsigned int button, glm::vec2 position);
+		virtual void pointerUp(unsigned int pointerId, unsigned int button, glm::vec2 position);
+		virtual void pointerMove(unsigned int pointerId, glm::vec2 position, glm::vec2 movement);
+		
 	private:
 		WorldManager *worldManager;
+		InputEngine *input;
 		GraphicsEngine *graphics;
 		ScriptEngine *script;
 };

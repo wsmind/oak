@@ -80,6 +80,7 @@ GraphicDriver::GraphicDriver()
 	#endif
 	
 	GL_CHECK(glDisable(GL_CULL_FACE));
+	GL_CHECK(glEnable(GL_DEPTH_TEST));
 	
 	this->state = new GraphicDriverState;
 }

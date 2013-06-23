@@ -32,6 +32,9 @@ AAssetManager *assetManager = NULL;
 
 namespace oak {
 
+// Android-specific input driver implementation
+int32_t handleAndroidInputEvent(AInputEvent *event);
+
 void AndroidActivity::run(android_app *androidApp)
 {
 	Log::info("Oak application startup");
@@ -172,9 +175,9 @@ void AndroidActivity::onAppCmd(android_app *androidApp, int32_t command)
 	}
 }
 
-int32_t AndroidActivity::onInputEvent(android_app *androidApp, AInputEvent* event)
+int32_t AndroidActivity::onInputEvent(android_app *androidApp, AInputEvent *event)
 {
-	return 0;
+	return handleAndroidInputEvent(event);
 }
 
 } // oak namespace

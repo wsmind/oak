@@ -59,7 +59,7 @@ void WorldManager::destroyWorld(World *world)
 	}
 	
 	// remove the world in-place
-	*it = this->worlds[this->worlds.size() - 1];
+	*it = this->worlds.back();
 	this->worlds.pop_back();
 	
 	delete world;
@@ -81,7 +81,7 @@ void WorldManager::removeWorldListener(WorldListener *listener)
 	OAK_ASSERT(it != this->listeners.end(), "WorldListener never registered");
 	
 	// remove in-place
-	*it = this->listeners[this->listeners.size() - 1];
+	*it = this->listeners.back();
 	this->listeners.pop_back();
 }
 

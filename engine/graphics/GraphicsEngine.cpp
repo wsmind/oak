@@ -152,7 +152,7 @@ void GraphicsEngine::worldDestroyed(World *world)
 			delete this->graphicWorlds[i];
 			
 			// then remove it in-place
-			this->graphicWorlds[i] = this->graphicWorlds[this->graphicWorlds.size() - 1];
+			this->graphicWorlds[i] = this->graphicWorlds.back();
 			this->graphicWorlds.pop_back();
 			
 			return;

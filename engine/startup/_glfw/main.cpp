@@ -54,6 +54,9 @@ int main()
 		return 1;
 	}
 	
+	// events will be polled from the input engine; no need to poll them automatically each frame
+	glfwDisable(GLFW_AUTO_POLL_EVENTS);
+	
 	// clear possible GL errors internal to glfw
 	glGetError();
 	

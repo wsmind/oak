@@ -25,55 +25,48 @@
 
 #pragma once
 
-#include <string>
+#include <engine/input/InputDriverListener.hpp>
 
-struct lua_State;
+#include <vector>
+#include <map>
 
 namespace oak {
 
-class GraphicsEngine;
-class SystemWrapper;
-class WorldManager;
+class InputDriver;
+class InputListener;
 
-class ScriptEngine
+class InputEngine: public InputDriverListener
 {
 	public:
-		ScriptEngine(const std::string &baseFolder);
-		~ScriptEngine();
+		InputEngine();
+		~InputEngine();
 		
-		void initialize();
-		void shutdown();
+		void update();
 		
-		// script file loading
-		void loadFile(const std::string &filename);
+		void addListener(InputListener *listener);
+		void removeListener(InputListener *listener);
 		
-		// function call api
-		bool startCall(const std::string &functionName);
-		void appendParameter(int value);
-		void appendParameter(double value);
-		void endCall();
+		// InputDriverListener
+		virtual void pointerAdded(unsigned int pointerId, glm::vec2 position);
+		virtual void pointerRemoved(unsigned int pointerId);
 		
-		// modules to bind
-		void registerGraphics(GraphicsEngine *graphics);
-		void registerSg(WorldManager *sg);
-		
+		virtual void pointerDown(unsigned int pointerId, unsigned int button);
+		virtual void pointerUp(unsigned int pointerId, unsigned int button);
+		virtual void pointerMove(unsigned int pointerId, glm::vec2 position);
+	
 	private:
-		static int luaErrorHandler(lua_State *L);
-		static int luaLoadFile(lua_State *L);
-		static int luaDoFile(lua_State *L);
-		static int luaPackageSearcher(lua_State *L);
+		InputDriver *driver;
 		
-		lua_State *L;
-		int errorHandlerStackIndex;
+		typedef std::vector<InputListener *> ListenerVector;
+		ListenerVector listeners;
 		
-		std::string baseFolder;
+		struct PointerState
+		{
+			glm::vec2 position;
+		};
 		
-		// function call state
-		bool callingFunction;
-		int callParameterCount;
-		
-		// built-in system functions
-		SystemWrapper *systemWrapper;
+		typedef std::map<unsigned int, PointerState> PointerMap;
+		PointerMap pointers;
 };
 
 } // oak namespace

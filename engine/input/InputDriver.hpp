@@ -25,55 +25,21 @@
 
 #pragma once
 
-#include <string>
-
-struct lua_State;
-
 namespace oak {
 
-class GraphicsEngine;
-class SystemWrapper;
-class WorldManager;
+class InputDriverListener;
+struct InputDriverState;
 
-class ScriptEngine
+class InputDriver
 {
 	public:
-		ScriptEngine(const std::string &baseFolder);
-		~ScriptEngine();
+		InputDriver(InputDriverListener *listener);
+		~InputDriver();
 		
-		void initialize();
-		void shutdown();
-		
-		// script file loading
-		void loadFile(const std::string &filename);
-		
-		// function call api
-		bool startCall(const std::string &functionName);
-		void appendParameter(int value);
-		void appendParameter(double value);
-		void endCall();
-		
-		// modules to bind
-		void registerGraphics(GraphicsEngine *graphics);
-		void registerSg(WorldManager *sg);
+		void update();
 		
 	private:
-		static int luaErrorHandler(lua_State *L);
-		static int luaLoadFile(lua_State *L);
-		static int luaDoFile(lua_State *L);
-		static int luaPackageSearcher(lua_State *L);
-		
-		lua_State *L;
-		int errorHandlerStackIndex;
-		
-		std::string baseFolder;
-		
-		// function call state
-		bool callingFunction;
-		int callParameterCount;
-		
-		// built-in system functions
-		SystemWrapper *systemWrapper;
+		InputDriverState *state;
 };
 
 } // oak namespace

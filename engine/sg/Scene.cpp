@@ -62,7 +62,7 @@ void Scene::destroyEntity(Entity *entity)
 	OAK_ASSERT(it != this->entities.end(), "Trying to destroy an unexisting entity");
 	
 	// remove the entity in-place
-	*it = this->entities[this->entities.size() - 1];
+	*it = this->entities.back();
 	this->entities.pop_back();
 	
 	delete entity;

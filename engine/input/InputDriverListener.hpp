@@ -25,55 +25,21 @@
 
 #pragma once
 
-#include <string>
-
-struct lua_State;
+#include <glm/glm.hpp>
 
 namespace oak {
 
-class GraphicsEngine;
-class SystemWrapper;
-class WorldManager;
-
-class ScriptEngine
+class InputDriverListener
 {
 	public:
-		ScriptEngine(const std::string &baseFolder);
-		~ScriptEngine();
+		virtual ~InputDriverListener() {}
 		
-		void initialize();
-		void shutdown();
+		virtual void pointerAdded(unsigned int pointerId, glm::vec2 position) {}
+		virtual void pointerRemoved(unsigned int pointerId) {}
 		
-		// script file loading
-		void loadFile(const std::string &filename);
-		
-		// function call api
-		bool startCall(const std::string &functionName);
-		void appendParameter(int value);
-		void appendParameter(double value);
-		void endCall();
-		
-		// modules to bind
-		void registerGraphics(GraphicsEngine *graphics);
-		void registerSg(WorldManager *sg);
-		
-	private:
-		static int luaErrorHandler(lua_State *L);
-		static int luaLoadFile(lua_State *L);
-		static int luaDoFile(lua_State *L);
-		static int luaPackageSearcher(lua_State *L);
-		
-		lua_State *L;
-		int errorHandlerStackIndex;
-		
-		std::string baseFolder;
-		
-		// function call state
-		bool callingFunction;
-		int callParameterCount;
-		
-		// built-in system functions
-		SystemWrapper *systemWrapper;
+		virtual void pointerDown(unsigned int pointerId, unsigned int button) {}
+		virtual void pointerUp(unsigned int pointerId, unsigned int button) {}
+		virtual void pointerMove(unsigned int pointerId, glm::vec2 position) {}
 };
 
 } // oak namespace

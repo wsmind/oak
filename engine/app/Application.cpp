@@ -27,6 +27,7 @@
 
 #include <glm/glm.hpp>
 
+#include <engine/input/InputEngine.hpp>
 #include <engine/graphics/GraphicsEngine.hpp>
 #include <engine/script/ScriptEngine.hpp>
 #include <engine/sg/WorldManager.hpp>
@@ -42,6 +43,9 @@ void Application::initialize(const std::string &baseFolder)
 	Time::reset();
 	
 	this->worldManager = new WorldManager;
+	
+	this->input = new InputEngine;
+	this->input->addListener(this);
 	
 	this->graphics = new GraphicsEngine(this->worldManager);
 	
@@ -70,6 +74,9 @@ void Application::shutdown()
 	
 	delete this->graphics;
 	
+	this->input->removeListener(this);
+	delete this->input;
+	
 	delete this->worldManager;
 }
 
@@ -77,11 +84,44 @@ void Application::update()
 {
 	Time::frameStart();
 	
+	this->input->update();
+	
 	this->script->startCall("update");
 	this->script->appendParameter(Time::getElapsedTime());
 	this->script->endCall();
 	
 	this->graphics->renderFrame();
+}
+
+void Application::pointerDown(unsigned int pointerId, unsigned int button, glm::vec2 position)
+{
+	this->script->startCall("pointerDown");
+	this->script->appendParameter((int)pointerId);
+	this->script->appendParameter((int)button);
+	this->script->appendParameter(position.x);
+	this->script->appendParameter(position.y);
+	this->script->endCall();
+}
+
+void Application::pointerUp(unsigned int pointerId, unsigned int button, glm::vec2 position)
+{
+	this->script->startCall("pointerUp");
+	this->script->appendParameter((int)pointerId);
+	this->script->appendParameter((int)button);
+	this->script->appendParameter(position.x);
+	this->script->appendParameter(position.y);
+	this->script->endCall();
+}
+
+void Application::pointerMove(unsigned int pointerId, glm::vec2 position, glm::vec2 movement)
+{
+	this->script->startCall("pointerMove");
+	this->script->appendParameter((int)pointerId);
+	this->script->appendParameter(position.x);
+	this->script->appendParameter(position.y);
+	this->script->appendParameter(movement.x);
+	this->script->appendParameter(movement.y);
+	this->script->endCall();
 }
 
 } // oak namespace

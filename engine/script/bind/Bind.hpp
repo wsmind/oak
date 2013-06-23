@@ -246,6 +246,17 @@ inline int pushReturnValue(lua_State *L, void *value)
 		return 0; \
 	}
 
+#define OAK_BIND_VOID_METHOD2(ClassName, methodName, ArgType1, ArgType2) \
+	int oak_method_##ClassName##_##methodName(lua_State *L) \
+	{ \
+		ArgType2 arg2 = oak::bind::popArgument<ArgType2>(L); \
+		ArgType1 arg1 = oak::bind::popArgument<ArgType1>(L); \
+		ClassName *self = oak::bind::popArgument<ClassName *>(L); \
+		self->methodName(arg1, arg2); \
+		 \
+		return 0; \
+	}
+
 #define OAK_BIND_WRET_METHOD0(ClassName, methodName) \
 	int oak_method_##ClassName##_##methodName(lua_State *L) \
 	{ \
@@ -261,6 +272,17 @@ inline int pushReturnValue(lua_State *L, void *value)
 		ArgType1 arg1 = oak::bind::popArgument<ArgType1>(L); \
 		ClassName *self = oak::bind::popArgument<ClassName *>(L); \
 		return oak::bind::pushReturnValue(L, self->methodName(arg1)); \
+		 \
+		return 0; \
+	}
+
+#define OAK_BIND_WRET_METHOD2(ClassName, methodName, ArgType1) \
+	int oak_method_##ClassName##_##methodName(lua_State *L) \
+	{ \
+		ArgType1 arg2 = oak::bind::popArgument<ArgType2>(L); \
+		ArgType1 arg1 = oak::bind::popArgument<ArgType1>(L); \
+		ClassName *self = oak::bind::popArgument<ClassName *>(L); \
+		return oak::bind::pushReturnValue(L, self->methodName(arg1, arg2)); \
 		 \
 		return 0; \
 	}

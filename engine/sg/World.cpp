@@ -61,7 +61,7 @@ void World::destroyScene(Scene *scene)
 	OAK_ASSERT(it != this->scenes.end(), "Trying to destroy an unexisting scene");
 	
 	// remove the scene in-place
-	*it = this->scenes[this->scenes.size() - 1];
+	*it = this->scenes.back();
 	this->scenes.pop_back();
 	
 	delete scene;

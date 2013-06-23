@@ -107,8 +107,27 @@ void Entity::destroyComponent(Component *component)
 	(*it)->detachComponent(this);
 	
 	// remove the component in-place
-	*it = this->components[this->components.size() - 1];
+	*it = this->components.back();
 	this->components.pop_back();
+}
+
+void Entity::translate(const glm::vec3 &translation)
+{
+	glm::vec3 newPosition = this->localPosition + translation;
+	this->setLocalPosition(newPosition);
+}
+
+void Entity::rotate(const glm::vec3 &axis, float angle)
+{
+	glm::quat rotation = glm::angleAxis(angle, axis.x, axis.y, axis.z);
+	glm::quat newOrientation = rotation * this->localOrientation;
+	this->setLocalOrientation(newOrientation);
+}
+
+void Entity::scale(const glm::vec3 &scalingFactor)
+{
+	glm::vec3 newScale = this->localScale + scalingFactor;
+	this->setLocalScale(newScale);
 }
 
 void Entity::updateLocalTransform()

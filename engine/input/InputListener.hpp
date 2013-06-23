@@ -25,55 +25,18 @@
 
 #pragma once
 
-#include <string>
-
-struct lua_State;
+#include <glm/glm.hpp>
 
 namespace oak {
 
-class GraphicsEngine;
-class SystemWrapper;
-class WorldManager;
-
-class ScriptEngine
+class InputListener
 {
 	public:
-		ScriptEngine(const std::string &baseFolder);
-		~ScriptEngine();
+		virtual ~InputListener() {}
 		
-		void initialize();
-		void shutdown();
-		
-		// script file loading
-		void loadFile(const std::string &filename);
-		
-		// function call api
-		bool startCall(const std::string &functionName);
-		void appendParameter(int value);
-		void appendParameter(double value);
-		void endCall();
-		
-		// modules to bind
-		void registerGraphics(GraphicsEngine *graphics);
-		void registerSg(WorldManager *sg);
-		
-	private:
-		static int luaErrorHandler(lua_State *L);
-		static int luaLoadFile(lua_State *L);
-		static int luaDoFile(lua_State *L);
-		static int luaPackageSearcher(lua_State *L);
-		
-		lua_State *L;
-		int errorHandlerStackIndex;
-		
-		std::string baseFolder;
-		
-		// function call state
-		bool callingFunction;
-		int callParameterCount;
-		
-		// built-in system functions
-		SystemWrapper *systemWrapper;
+		virtual void pointerDown(unsigned int pointerId, unsigned int button, glm::vec2 position) {}
+		virtual void pointerUp(unsigned int pointerId, unsigned int button, glm::vec2 position) {}
+		virtual void pointerMove(unsigned int pointerId, glm::vec2 position, glm::vec2 movement) {}
 };
 
 } // oak namespace

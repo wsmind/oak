@@ -63,6 +63,11 @@ class Entity
 		const glm::mat4 &getLocalTransform() const { return this->localTransform; }
 		//const glm::mat4 &getWorldTransform() const { return this->worldTransform; }
 		
+		// utility transform methods
+		void translate(const glm::vec3 &translation);
+		void rotate(const glm::vec3 &axis, float angle);
+		void scale(const glm::vec3 &scalingFactor);
+		
 	private:
 		// compute local transform from separate position, orientation and scale
 		void updateLocalTransform();

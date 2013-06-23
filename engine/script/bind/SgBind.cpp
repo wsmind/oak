@@ -55,6 +55,9 @@ OAK_BIND_WRET_METHOD1(Entity, createComponent, std::string)
 OAK_BIND_VOID_METHOD1(Entity, destroyComponent, Component *)
 OAK_BIND_WRET_METHOD0(Entity, getLocalPosition)
 OAK_BIND_VOID_METHOD1(Entity, setLocalPosition, glm::vec3)
+OAK_BIND_VOID_METHOD1(Entity, translate, glm::vec3)
+OAK_BIND_VOID_METHOD2(Entity, rotate, glm::vec3, float)
+OAK_BIND_VOID_METHOD1(Entity, scale, glm::vec3)
 
 void SgBind::registerFunctions(lua_State *L, WorldManager *sg)
 {
@@ -77,6 +80,9 @@ void SgBind::registerFunctions(lua_State *L, WorldManager *sg)
 	OAK_REGISTER_METHOD(L, Entity, destroyComponent)
 	OAK_REGISTER_METHOD(L, Entity, getLocalPosition)
 	OAK_REGISTER_METHOD(L, Entity, setLocalPosition)
+	OAK_REGISTER_METHOD(L, Entity, translate)
+	OAK_REGISTER_METHOD(L, Entity, rotate)
+	OAK_REGISTER_METHOD(L, Entity, scale)
 }
 
 } // oak namespace

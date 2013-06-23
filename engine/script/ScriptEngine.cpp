@@ -144,6 +144,15 @@ bool ScriptEngine::startCall(const std::string &functionName)
 	return true;
 }
 
+void ScriptEngine::appendParameter(int value)
+{
+	if (!this->callingFunction)
+		return;
+	
+	lua_pushinteger(this->L, value);
+	this->callParameterCount++;
+}
+
 void ScriptEngine::appendParameter(double value)
 {
 	if (!this->callingFunction)
