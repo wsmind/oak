@@ -31,24 +31,35 @@ uniform vec3 color;
 varying vec3 fragPosition;
 varying vec3 fragNormal;
 varying vec2 fragUV;
+varying float viewDepth;
 
 vec3 lightDir = normalize(vec3(1.0, 0.7, -0.6));
-vec3 lightPos = vec3(5.0, 2.0, -3.0);
+vec3 lightPos = vec3(4.0, 2.0, 0.0);
 
 void main(void)
 {
 	vec3 normal = normalize(fragNormal);
 	
 	// directional light
-	float light = clamp(dot(normal, lightDir), 0.0, 1.0) * 0.2;
+	float light = clamp(dot(normal, lightDir), 0.0, 1.0) * 0.1;
 	
 	// point light
 	vec3 dir = lightPos - fragPosition;
 	float dirLength = length(dir);
-	light += clamp(dot(normal, dir) / dirLength, 0.0, 1.0) / (0.2 * dirLength * dirLength);
+	light += clamp(dot(normal, dir) / dirLength, 0.0, 1.0) / (0.1 * dirLength * dirLength);
 	
-	vec3 outColor = vec3(light);
+	// simple procedural texture
+	float f = fract(fragUV.x * 3.0) * fract(fragUV.y * 3.0);
+	float style = pow(f, 2.0);
+	float border = pow(clamp((abs(f - 0.5) - 0.4) * 10.0, 0.0, 1.0), 2.0);
+	vec3 diffuse = style * vec3(0.8, 1.0, 0.8) + border * vec3(1.0, 1.0, 0.7);
 	
-	outColor = sqrt(outColor); // gamma
+	vec3 outColor = vec3(light) * diffuse;
+	
+	// fog
+	float fog = 1.0 - exp(-viewDepth * 0.02);
+	outColor = mix(outColor, vec3(0.6, 0.8, 0.9), fog);
+	
+	//outColor = sqrt(outColor); // gamma
 	gl_FragColor = vec4(outColor, 1.0);
 }

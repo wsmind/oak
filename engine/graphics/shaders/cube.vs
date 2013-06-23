@@ -37,11 +37,15 @@ attribute vec2 uv;
 varying vec3 fragPosition;
 varying vec3 fragNormal;
 varying vec2 fragUV;
+varying float viewDepth;
 
 void main()
 {
 	fragPosition = (modelMatrix * vec4(position, 1.0)).xyz;
 	fragNormal = normalMatrix * normal;
 	fragUV = uv;
-	gl_Position = projectionMatrix * viewMatrix * vec4(fragPosition, 1.0);
+	
+	vec4 viewPosition = viewMatrix * vec4(fragPosition, 1.0);
+	viewDepth = -viewPosition.z;
+	gl_Position = projectionMatrix * viewPosition;
 }

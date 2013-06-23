@@ -9,21 +9,24 @@ function Game.new()
 end
 
 function Game:start()
-	oak.graphics.setBackgroundColor(0.2, 0.5, 0.7)
+	oak.graphics.setBackgroundColor(0.6, 0.8, 0.9)
 	
 	self.world = oak.sg.createWorld()
 	local scene = oak.World.createScene(self.world)
 	
 	self.entity1 = oak.Scene.createEntity(scene)
-	oak.Entity.setLocalPosition(self.entity1, 0, 1, 0)
+	oak.Entity.setLocalPosition(self.entity1, 0, 2, 0)
+	oak.Entity.scale(self.entity1, 1.5, 1.5, 1.5)
 	self.cube = oak.Entity.createComponent(self.entity1, "Cube")
 	
 	-- ground
-	for x = -10, 10 do
-		for z = -10, 10 do
+	self.cubes = {}
+	for x = -10, 5 do
+		for z = -10, 5 do
 			local entity = oak.Scene.createEntity(scene)
 			oak.Entity.createComponent(entity, "Cube")
-			oak.Entity.setLocalPosition(entity, x * 2, -1.2, z * 2)
+			oak.Entity.setLocalPosition(entity, x * 3, -1.2, z * 3)
+			table.insert(self.cubes, entity)
 		end
 	end
 	
@@ -42,6 +45,12 @@ function Game:update(dt)
 	local time = oak.system.getTime()
 	oak.Entity.rotate(self.entity1, 0, 1, 0, dt * 0.1)
 	--oak.Entity.setLocalPosition(self.entity1, math.sin(time * 0.5) * 3.0, math.sin(time), -60)
+	
+	for i = 1, #self.cubes do
+		local entity = self.cubes[i]
+		local x, y, z = oak.Entity.getLocalPosition(entity)
+		oak.Entity.rotate(entity, x, y, z, dt * 0.2)
+	end
 end
 
 function Game:stop()

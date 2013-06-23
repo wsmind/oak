@@ -123,7 +123,7 @@ void Entity::rotate(const glm::vec3 &axis, float angle)
 
 void Entity::scale(const glm::vec3 &scalingFactor)
 {
-	glm::vec3 newScale = this->localScale + scalingFactor;
+	glm::vec3 newScale = this->localScale * scalingFactor;
 	this->setLocalScale(newScale);
 }
 
