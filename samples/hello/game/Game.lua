@@ -15,19 +15,32 @@ function Game:start()
 	local scene = oak.World.createScene(self.world)
 	
 	self.entity1 = oak.Scene.createEntity(scene)
-	oak.Entity.setLocalPosition(self.entity1, 0, 0, -80)
-	self.quad = oak.Entity.createComponent(self.entity1, "Cube")
+	oak.Entity.setLocalPosition(self.entity1, 0, 1, 0)
+	self.cube = oak.Entity.createComponent(self.entity1, "Cube")
+	
+	-- ground
+	for x = -5, 5 do
+		for z = -5, 5 do
+			local entity = oak.Scene.createEntity(scene)
+			oak.Entity.createComponent(entity, "Cube")
+			oak.Entity.setLocalPosition(entity, x * 2, -1.2, z * 2)
+		end
+	end
 	
 	local entity2 = oak.Scene.createEntity(scene)
-	self.camera = oak.Entity.createComponent(entity2, "Camera")
+	local camera = oak.Entity.createComponent(entity2, "Camera")
+	oak.Entity.setLocalPosition(entity2, 5, 4, 5)
+	oak.Entity.rotate(entity2, 1, 0, 0, -0.5)
+	oak.Entity.rotate(entity2, 0, 1, 0, 0.78)
+	--oak.Camera.setFov(camera, 60)
 	
 	self.view = oak.graphics.createView(self.world)
-	oak.View.setCamera(self.view, self.camera)
+	oak.View.setCamera(self.view, camera)
 end
 
 function Game:update(dt)
 	local time = oak.system.getTime()
-	oak.Entity.rotate(self.entity1, 0, 1, 0, dt * 10.0)
+	oak.Entity.rotate(self.entity1, 0, 1, 0, dt * 0.1)
 	--oak.Entity.setLocalPosition(self.entity1, math.sin(time * 0.5) * 3.0, math.sin(time), -60)
 end
 
@@ -50,7 +63,7 @@ function Game:pointerMove(pointerId, x, y, dx, dy)
 	--oak.Entity.setLocalPosition(self.entity1, 4.0 * (x / 1280) - 2.0, 1.0 - (y / 800) * 2.0, -60)
 	
 	if self.dragging then
-		oak.Entity.rotate(self.entity1, 0, 1, 0, dx * 0.2)
-		oak.Entity.rotate(self.entity1, 1, 0, 0, dy * 0.2)
+		oak.Entity.rotate(self.entity1, 0, 1, 0, dx * 0.01)
+		oak.Entity.rotate(self.entity1, 1, 0, -1, dy * 0.01)
 	end
 end

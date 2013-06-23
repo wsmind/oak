@@ -51,6 +51,7 @@ def build(ctx):
 	ctx(
 		name = "glm",
 		export_includes = "glm-0.9.4.3",
+		export_defines = ["GLM_FORCE_RADIANS"]
 	)
 	
 	# GLEW

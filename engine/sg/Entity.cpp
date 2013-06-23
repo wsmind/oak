@@ -119,7 +119,8 @@ void Entity::translate(const glm::vec3 &translation)
 
 void Entity::rotate(const glm::vec3 &axis, float angle)
 {
-	glm::quat rotation = glm::angleAxis(angle, axis.x, axis.y, axis.z);
+	glm::vec3 normalizedAxis = glm::normalize(axis);
+	glm::quat rotation = glm::angleAxis(angle, normalizedAxis.x, normalizedAxis.y, normalizedAxis.z);
 	glm::quat newOrientation = rotation * this->localOrientation;
 	this->setLocalOrientation(newOrientation);
 }

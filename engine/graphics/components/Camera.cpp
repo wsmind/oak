@@ -30,7 +30,7 @@
 namespace oak {
 
 Camera::Camera()
-	: fov(3.0f)
+	: fov(1.2f)
 	, aspect(16.0f / 9.0f)
 	, nearPlane(0.1f)
 	, farPlane(1000.0f)
