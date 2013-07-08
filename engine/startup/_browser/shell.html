@@ -1,15 +1,16 @@
 <!doctype html>
 <html>
   <head>
-    <meta charset="utf-8">
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta charset="utf-8" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1.0, user-scalable=no" />
     <title>Oak test</title>
     <style>
-      body { background-color: #333; }
+      body { background-color: #333; padding: 0px; margin: 0px; }
       .emscripten { padding-right: 0; margin-left: auto; margin-right: auto; display: block; }
       div.emscripten { text-align: center; }
       /* the canvas *must not* have any border or padding, or mouse coords will be wrong */
-      canvas.emscripten { border: 0px none; }
+      canvas.emscripten { border: 0px none; margin: 0px; padding: 0px; width: 100%; height: 100%; }
     </style>
   </head>
   <body>
@@ -18,9 +19,9 @@
       <progress value="0" max="100" id="progress" hidden=1></progress>  
     </div>
     <canvas class="emscripten" id="canvas" oncontextmenu="event.preventDefault()"></canvas>
-    <div class="emscripten">
+    <!--<div class="emscripten">
       <input type="button" value="Fullscreen" onclick="Module.requestFullScreen(true, true)" />
-    </div>
+    </div>-->
     <script type='text/javascript'>
       // connect to canvas
       var Module = {
