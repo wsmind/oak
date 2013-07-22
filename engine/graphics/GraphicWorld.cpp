@@ -64,10 +64,7 @@ void GraphicWorld::render(GraphicDriver *driver, Camera *camera)
 		driver->setShaderConstant("viewMatrix", viewMatrix);
 		driver->setShaderConstant("projectionMatrix", camera->getProjectionMatrix());
 		
-		if (renderable.primitiveType == TRIANGLE_STRIP)
-			driver->drawTriangleStrip(renderable.startElement, renderable.elementCount);
-		else if (renderable.primitiveType == TRIANGLES)
-			driver->drawTriangles(renderable.startElement, renderable.elementCount);
+		driver->draw(renderable.primitiveType, renderable.startElement, renderable.elementCount);
 	}
 }
 

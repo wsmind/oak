@@ -142,7 +142,7 @@ void Cube::activateComponent(Entity *entity)
 	renderable.transform = &entity->getLocalTransform();
 	renderable.buffer = Cube::vertexBuffer;
 	renderable.shader = Cube::shader;
-	renderable.primitiveType = GraphicWorld::TRIANGLES;
+	renderable.primitiveType = GraphicDriver::Triangles;
 	renderable.startElement = 0;
 	renderable.elementCount = 36;
 	

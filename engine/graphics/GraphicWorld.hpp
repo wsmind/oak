@@ -34,7 +34,6 @@
 namespace oak {
 
 class Camera;
-class GraphicDriver;
 class World;
 
 class GraphicWorld
@@ -47,18 +46,12 @@ class GraphicWorld
 		
 		void render(GraphicDriver *driver, Camera *camera);
 		
-		enum PrimitiveType
-		{
-			TRIANGLE_STRIP,
-			TRIANGLES
-		};
-		
 		struct Renderable
 		{
 			const glm::mat4 *transform;
 			VertexBuffer *buffer;
 			ShaderProgram *shader;
-			PrimitiveType primitiveType;
+			GraphicDriver::PrimitiveType primitiveType;
 			unsigned int startElement;
 			unsigned int elementCount;
 			
@@ -66,7 +59,7 @@ class GraphicWorld
 				: transform(NULL)
 				, buffer(NULL)
 				, shader(NULL)
-				, primitiveType(TRIANGLE_STRIP)
+				, primitiveType(GraphicDriver::TriangleStrip)
 				, startElement(0)
 				, elementCount(0)
 			{}

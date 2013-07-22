@@ -87,8 +87,12 @@ class GraphicDriver
 		void setShaderConstant(const std::string &name, const glm::mat3 &value);
 		void setShaderConstant(const std::string &name, const glm::mat4 &value);
 		
-		void drawTriangleStrip(unsigned int startElement, unsigned int elementCount);
-		void drawTriangles(unsigned int startElement, unsigned int elementCount);
+		enum PrimitiveType
+		{
+			TriangleStrip,
+			Triangles
+		};
+		void draw(PrimitiveType primitiveType, unsigned int startElement, unsigned int elementCount);
 		
 	private:
 		GraphicDriverState *state;

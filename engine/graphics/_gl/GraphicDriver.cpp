@@ -266,14 +266,16 @@ void GraphicDriver::setShaderConstant(const std::string &name, const glm::mat4 &
 	GL_CHECK(glUniformMatrix4fv(location, 1, GL_FALSE, &value[0].x));
 }
 
-void GraphicDriver::drawTriangleStrip(unsigned int startElement, unsigned int elementCount)
+void GraphicDriver::draw(PrimitiveType primitiveType, unsigned int startElement, unsigned int elementCount)
 {
-	GL_CHECK(glDrawArrays(GL_TRIANGLE_STRIP, startElement, elementCount));
-}
-
-void GraphicDriver::drawTriangles(unsigned int startElement, unsigned int elementCount)
-{
-	GL_CHECK(glDrawArrays(GL_TRIANGLES, startElement, elementCount));
+	GLenum glPrimitiveType = GL_TRIANGLES;
+	switch (primitiveType)
+	{
+		case TriangleStrip: glPrimitiveType = GL_TRIANGLE_STRIP; break;
+		case Triangles: glPrimitiveType = GL_TRIANGLES; break;
+	}
+	
+	GL_CHECK(glDrawArrays(glPrimitiveType, startElement, elementCount));
 }
 
 } // oak namespace

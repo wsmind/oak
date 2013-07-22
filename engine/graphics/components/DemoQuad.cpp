@@ -83,7 +83,7 @@ void DemoQuad::activateComponent(Entity *entity)
 	renderable.transform = &entity->getLocalTransform();
 	renderable.buffer = this->vertexBuffer;
 	renderable.shader = this->shader;
-	renderable.primitiveType = GraphicWorld::TRIANGLE_STRIP;
+	renderable.primitiveType = GraphicDriver::TriangleStrip;
 	renderable.startElement = 0;
 	renderable.elementCount = 4;
 	
