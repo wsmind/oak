@@ -72,6 +72,7 @@ int main(int argc, char **argv)
 		std::cout << "The game folder must contain a main.lua file" << std::endl;
 		return 1;
 	}
+	mainScriptFile.close();
 	
 	glfwInit();
 	
