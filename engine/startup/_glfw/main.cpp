@@ -28,6 +28,11 @@
 #include <engine/app/Application.hpp>
 #include <engine/system/Log.hpp>
 
+#include <iostream>
+#include <fstream>
+#include <algorithm>
+#include <string>
+
 using namespace oak;
 
 #ifdef EMSCRIPTEN
@@ -42,8 +47,32 @@ void main_loop()
 }
 #endif
 
-int main()
+int main(int argc, char **argv)
 {
+	// the engine must be given a game folder
+	if (argc < 2)
+	{
+		Log::error("No game folder given on the command-line, aborting");
+		std::cout << "Usage: " << argv[0] << " <game folder>" << std::endl;
+		return 1;
+	}
+	
+	// normalize game folder
+	std::string gameFolder = std::string(argv[1]);
+	std::replace(gameFolder.begin(), gameFolder.end(), '\\', '/');
+	if (gameFolder[gameFolder.size() - 1] != '/')
+		gameFolder += '/';
+	
+	// the game must contain at least a file named main.lua
+	std::string mainScriptFilename = gameFolder + "main.lua";
+	std::ifstream mainScriptFile(mainScriptFilename.c_str());
+	if (mainScriptFile.fail())
+	{
+		Log::error("Entry script main.lua not found in game folder, aborting");
+		std::cout << "The game folder must contain a main.lua file" << std::endl;
+		return 1;
+	}
+	
 	glfwInit();
 	
 	if (glfwOpenWindow(1280, 800, 8, 8, 8, 8, 24, 8, GLFW_WINDOW) == GL_FALSE)
@@ -62,7 +91,7 @@ int main()
 	
 	Application *application = new Application;
 	
-	application->initialize("D:/proj/oak/samples/hello");
+	application->initialize(gameFolder);
 	
 	#ifdef EMSCRIPTEN
 		app = application;
