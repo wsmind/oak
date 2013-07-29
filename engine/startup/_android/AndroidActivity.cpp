@@ -117,7 +117,9 @@ void AndroidActivity::createWindow(ANativeWindow *window)
 	}
 	
 	// the context is ready, start application
-	this->gameApplication.initialize("hello");
+	// note: there are issues with files at the root of the .apk assets/ folder,
+	// so the packager will put everything under assets/data/.
+	this->gameApplication.initialize("data");
 	this->initialized = true;
 }
 
