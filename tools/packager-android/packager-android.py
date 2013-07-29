@@ -55,7 +55,8 @@ if args.install:
 
 # extract generated apk
 apkFilename = os.path.join(appDir, "bin", "OakApp-debug.apk")
-os.makedirs(outputDir)
+if not os.path.exists(outputDir):
+    os.makedirs(outputDir)
 shutil.copy2(apkFilename, outputDir)
 
 # run on device
