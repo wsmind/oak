@@ -74,5 +74,11 @@ function Game:pointerMove(pointerId, x, y, dx, dy)
 	if self.dragging then
 		oak.Entity.rotate(self.entity1, 0, 1, 0, dx * 0.004)
 		oak.Entity.rotate(self.entity1, 1, 0, -1, dy * 0.004)
+		
+		for i = 1, #self.cubes do
+			local entity = self.cubes[i]
+			oak.Entity.rotate(entity, 0, 1, 0, dx * 0.004)
+			oak.Entity.rotate(entity, 1, 0, -1, dy * 0.004)
+		end
 	end
 end
