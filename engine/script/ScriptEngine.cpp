@@ -228,6 +228,12 @@ int ScriptEngine::luaLoadFile(lua_State *L)
 			
 			result = luaL_loadstring(L, code.c_str());
 		}
+		else
+		{
+			std::string errorMessage = "failed to load script file '" + fullPath + "'";
+			lua_pushstring(L, errorMessage.c_str());
+			result = -1;
+		}
 	#else
 		result = luaL_loadfile(L, fullPath.c_str());
 	#endif
