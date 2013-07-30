@@ -5,4 +5,4 @@ rem python waf build_release_android9_armv7_ndk
 ..\tools\packager-android\packager-android.py --game ../samples/hello --engine output/debug_android9_armv7_ndk/liboak.so --out output/apk --install --run
 echo Press any key to kill the app
 pause
-adb shell am force-stop com.tabsorspaces.oakapp
+adb shell am force-stop com.example.oak.helloworld
