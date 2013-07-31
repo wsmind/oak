@@ -118,7 +118,7 @@ void Memory::dumpUsedMemory()
 unsigned long Memory::trackAllocation(size_t size)
 {
 	void *stack[MAX_STACK_DEPTH] = {0};
-	unsigned long stackHash;
+	unsigned long stackHash = 1;
 	StackWalker::dumpStack(stack, MAX_STACK_DEPTH, &stackHash);
 	
 	// look for this call stack, starting at the hash index
@@ -169,10 +169,9 @@ void Memory::trackFree(size_t size, unsigned long stackHash)
 			
 			// free stack info if everything has been deallocated
 			if (stats.totalSize == 0)
-			{
 				stats.hash = 0;
-				break;
-			}
+			
+			break;
 		}
 	}
 }
