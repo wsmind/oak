@@ -27,6 +27,7 @@
 
 #include <engine/app/Application.hpp>
 #include <engine/system/Log.hpp>
+//#include <engine/system/Memory.hpp>
 
 #include <iostream>
 #include <fstream>
@@ -104,6 +105,8 @@ int main(int argc, char **argv)
 			application->update();
 			
 			glfwSwapBuffers();
+			
+			//Memory::dumpUsedMemory();
 		}
 	#endif
 	

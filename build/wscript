@@ -220,6 +220,9 @@ def build(ctx):
 	if ctx.env.TARGET_OS == "windows":
 		deps = ["glfw", "glm", "glew", "lua"]
 		libs = ["opengl32", "winmm", "gdi32", "user32"]
+		
+		if ctx.env.TARGET_CONFIG == "debug" and ctx.env.TARGET_TOOLCHAIN == "msvc":
+			libs += ["dbghelp"]
 	else:
 		deps = ["glm", "lua"]
 		libs = ["m"]
