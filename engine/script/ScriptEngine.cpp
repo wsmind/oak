@@ -85,10 +85,6 @@ void ScriptEngine::initialize()
 	lua_pushstring(this->L, this->baseFolder.c_str());
 	lua_setfield(this->L, LUA_REGISTRYINDEX, "oakBaseFolder");
 	
-	// global oak namespace
-	lua_createtable(this->L, 0, 0);
-	lua_setglobal(this->L, "oak");
-	
 	// override low-level file loading functions
 	lua_register(this->L, "loadfile", ScriptEngine::luaLoadFile);
 	lua_register(this->L, "dofile", ScriptEngine::luaDoFile);

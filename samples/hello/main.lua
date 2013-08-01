@@ -1,7 +1,7 @@
 require("game.Game")
 
 function initialize()
-	oak.system.logInfo("=== SCRIPT START ===")
+	system.logInfo("=== SCRIPT START ===")
 	
 	game = Game.new()
 	game:start()
@@ -14,7 +14,7 @@ end
 function shutdown()
 	game:stop()
 	
-	oak.system.logInfo("=== SCRIPT END ===")
+	system.logInfo("=== SCRIPT END ===")
 end
 
 function pointerDown(pointerId, button, x, y)
