@@ -29,6 +29,7 @@
 
 #include <string>
 #include <glm/glm.hpp>
+#include <glm/ext.hpp>
 
 #include <engine/system/Log.hpp>
 
@@ -90,6 +91,18 @@ inline glm::vec3 popArgument(lua_State *L)
 }
 
 template <>
+inline glm::quat popArgument(lua_State *L)
+{
+	lua_Number w = lua_tonumber(L, -4);
+	lua_Number x = lua_tonumber(L, -3);
+	lua_Number y = lua_tonumber(L, -2);
+	lua_Number z = lua_tonumber(L, -1);
+	lua_pop(L, 4);
+	
+	return glm::quat((float)w, (float)x, (float)y, (float)z);
+}
+
+template <>
 inline std::string popArgument(lua_State *L)
 {
 	const char *str = lua_tostring(L, -1);
@@ -133,6 +146,16 @@ inline int pushReturnValue(lua_State *L, glm::vec3 value)
 	lua_pushnumber(L, (lua_Number)value.z);
 	
 	return 3;
+}
+
+inline int pushReturnValue(lua_State *L, glm::quat value)
+{
+	lua_pushnumber(L, (lua_Number)value.w);
+	lua_pushnumber(L, (lua_Number)value.x);
+	lua_pushnumber(L, (lua_Number)value.y);
+	lua_pushnumber(L, (lua_Number)value.z);
+	
+	return 4;
 }
 
 inline int pushReturnValue(lua_State *L, const std::string &value)

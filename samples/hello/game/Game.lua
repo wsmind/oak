@@ -32,21 +32,25 @@ function Game:start()
 		end
 	end
 	
-	local entity2 = Scene.createEntity(scene)
-	local camera = Entity.createComponent(entity2, "Camera")
-	Entity.setLocalPosition(entity2, 5, 4, 5)
-	Entity.rotate(entity2, 1, 0, 0, -0.5)
-	Entity.rotate(entity2, 0, 1, 0, 0.78)
-	--Camera.setFov(camera, 60)
+	self.camera = Scene.createEntity(scene)
+	local cameraComponent = Entity.createComponent(self.camera, "Camera")
+	Entity.setLocalPosition(self.camera, 5, 4, 5)
+	
+	self.cameraAngleX = 0.78
+	self.cameraAngleY = -0.5
 	
 	self.view = graphics.createView(self.world)
-	View.setCamera(self.view, camera)
+	View.setCamera(self.view, cameraComponent)
 end
 
 function Game:update(dt)
 	local time = system.getTime()
 	Entity.rotate(self.entity1, 0, 1, 0, dt * 0.1)
 	--Entity.setLocalPosition(self.entity1, math.sin(time * 0.5) * 3.0, math.sin(time), -60)
+	
+	Entity.setLocalOrientation(self.camera, 1, 0, 0, 0)
+	Entity.rotate(self.camera, 1, 0, 0, self.cameraAngleY)
+	Entity.rotate(self.camera, 0, 1, 0, self.cameraAngleX)
 	
 	for i = 1, #self.cubes do
 		local entity = self.cubes[i]
@@ -82,5 +86,8 @@ function Game:pointerMove(pointerId, x, y, dx, dy)
 			Entity.rotate(entity, 0, 1, 0, dx * 0.004)
 			Entity.rotate(entity, 1, 0, -1, dy * 0.004)
 		end
+		
+		self.cameraAngleX = self.cameraAngleX + dx * 0.002
+		self.cameraAngleY = self.cameraAngleY + dy * 0.002
 	end
 end
