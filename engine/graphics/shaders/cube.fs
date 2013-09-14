@@ -23,7 +23,9 @@
  * 
  *****************************************************************************/
 
-precision highp float;
+#ifdef GLES2
+	precision highp float;
+#endif
 
 uniform float time;
 uniform vec3 color;

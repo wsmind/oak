@@ -23,7 +23,9 @@
  * 
  *****************************************************************************/
 
-precision mediump float;
+#ifdef GLES2
+	precision highp float;
+#endif
 
 uniform mat4 modelMatrix;
 uniform mat4 viewMatrix;

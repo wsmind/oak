@@ -46,7 +46,16 @@ GLuint compileShader(GLenum type, const std::string &code)
 {
 	GLuint name = GL_CHECK(glCreateShader(type));
 	
-	const char *codeString = code.c_str();
+	std::string fullCode;
+	
+	// add a #define for GLES2
+	#if defined(ANDROID) || defined(EMSCRIPTEN)
+		fullCode = std::string("#define GLES2\n") + code;
+	#else
+		fullCode = code;
+	#endif
+	
+	const char *codeString = fullCode.c_str();
 	GL_CHECK(glShaderSource(name, 1, &codeString, NULL));
 	GL_CHECK(glCompileShader(name));
 	
