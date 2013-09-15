@@ -132,9 +132,11 @@ def configure(ctx):
 		
 		try:
 			# check the systems we cannot cross-compile to
-			validTargetOs = True
-			if sys.platform == "win32" and variant["system"] not in ["windows", "android9", "browser"]:
-				validTargetOs = False
+			validTargetOs = False
+			if sys.platform == "win32" and variant["system"] in ["windows", "android9", "browser"]:
+				validTargetOs = True
+			if sys.platform == "linux2" and variant["system"] in ["linux", "android9", "browser"]:
+				validTargetOs = True
 			
 			ctx.msg("Checking target system", "ok" if validTargetOs else "failed (cross-compile not supported from the current host system)", "GREEN" if validTargetOs else "YELLOW")
 			if not validTargetOs:
@@ -144,8 +146,8 @@ def configure(ctx):
 			if variant["toolchain"] == "gcc":
 				ctx.load("gcc")
 				ctx.load("g++")
-				ctx.env.append_unique("CPPFLAGS", ["-Wall", "-Werror"])
-				ctx.env.append_unique("LINKFLAGS", ["-Wall", "-Werror"])
+				ctx.env.append_unique("CPPFLAGS", ["-Wall", ""])
+				ctx.env.append_unique("LINKFLAGS", ["-Wall", ""])
 			elif variant["toolchain"] == "msvc":
 				ctx.load("msvc")
 				ctx.define("_CRT_SECURE_NO_WARNINGS", 1)
@@ -223,6 +225,9 @@ def build(ctx):
 		
 		if ctx.env.TARGET_CONFIG == "debug" and ctx.env.TARGET_TOOLCHAIN == "msvc":
 			libs += ["dbghelp"]
+	elif ctx.env.TARGET_OS == "linux":
+		deps = ["glfw", "glm", "glew", "lua"]
+		libs = ["m", "GL"]
 	else:
 		deps = ["glm", "lua"]
 		libs = ["m"]

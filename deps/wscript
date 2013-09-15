@@ -27,11 +27,24 @@ import os
 
 def build(ctx):
 	# GLFW
-	glfwSources = ctx.path.ant_glob("glfw-2.7.8/lib/*.c") + ctx.path.ant_glob("glfw-2.7.8/lib/win32/*.c")
-	glfwIncludes = ["glfw-2.7.8/lib", "glfw-2.7.8/lib/win32"]
-	glfwDefines = ["GLFW_BUILD_DLL", "_GLFW_NO_DLOAD_GDI32", "_GLFW_NO_DLOAD_WINMM", "GLFW_NO_GLU"]
+	glfwSources = ctx.path.ant_glob("glfw-2.7.8/lib/*.c")
+	glfwIncludes = ["glfw-2.7.8/lib"]
+	glfwDefines = ["GLFW_NO_GLU"]
+	glfwLibs = []
+	
+	if ctx.env.TARGET_OS == "windows":
+		glfwSources += ctx.path.ant_glob("glfw-2.7.8/lib/win32/*.c")
+		glfwIncludes += ["glfw-2.7.8/lib/win32"]
+		glfwDefines += ["GLFW_BUILD_DLL", "_GLFW_NO_DLOAD_GDI32", "_GLFW_NO_DLOAD_WINMM"]
+		glfwLibs += ["opengl32", "winmm", "gdi32", "user32"]
+	
+	if ctx.env.TARGET_OS == "linux":
+		glfwSources += ctx.path.ant_glob("glfw-2.7.8/lib/x11/*.c")
+		glfwIncludes += ["glfw-2.7.8/lib/x11"]
+		glfwDefines += ["_GLFW_HAS_GLXGETPROCADDRESS"]
+		glfwLibs += ["GL"]
+	
 	glfwFlags = ["/Fdglfw"] if ctx.env.TARGET_TOOLCHAIN == "msvc" else []
-	glfwLibs = ["opengl32", "winmm", "gdi32", "user32"]
 	glfwLinkFlags = ["/PDB:glfw"] if ctx.env.TARGET_TOOLCHAIN == "msvc" else []
 	ctx.shlib(
 		target = os.path.join("..", "glfw"),

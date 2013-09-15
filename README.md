@@ -34,6 +34,16 @@ python waf configure
 python waf build_release_windows_x86_gcc
 ```
 
+### Linux (work in progress, not yet officially supported)
+
+You need to install libX11-dev and libgl1-mesa-dev, then build as usual:
+```sh
+sudo apt-get install libX11-dev libgl1-mesa-dev
+cd build
+python waf configure
+python waf build_release_linux_x86_gcc
+```
+
 ### Android
 
 You need the Android NDK installed and must specifiy its root to the configure step
