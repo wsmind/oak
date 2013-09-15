@@ -106,7 +106,7 @@ void Memory::dumpUsedMemory()
 						break;
 					
 					StackWalker::translateSymbol(stats.stack[j], &symbolInfo);
-					printf("0x%x %s (%s:%d)\n", (unsigned int)stats.stack[j], symbolInfo.name, symbolInfo.file, symbolInfo.line);
+					//printf("0x%x %s (%s:%d)\n", (unsigned int)stats.stack[j], symbolInfo.name, symbolInfo.file, symbolInfo.line);
 				}
 			}
 		}
