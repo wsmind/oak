@@ -48,6 +48,11 @@ void main_loop()
 }
 #endif
 
+static void GLFWCALL onWindowResize(int width, int height)
+{
+	glViewport(0, 0, width, height);
+}
+
 int main(int argc, char **argv)
 {
 	// the engine must be given a game folder
@@ -77,13 +82,15 @@ int main(int argc, char **argv)
 	
 	glfwInit();
 	
-	if (glfwOpenWindow(1280, 800, 8, 8, 8, 8, 24, 8, GLFW_WINDOW) == GL_FALSE)
+	if (glfwOpenWindow(1280, 720, 8, 8, 8, 8, 24, 8, GLFW_WINDOW) == GL_FALSE)
 	{
 		Log::error("Failed to open a GLFW window! Exiting...");
 		glfwTerminate();
 		
 		return 1;
 	}
+	
+	glfwSetWindowSizeCallback(onWindowResize);
 	
 	// events will be polled from the input engine; no need to poll them automatically each frame
 	glfwDisable(GLFW_AUTO_POLL_EVENTS);
