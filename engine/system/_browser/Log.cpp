@@ -27,8 +27,9 @@
 
 #include <engine/system/Log.hpp>
 
-#include <stdio.h>
-#include <assert.h>
+#include <cstdio>
+#include <cstdarg>
+#include <cassert>
 
 namespace oak {
 
