@@ -235,7 +235,7 @@ def build(ctx):
 	if ctx.env.TARGET_OS == "browser":
 		dataNode = ctx.path.parent.find_node("samples/hello")
 		shellNode = ctx.path.parent.find_node("engine/startup/_browser/shell.html")
-		ctx.env.append_unique("LINKFLAGS", ["--preload-file", dataNode.abspath()])
+		ctx.env.append_unique("LINKFLAGS", ["--embed-file", dataNode.abspath() + "@/"])
 		ctx.env.append_unique("LINKFLAGS", ["--shell-file", shellNode.abspath()])
 		ctx.add_manual_dependency("../oak.html", shellNode)
 	

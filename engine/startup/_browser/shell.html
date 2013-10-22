@@ -3,10 +3,25 @@
   <head>
     <meta charset="utf-8" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1.0, user-scalable=no" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no" />
     <title>Oak test</title>
     <style>
-      body { background-color: #333; padding: 0px; margin: 0px; }
+      body {
+        background-color: #333;
+        padding: 0px;
+        margin: 0px;
+        height:100%;
+        overflow:hidden;
+        -webkit-user-select:none;
+        -khtml-user-select:none;
+        -moz-user-select:none;
+        -ms-user-select:none;
+        user-select:none;
+        -webkit-touch-callout:none;
+        -ms-touch-action:none;
+        touch-action:none;
+        -ms-content-zooming:none;
+      }
       .emscripten { padding-right: 0; margin-left: auto; margin-right: auto; display: block; }
       div.emscripten { text-align: center; }
       /* the canvas *must not* have any border or padding, or mouse coords will be wrong */
@@ -25,11 +40,11 @@
     <script type='text/javascript'>
       // connect to canvas
       var Module = {
-		arguments: ["D:/proj/oak/samples/hello"],
+		arguments: ["."],
         preRun: [],
         postRun: [],
-        print: console.log,
-        printErr: console.error,
+        print: function(msg) { console.log(msg) },
+        printErr: function(msg) { console.error(msg) },
         canvas: document.getElementById('canvas'),
         setStatus: function(text) {
           if (Module.setStatus.interval) clearInterval(Module.setStatus.interval);
@@ -56,10 +71,6 @@
       };
       Module.setStatus('Downloading...');
     </script>
-    <script type='text/javascript'>
-
-      {{{ SCRIPT_CODE }}}
-
-    </script>
+    <script type='text/javascript'>{{{ SCRIPT_CODE }}}</script>
   </body>
 </html>
